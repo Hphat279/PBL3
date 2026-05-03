@@ -1,0 +1,107 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Nhập chỉ số sinh tồn{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row">
+        <div class="col">
+            <h3 class="page-title">📊 Chỉ số sinh tồn</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'clinic:tiep-nhan' %}">Tiếp nhận</a></li>
+                <li class="breadcrumb-item active">Sinh hiệu</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Thông tin bệnh nhân -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header"><h5>🧑‍⚕️ Thông tin bệnh nhân</h5></div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless">
+                    <tr><th>Họ tên:</th><td><strong>{{ appointment.patient.full_name }}</strong></td></tr>
+                    <tr><th>Mã BN:</th><td>{{ appointment.patient.patient_code }}</td></tr>
+                    <tr><th>Giới tính:</th><td>{{ appointment.patient.get_gender_display|default:"—" }}</td></tr>
+                    <tr><th>Ngày sinh:</th><td>{{ appointment.patient.birthday|date:"d/m/Y" }}</td></tr>
+                    <tr><th>Điện thoại:</th><td>{{ appointment.patient.phone }}</td></tr>
+                    <tr><th>Nhóm máu:</th><td>{{ appointment.patient.blood_type|default:"—" }}</td></tr>
+                    <tr><th>Dị ứng:</th><td class="text-danger">{{ appointment.patient.allergy_history|default:"Không" }}</td></tr>
+                    <tr><th>Bác sĩ:</th><td>{{ appointment.doctor.full_name }}</td></tr>
+                    <tr><th>Lý do khám:</th><td>{{ appointment.reason|default:"—" }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form nhập sinh hiệu -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h5>📋 Nhập chỉ số sinh tồn</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{% url 'clinic:sinh-hieu' appointment.pk %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label><strong>⚖️ Cân nặng (kg)</strong></label>
+                            <input type="number" step="0.1" min="0" max="300"
+                                   name="weight" class="form-control form-control-lg"
+                                   placeholder="Ví dụ: 65.5"
+                                   value="{{ sinh_hieu.weight|default:'' }}">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label><strong>📏 Chiều cao (cm)</strong></label>
+                            <input type="number" step="0.1" min="0" max="250"
+                                   name="height" class="form-control form-control-lg"
+                                   placeholder="Ví dụ: 170.0"
+                                   value="{{ sinh_hieu.height|default:'' }}">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label><strong>🌡️ Thân nhiệt (°C)</strong></label>
+                            <input type="number" step="0.1" min="30" max="45"
+                                   name="temperature" class="form-control form-control-lg"
+                                   placeholder="Ví dụ: 36.8"
+                                   value="{{ sinh_hieu.temperature|default:'' }}">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label><strong>💓 Nhịp tim (lần/phút)</strong></label>
+                            <input type="number" min="0" max="300"
+                                   name="heart_rate" class="form-control form-control-lg"
+                                   placeholder="Ví dụ: 80"
+                                   value="{{ sinh_hieu.heart_rate|default:'' }}">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label><strong>🩺 Huyết áp (mmHg)</strong></label>
+                            <input type="text"
+                                   name="blood_pressure" class="form-control form-control-lg"
+                                   placeholder="Ví dụ: 120/80"
+                                   value="{{ sinh_hieu.blood_pressure|default:'' }}">
+                        </div>
+                    </div>
+
+                    {% if sinh_hieu.bmi %}
+                    <div class="alert alert-info">
+                        <strong>BMI:</strong> {{ sinh_hieu.bmi }}
+                        {% if sinh_hieu.bmi < 18.5 %}– Thiếu cân
+                        {% elif sinh_hieu.bmi < 25 %}– Bình thường
+                        {% elif sinh_hieu.bmi < 30 %}– Thừa cân
+                        {% else %}– Béo phì
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="text-right mt-3">
+                        <a href="{% url 'clinic:tiep-nhan' %}" class="btn btn-secondary mr-2">Hủy</a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fe fe-save"></i> Lưu sinh hiệu & Xác nhận
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

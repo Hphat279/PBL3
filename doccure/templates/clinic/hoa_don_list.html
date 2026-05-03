@@ -1,0 +1,108 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Hóa đơn{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row">
+        <div class="col">
+            <h3 class="page-title">🧾 Quản lý hóa đơn</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin-dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Hóa đơn</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Thống kê -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>{{ tong_doanh_thu|floatformat:0 }}đ</h3>
+                <p class="mb-0">Doanh thu đã thu</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h3>{{ chua_thanh_toan }}</h3>
+                <p class="mb-0">Hóa đơn chưa thanh toán</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h3>{{ hoa_dons.count }}</h3>
+                <p class="mb-0">Tổng hóa đơn</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lọc theo trạng thái -->
+<div class="mb-3">
+    <a href="{% url 'clinic:hoa-don' %}" class="btn {% if not trang_thai_filter %}btn-primary{% else %}btn-outline-primary{% endif %} mr-1">Tất cả</a>
+    <a href="{% url 'clinic:hoa-don' %}?status=unpaid" class="btn {% if trang_thai_filter == 'unpaid' %}btn-warning{% else %}btn-outline-warning{% endif %} mr-1">Chưa thanh toán</a>
+    <a href="{% url 'clinic:hoa-don' %}?status=partially_paid" class="btn {% if trang_thai_filter == 'partially_paid' %}btn-info{% else %}btn-outline-info{% endif %} mr-1">Thanh toán 1 phần</a>
+    <a href="{% url 'clinic:hoa-don' %}?status=paid" class="btn {% if trang_thai_filter == 'paid' %}btn-success{% else %}btn-outline-success{% endif %}">Đã thanh toán</a>
+</div>
+
+<!-- Bảng hóa đơn -->
+<div class="card card-table">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-center mb-0">
+                <thead>
+                    <tr>
+                        <th>Số HĐ</th>
+                        <th>Bệnh nhân</th>
+                        <th>Ngày</th>
+                        <th class="text-right">Tổng tiền</th>
+                        <th class="text-right">Giảm giá</th>
+                        <th class="text-right">Thực thu</th>
+                        <th>Trạng thái</th>
+                        <th class="text-right">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hd in hoa_dons %}
+                    <tr>
+                        <td><strong>#{{ hd.pk }}</strong></td>
+                        <td>{{ hd.patient.full_name }}</td>
+                        <td>{{ hd.created_at|date:"d/m/Y" }}</td>
+                        <td class="text-right">{{ hd.total_amount|floatformat:0 }}đ</td>
+                        <td class="text-right text-danger">
+                            {% if hd.discount %}{{ hd.discount|floatformat:0 }}đ{% else %}—{% endif %}
+                        </td>
+                        <td class="text-right font-weight-bold">{{ hd.final_amount|floatformat:0 }}đ</td>
+                        <td>
+                            {% if hd.payment_status == "paid" %}
+                                <span class="badge badge-pill badge-success">✓ Đã thanh toán</span>
+                            {% elif hd.payment_status == "partially_paid" %}
+                                <span class="badge badge-pill badge-info">Một phần</span>
+                            {% else %}
+                                <span class="badge badge-pill badge-warning">Chưa thanh toán</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right">
+                            <a href="{% url 'clinic:hoa-don-chi-tiet' hd.pk %}" class="btn btn-sm btn-primary">
+                                <i class="fe fe-eye"></i> Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">Không có hóa đơn nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

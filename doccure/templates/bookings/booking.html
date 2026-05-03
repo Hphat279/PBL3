@@ -3,7 +3,7 @@
 {% load static %}
 {% load booking_tags %}
 
-{% block title %}Book Appointment with Dr. {{ doctor.get_full_name }}{% endblock %}
+{% block title %}Đặt lịch khám với BS. {{ doctor.get_full_name }}{% endblock %}
 
 {% block content %}
     <!-- Breadcrumb -->
@@ -13,11 +13,11 @@
                 <div class="col-md-12 col-12">
                     <nav aria-label="breadcrumb" class="page-breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Booking</li>
+                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Đặt lịch</li>
                         </ol>
                     </nav>
-                    <h2 class="breadcrumb-title">Book Appointment</h2>
+                    <h2 class="breadcrumb-title">Đặt lịch hẹn</h2>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
                                     <img src="{{ doctor.profile.image }}" alt="{{ doctor.get_full_name }}">
                                 </a>
                                 <div class="booking-info">
-                                    <h4><a href="{% url 'doctors:doctor-profile' doctor.username %}">Dr. {{ doctor.get_full_name }}</a></h4>
+                                    <h4><a href="{% url 'doctors:doctor-profile' doctor.username %}">BS. {{ doctor.get_full_name }}</a></h4>
                                     {% if doctor.profile.specialization %}
                                         <p class="doc-speciality">{{ doctor.profile.specialization }}</p>
                                     {% endif %}
@@ -104,7 +104,7 @@
                                                         <span>{{ slot.formatted_time }}</span>
                                                     </a>
                                                 {% empty %}
-                                                    <p class="text-muted">No slots available</p>
+                                                    <p class="text-muted">Không có lịch trống</p>
                                                 {% endfor %}
                                             </li>
                                             {% endfor %}
@@ -124,7 +124,7 @@
                         <input type="hidden" name="selected_date" id="selected_date">
                         <input type="hidden" name="selected_time" id="selected_time">
                         <div class="submit-section proceed-btn text-right">
-                            <button type="submit" class="btn btn-primary submit-btn" disabled>Proceed to Book</button>
+                            <button type="submit" class="btn btn-primary submit-btn" disabled>Tiến hành đặt lịch</button>
                         </div>
                     </form>
                     <!-- /Submit Section -->

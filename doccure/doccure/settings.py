@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "doctors",
     "patients",
     "bookings",
+    "clinic",
     "ckeditor",
 ]
 

@@ -15,14 +15,14 @@
 
 {% block content %}
 
-    <!-- Breadcrumb -->
+    <!-- Đường dẫn điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-md-12 col-12">
                     <nav aria-label="breadcrumb" class="page-breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Trang chủ</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{% block page_name1 %}{% endblock %}</li>
                         </ol>
                     </nav>
@@ -31,24 +31,24 @@
             </div>
         </div>
     </div>
-    <!-- /Breadcrumb -->
+    <!-- /Đường dẫn điều hướng -->
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container-fluid">
 
             <div class="row">
                 <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
 
-                    <!-- Profile Sidebar -->
+                    <!-- Thanh bên hồ sơ -->
                     <div class="profile-sidebar">
                         <div class="widget-profile pro-widget-content">
                             <div class="profile-info-widget">
                                 <a href="#" class="booking-doc-img">
-                                    <img src="{{ user.profile.image }}" alt="User Image">
+                                    <img src="{{ user.profile.image }}" alt="Ảnh người dùng">
                                 </a>
                                 <div class="profile-det-info">
-                                    <h3>Dr. {{ user.get_full_name }}</h3>
+                                    <h3>BS. {{ user.get_full_name }}</h3>
 
                                     <div class="patient-details">
                                         {% if user.profile.specialization %}
@@ -67,59 +67,85 @@
                         <div class="dashboard-widget">
                             <nav class="dashboard-menu">
                                 <ul>
+                                    <!-- Quản lý tài khoản -->
                                     <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                                         <a href="{% url 'doctors:dashboard' %}">
                                             <i class="fas fa-columns"></i>
-                                            <span>Dashboard</span>
+                                            <span>Bảng điều khiển</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'appointments' %}active{% endif %}">
                                         <a href="{% url 'doctors:appointments' %}">
                                             <i class="fas fa-calendar-check"></i>
-                                            <span>Appointments</span>
+                                            <span>Lịch hẹn</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'my-patients' %}active{% endif %}">
                                         <a href="{% url 'doctors:my-patients' %}">
                                             <i class="fas fa-user-injured"></i>
-                                            <span>My Patients</span>
+                                            <span>Bệnh nhân của tôi</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'schedule-timings' %}active{% endif %}">
                                         <a href="{% url 'doctors:schedule-timings' %}">
                                             <i class="fas fa-hourglass-start"></i>
-                                            <span>Schedule Timings</span>
+                                            <span>Lịch làm việc</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'booking-list' %}active{% endif %}">
                                         <a href="{% url 'bookings:booking-list' %}">
                                             <i class="fas fa-calendar-alt"></i>
-                                            <span>Bookings</span>
+                                            <span>Đặt lịch</span>
                                         </a>
                                     </li>
+
+                                    <!-- Phòng khám 4.0 -->
+                                    <li class="menu-title-item">
+                                        <span style="font-size:11px; font-weight:600; color:#aaa; text-transform:uppercase; padding: 8px 15px; display:block;">Phòng khám</span>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'tiep-nhan' %}active{% endif %}">
+                                        <a href="{% url 'clinic:tiep-nhan' %}">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                            <span>Tiếp nhận</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'benh-nhan' %}active{% endif %}">
+                                        <a href="{% url 'clinic:benh-nhan' %}">
+                                            <i class="fas fa-procedures"></i>
+                                            <span>Bệnh nhân</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'hoa-don' %}active{% endif %}">
+                                        <a href="{% url 'clinic:hoa-don' %}">
+                                            <i class="fas fa-file-invoice-dollar"></i>
+                                            <span>Hóa đơn</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Tài khoản -->
                                     <li class="{% if request.resolver_match.url_name == 'profile-setting' %}active{% endif %}">
                                         <a href="{% url 'doctors:profile-setting' %}">
                                             <i class="fas fa-user-cog"></i>
-                                            <span>Profile Settings</span>
+                                            <span>Cài đặt hồ sơ</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'change-password' %}active{% endif %}">
                                         <a href="{% url 'doctors:change-password' %}">
                                             <i class="fas fa-lock"></i>
-                                            <span>Change Password</span>
+                                            <span>Đổi mật khẩu</span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href="{% url 'accounts:logout' %}">
                                             <i class="fas fa-sign-out-alt"></i>
-                                            <span>Logout</span>
+                                            <span>Đăng xuất</span>
                                         </a>
                                     </li>
                                 </ul>
                             </nav>
                         </div>
                     </div>
-                    <!-- /Profile Sidebar -->
+                    <!-- /Thanh bên hồ sơ -->
 
                 </div>
 
@@ -133,6 +159,6 @@
         </div>
 
     </div>
-    <!-- /Page Content -->
+    <!-- /Nội dung trang -->
 
 {% endblock %}

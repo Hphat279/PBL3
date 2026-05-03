@@ -13,7 +13,7 @@
                             <img src="{% static 'assets/img/logo2.svg' %}" alt="Doccure">
                         </div>
                         <div class="footer-about-content">
-                            <p>Find and book appointments with the best doctors in Bangladesh. Quality healthcare made accessible and convenient.</p>
+                            <p>Tìm và đặt lịch hẹn với các bác sĩ tốt nhất tại Việt Nam. Chăm sóc sức khỏe chất lượng, tiện lợi và dễ tiếp cận.</p>
                             <div class="social-icon">
                                 <ul>
                                     <li>
@@ -35,13 +35,13 @@
                 <div class="col-lg-3 col-md-6">
                     <!-- Footer Widget -->
                     <div class="footer-widget footer-menu">
-                        <h2 class="footer-title">For Patients</h2>
+                        <h2 class="footer-title">Dành cho Bệnh nhân</h2>
                         <ul>
-                            <li><a href="{% url 'doctors:list' %}"><i class="fas fa-angle-double-right"></i> Search for Doctors</a></li>
-                            <li><a href="{% url 'accounts:login' %}"><i class="fas fa-angle-double-right"></i> Login</a></li>
-                            <li><a href="{% url 'accounts:patient-register' %}"><i class="fas fa-angle-double-right"></i> Register</a></li>
+                            <li><a href="{% url 'doctors:list' %}"><i class="fas fa-angle-double-right"></i> Tìm bác sĩ</a></li>
+                            <li><a href="{% url 'accounts:login' %}"><i class="fas fa-angle-double-right"></i> Đăng nhập</a></li>
+                            <li><a href="{% url 'accounts:patient-register' %}"><i class="fas fa-angle-double-right"></i> Đăng ký</a></li>
                             {% if user.is_authenticated and user.role == 'patient' %}
-                                <li><a href="{% url 'patients:dashboard' %}"><i class="fas fa-angle-double-right"></i> Patient Dashboard</a></li>
+                                <li><a href="{% url 'patients:dashboard' %}"><i class="fas fa-angle-double-right"></i> Bảng điều khiển</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -51,14 +51,15 @@
                 <div class="col-lg-3 col-md-6">
                     <!-- Footer Widget -->
                     <div class="footer-widget footer-menu">
-                        <h2 class="footer-title">For Doctors</h2>
+                        <h2 class="footer-title">Dành cho Bác sĩ</h2>
                         <ul>
                             {% if user.is_authenticated and user.role == 'doctor' %}
-                                <li><a href="{% url 'doctors:appointments' %}"><i class="fas fa-angle-double-right"></i> Appointments</a></li>
-                                <li><a href="{% url 'doctors:dashboard' %}"><i class="fas fa-angle-double-right"></i> Doctor Dashboard</a></li>
+                                <li><a href="{% url 'doctors:appointments' %}"><i class="fas fa-angle-double-right"></i> Lịch hẹn</a></li>
+                                <li><a href="{% url 'doctors:dashboard' %}"><i class="fas fa-angle-double-right"></i> Bảng điều khiển</a></li>
+                                <li><a href="{% url 'clinic:tiep-nhan' %}"><i class="fas fa-angle-double-right"></i> Tiếp nhận bệnh nhân</a></li>
                             {% else %}
-                                <li><a href="{% url 'accounts:login' %}"><i class="fas fa-angle-double-right"></i> Login</a></li>
-                                <li><a href="{% url 'accounts:doctor-register' %}"><i class="fas fa-angle-double-right"></i> Register</a></li>
+                                <li><a href="{% url 'accounts:login' %}"><i class="fas fa-angle-double-right"></i> Đăng nhập</a></li>
+                                <li><a href="{% url 'accounts:doctor-register' %}"><i class="fas fa-angle-double-right"></i> Đăng ký</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -68,19 +69,19 @@
                 <div class="col-lg-3 col-md-6">
                     <!-- Footer Widget -->
                     <div class="footer-widget footer-contact">
-                        <h2 class="footer-title">Contact Us</h2>
+                        <h2 class="footer-title">Liên hệ chúng tôi</h2>
                         <div class="footer-contact-info">
                             <div class="footer-address">
                                 <span><i class="fas fa-map-marker-alt"></i></span>
-                                <p>House 1, Road 1, Block A, Banani, Dhaka-1213, Bangladesh</p>
+                                <p>123 Nguyễn Văn Linh, Quận Hải Châu, Đà Nẵng, Việt Nam</p>
                             </div>
                             <p>
                                 <i class="fas fa-phone-alt"></i>
-                                +880 1700-000000
+                                +84 0236 000 0000
                             </p>
                             <p class="mb-0">
                                 <i class="fas fa-envelope"></i>
-                                info@doccure.com
+                                info@doccure.vn
                             </p>
                         </div>
                     </div>
@@ -99,15 +100,15 @@
                 <div class="row">
                     <div class="col-md-6 col-lg-6">
                         <div class="copyright-text">
-                            <p class="mb-0">&copy; 2024 Doccure. All rights reserved.</p>
+                            <p class="mb-0">&copy; 2024 Doccure. Bản quyền thuộc về Doccure.</p>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-6">
                         <!-- Copyright Menu -->
                         <div class="copyright-menu">
                             <ul class="policy-menu">
-                                <li><a href="{% url 'core:terms' %}">Terms and Conditions</a></li>
-                                <li><a href="{% url 'core:privacy' %}">Privacy Policy</a></li>
+                                <li><a href="{% url 'core:terms' %}">Điều khoản sử dụng</a></li>
+                                <li><a href="{% url 'core:privacy' %}">Chính sách bảo mật</a></li>
                             </ul>
                         </div>
                         <!-- /Copyright Menu -->

@@ -26,26 +26,31 @@
             </div>
             <ul class="main-nav">
                 <li {% if request.path == '/' %}class="active"{% endif %}>
-                    <a href="{% url 'core:home' %}">Home</a>
+                    <a href="{% url 'core:home' %}">Trang chủ</a>
                 </li>
                 <li class="has-submenu{% if request.path == '/doctors/' %} active {% endif %}">
-{#                    <a href="#">Doctors <i class="fas fa-chevron-down"></i></a>#}
-{#                    <ul class="submenu">#}
-{#                        <li><a href="#">Doctor Register</a></li>#}
-{#                    </ul>#}
-                    <a href="{% url 'doctors:list' %}">Doctors</a>
+                    <a href="{% url 'doctors:list' %}">Bác sĩ</a>
                 </li>
                 {% if not user.is_authenticated %}
                     <li class="login-link">
-                        <a href="{% url 'accounts:login' %}">Login / Signup</a>
+                        <a href="{% url 'accounts:login' %}">Đăng nhập / Đăng ký</a>
                     </li>
                 {% elif user.role == 'patient' %}
                     <li class="has-submenu {% if request.path == '/patients/' %} active {% endif %}">
-                        <a href="#">Patients <i class="fas fa-chevron-down"></i></a>
+                        <a href="#">Bệnh nhân <i class="fas fa-chevron-down"></i></a>
                         <ul class="submenu">
-                            <li><a href="{% url 'patients:dashboard' %}">Patient Dashboard</a></li>
-                            <li><a href="{% url 'patients:profile-setting' %}">Profile Settings</a></li>
-                            <li><a href="#">Change Password</a></li>
+                            <li><a href="{% url 'patients:dashboard' %}">Bảng điều khiển</a></li>
+                            <li><a href="{% url 'patients:profile-setting' %}">Cài đặt hồ sơ</a></li>
+                            <li><a href="#">Đổi mật khẩu</a></li>
+                        </ul>
+                    </li>
+                {% elif user.role == 'doctor' %}
+                    <li class="has-submenu">
+                        <a href="#">Phòng khám <i class="fas fa-chevron-down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="{% url 'clinic:tiep-nhan' %}">Tiếp nhận</a></li>
+                            <li><a href="{% url 'clinic:benh-nhan' %}">Bệnh nhân</a></li>
+                            <li><a href="{% url 'clinic:hoa-don' %}">Hóa đơn</a></li>
                         </ul>
                     </li>
                 {% endif %}
@@ -57,13 +62,13 @@
                     <i class="far fa-hospital"></i>
                 </div>
                 <div class="header-contact-detail">
-                    <p class="contact-header">Contact</p>
+                    <p class="contact-header">Liên hệ</p>
                     <p class="contact-info-header"> +8801224242</p>
                 </div>
             </li>
             {% if not user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link header-login" href="{% url 'accounts:login' %}">Login / Signup </a>
+                    <a class="nav-link header-login" href="{% url 'accounts:login' %}">Đăng nhập / Đăng ký</a>
                 </li>
             {% else %}
                 <!-- User Menu -->
@@ -76,24 +81,24 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="user-header">
                             <div class="avatar avatar-sm">
-                                <img src="{{ user.profile.image }}" alt="User Image" class="avatar-img rounded-circle">
+                                <img src="{{ user.profile.image }}" alt="Ảnh người dùng" class="avatar-img rounded-circle">
                             </div>
                             <div class="user-text">
                                 <h6>{{ user.username }}</h6>
                                 {% if user.role == "patient" %}
-                                    <p class="text-muted mb-0">Patient</p>
+                                    <p class="text-muted mb-0">Bệnh nhân</p>
                                 {% else %}
-                                    <p class="text-muted mb-0">Doctor</p>
+                                    <p class="text-muted mb-0">Bác sĩ</p>
                                 {% endif %}
                             </div>
                         </div>
                         {% if user.role == "patient" %}
-                            <a class="dropdown-item" href="{% url 'patients:dashboard' %}">Dashboard</a>
-                            <a class="dropdown-item" href="{% url 'patients:profile-setting' %}">Profile Settings</a>
+                            <a class="dropdown-item" href="{% url 'patients:dashboard' %}">Bảng điều khiển</a>
+                            <a class="dropdown-item" href="{% url 'patients:profile-setting' %}">Cài đặt hồ sơ</a>
                         {% elif user.role == "doctor" %}
-                            <a class="dropdown-item" href="{% url 'doctors:dashboard' %}">Dashboard</a>
+                            <a class="dropdown-item" href="{% url 'doctors:dashboard' %}">Bảng điều khiển</a>
                         {% endif %}
-                        <a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a>
+                        <a class="dropdown-item" href="{% url 'accounts:logout' %}">Đăng xuất</a>
                     </div>
                 </li>
                 <!-- /User Menu -->

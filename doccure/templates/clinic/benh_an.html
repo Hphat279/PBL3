@@ -1,0 +1,272 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Bệnh án – {{ benh_nhan.full_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">📋 Bệnh án – {{ benh_nhan.full_name }}</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'clinic:benh-nhan' %}">Bệnh nhân</a></li>
+                <li class="breadcrumb-item active">Bệnh án</li>
+            </ul>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#modalTaoBenhAn">
+                <i class="fe fe-plus"></i> Tạo bệnh án mới
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Thông tin bệnh nhân (cột trái) -->
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="avatar avatar-xl mb-3 bg-primary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:80px;height:80px;font-size:32px;">
+                    {{ benh_nhan.full_name|first|upper }}
+                </div>
+                <h5>{{ benh_nhan.full_name }}</h5>
+                <span class="badge badge-primary">{{ benh_nhan.patient_code }}</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Giới tính</span>
+                    <strong>{{ benh_nhan.get_gender_display|default:"—" }}</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Tuổi</span>
+                    <strong>{{ benh_nhan.tuoi }} tuổi</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Nhóm máu</span>
+                    <strong class="text-danger">{{ benh_nhan.blood_type|default:"—" }}</strong>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span class="text-muted">Điện thoại</span>
+                    <strong>{{ benh_nhan.phone }}</strong>
+                </li>
+                {% if benh_nhan.allergy_history %}
+                <li class="list-group-item">
+                    <span class="text-muted d-block">⚠️ Dị ứng</span>
+                    <span class="text-danger">{{ benh_nhan.allergy_history }}</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Bệnh án hiện tại (cột phải) -->
+    <div class="col-md-9">
+        {% if benh_an_hien_tai %}
+        <!-- Tabs bệnh án -->
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="benhAnTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="kham-tab" data-toggle="tab" href="#tab-kham" role="tab">
+                            🩺 Khám bệnh
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="dichvu-tab" data-toggle="tab" href="#tab-dichvu" role="tab">
+                            🔬 Cận lâm sàng
+                            <span class="badge badge-secondary">{{ benh_an_hien_tai.service_orders.count }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="don-tab" data-toggle="tab" href="#tab-don" role="tab">
+                            💊 Đơn thuốc
+                        </a>
+                    </li>
+                </ul>
+                <small class="text-muted ml-auto">
+                    BA#{{ benh_an_hien_tai.pk }} – {{ benh_an_hien_tai.visit_date|date:"d/m/Y H:i" }}
+                    – BS. {{ benh_an_hien_tai.doctor.full_name }}
+                </small>
+            </div>
+
+            <div class="tab-content" id="benhAnTabContent">
+                <!-- Tab 1: Khám bệnh -->
+                <div class="tab-pane fade show active" id="tab-kham" role="tabpanel">
+                    <div class="card-body">
+                        <form method="POST" action="{% url 'clinic:tao-benh-an' benh_nhan.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="doctor_id" value="{{ benh_an_hien_tai.doctor.pk }}">
+                            <div class="form-group">
+                                <label><strong>Triệu chứng</strong></label>
+                                <textarea name="symptoms" class="form-control" rows="3"
+                                          placeholder="Bệnh nhân mô tả triệu chứng…">{{ benh_an_hien_tai.symptoms }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><strong>Chẩn đoán sơ bộ</strong></label>
+                                <textarea name="initial_diagnosis" class="form-control" rows="2"
+                                          placeholder="Chẩn đoán ban đầu của bác sĩ…">{{ benh_an_hien_tai.initial_diagnosis }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><strong>Chẩn đoán xác định (ICD-10)</strong></label>
+                                <textarea name="final_diagnosis" class="form-control" rows="2"
+                                          placeholder="Chẩn đoán sau khi có kết quả cận lâm sàng…">{{ benh_an_hien_tai.final_diagnosis }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><strong>Hướng điều trị</strong></label>
+                                <textarea name="treatment_plan" class="form-control" rows="3"
+                                          placeholder="Phác đồ điều trị…">{{ benh_an_hien_tai.treatment_plan }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label><strong>Ghi chú</strong></label>
+                                <textarea name="notes" class="form-control" rows="2"
+                                          placeholder="Ghi chú khác…">{{ benh_an_hien_tai.notes }}</textarea>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fe fe-save"></i> Lưu bệnh án
+                                </button>
+                                <a href="{% url 'clinic:ke-don' benh_an_hien_tai.pk %}" class="btn btn-primary ml-2">
+                                    <i class="fe fe-file-text"></i> Kê đơn thuốc →
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Cận lâm sàng -->
+                <div class="tab-pane fade" id="tab-dichvu" role="tabpanel">
+                    <div class="card-body">
+                        <!-- Form chỉ định dịch vụ -->
+                        <form method="POST" action="{% url 'clinic:chi-dinh-dich-vu' benh_an_hien_tai.pk %}" class="mb-4">
+                            {% csrf_token %}
+                            <div class="row align-items-end">
+                                <div class="col-md-8">
+                                    <label><strong>Chỉ định dịch vụ</strong></label>
+                                    <select name="service_id" class="form-control" required>
+                                        <option value="">-- Chọn dịch vụ --</option>
+                                        {% for danh_muc in danh_muc_dv %}
+                                        <optgroup label="{{ danh_muc.name }}">
+                                            {% for dv in danh_muc.services.all %}
+                                            {% if dv.is_active %}
+                                            <option value="{{ dv.pk }}">{{ dv.service_name }} – {{ dv.price|floatformat:0 }}đ</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </optgroup>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fe fe-plus"></i> Chỉ định
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Danh sách dịch vụ đã chỉ định -->
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Dịch vụ</th>
+                                    <th>Danh mục</th>
+                                    <th>Trạng thái</th>
+                                    <th>Kết quả</th>
+                                    <th class="text-right">Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in benh_an_hien_tai.service_orders.all %}
+                                <tr>
+                                    <td>{{ order.service.service_name }}</td>
+                                    <td>{{ order.service.category.name }}</td>
+                                    <td>
+                                        <span class="badge badge-pill 
+                                            {% if order.status == 'completed' %}badge-success
+                                            {% elif order.status == 'processing' %}badge-info
+                                            {% elif order.status == 'paid' %}badge-primary
+                                            {% elif order.status == 'cancelled' %}badge-danger
+                                            {% else %}badge-warning{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.result_text|default:"Chưa có kết quả"|truncatechars:50 }}</td>
+                                    <td class="text-right">{{ order.service.price|floatformat:0 }}đ</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-center text-muted">Chưa có dịch vụ nào được chỉ định</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <!-- Nút tạo hóa đơn -->
+                        <div class="text-right mt-3">
+                            <form method="POST" action="{% url 'clinic:tao-hoa-don' benh_an_hien_tai.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fe fe-file-text"></i> Xuất hóa đơn
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Đơn thuốc -->
+                <div class="tab-pane fade" id="tab-don" role="tabpanel">
+                    <div class="card-body text-center py-5">
+                        <i class="fe fe-package" style="font-size:48px;color:#ccc;"></i>
+                        <p class="mt-3 text-muted">Kê đơn thuốc trực tiếp tại trang kê đơn</p>
+                        <a href="{% url 'clinic:ke-don' benh_an_hien_tai.pk %}" class="btn btn-primary btn-lg">
+                            <i class="fe fe-file-text"></i> Mở trang kê đơn thuốc
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Chưa có bệnh án nào -->
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fe fe-clipboard" style="font-size:64px;color:#ccc;"></i>
+                <h5 class="mt-3 text-muted">Bệnh nhân chưa có bệnh án nào</h5>
+                <button class="btn btn-primary mt-3" data-toggle="modal" data-target="#modalTaoBenhAn">
+                    <i class="fe fe-plus"></i> Tạo bệnh án đầu tiên
+                </button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal tạo bệnh án mới -->
+<div class="modal fade" id="modalTaoBenhAn" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📋 Tạo bệnh án mới</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <form method="POST" action="{% url 'clinic:tao-benh-an' benh_nhan.pk %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Bác sĩ phụ trách</label>
+                        <select name="doctor_id" class="form-control" required>
+                            <!-- Cần truyền danh sách bác sĩ vào context -->
+                            <option value="">-- Chọn bác sĩ --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Triệu chứng ban đầu</label>
+                        <textarea name="symptoms" class="form-control" rows="3" placeholder="Bệnh nhân mô tả…"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Tạo bệnh án</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

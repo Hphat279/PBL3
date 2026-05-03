@@ -3,102 +3,102 @@
 {% load static %}
 
 {% block title %}
-    Home
+    Trang chủ
 {% endblock %}
 
 {% block content %}
 
-    <!-- Home Banner -->
+    <!-- Biểu ngữ trang chủ -->
     <section class="section section-search">
         <div class="container-fluid">
             <div class="banner-wrapper">
                 <div class="banner-header text-center">
-                    <h1>Find and Book Appointments with Top Doctors</h1>
-                    <p>Get instant access to trusted doctors in your area for quality healthcare.</p>
+                    <h1>Tìm kiếm và đặt lịch hẹn với các bác sĩ hàng đầu</h1>
+                    <p>Truy cập ngay các bác sĩ đáng tin cậy trong khu vực của bạn để được chăm sóc sức khỏe chất lượng.</p>
                 </div>
 
-                <!-- Search -->
+                <!-- Tìm kiếm -->
                 <div class="search-box">
                     <form action="{% url 'doctors:list' %}" method="get">
                         <div class="form-group search-location">
-                            <input type="text" name="location" class="form-control" placeholder="Enter City or Division">
-                            <span class="form-text">Find doctors in your area</span>
+                            <input type="text" name="location" class="form-control" placeholder="Nhập thành phố hoặc tỉnh/thành">
+                            <span class="form-text">Tìm bác sĩ trong khu vực của bạn</span>
                         </div>
                         <div class="form-group search-info">
-                            <input type="text" name="q" class="form-control" placeholder="Search by Doctor Name, Specialization, or Symptoms">
-                            <span class="form-text">e.g. Cardiologist, Heart Problems, Dr. Rahman</span>
+                            <input type="text" name="q" class="form-control" placeholder="Tìm kiếm theo tên bác sĩ, chuyên khoa hoặc triệu chứng">
+                            <span class="form-text">Ví dụ: Tim mạch, Đau ngực, BS. Nguyễn Văn A</span>
                         </div>
-                        <button type="submit" class="btn btn-primary search-btn"><i class="fas fa-search"></i> <span>Search</span></button>
+                        <button type="submit" class="btn btn-primary search-btn"><i class="fas fa-search"></i> <span>Tìm kiếm</span></button>
                     </form>
                 </div>
-                <!-- /Search -->
+                <!-- /Tìm kiếm -->
 
             </div>
         </div>
     </section>
-    <!-- /Home Banner -->
+    <!-- /Biểu ngữ trang chủ -->
 
-    <!-- Clinic and Specialities -->
+    <!-- Chuyên khoa -->
     <section class="section section-specialities">
         <div class="container-fluid">
             <div class="section-header text-center">
-                <h2>Medical Specialities</h2>
-                <p class="sub-title">Find specialized doctors across major medical fields to address your specific health needs</p>
+                <h2>Chuyên khoa y tế</h2>
+                <p class="sub-title">Tìm các bác sĩ chuyên khoa trong nhiều lĩnh vực y tế để đáp ứng nhu cầu sức khỏe của bạn</p>
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-9">
                     <!-- Slider -->
                     <div class="specialities-slider slider">
 
-                        <!-- Slider Item -->
+                        <!-- Mục Slider -->
                         <div class="speicality-item text-center">
                             <div class="speicality-img">
-                                <img src="{% static 'assets/img/specialities/specialities-01.png' %}" class="img-fluid" alt="Cardiology">
+                                <img src="{% static 'assets/img/specialities/specialities-01.png' %}" class="img-fluid" alt="Tim mạch">
                                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                             </div>
-                            <p>Cardiology</p>
+                            <p>Tim mạch</p>
                         </div>
-                        <!-- /Slider Item -->
+                        <!-- /Mục Slider -->
 
-                        <!-- Slider Item -->
+                        <!-- Mục Slider -->
                         <div class="speicality-item text-center">
                             <div class="speicality-img">
-                                <img src="{% static 'assets/img/specialities/specialities-02.png' %}" class="img-fluid" alt="Neurology">
+                                <img src="{% static 'assets/img/specialities/specialities-02.png' %}" class="img-fluid" alt="Thần kinh">
                                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                             </div>
-                            <p>Neurology</p>
+                            <p>Thần kinh</p>
                         </div>
-                        <!-- /Slider Item -->
+                        <!-- /Mục Slider -->
 
-                        <!-- Slider Item -->
+                        <!-- Mục Slider -->
                         <div class="speicality-item text-center">
                             <div class="speicality-img">
-                                <img src="{% static 'assets/img/specialities/specialities-03.png' %}" class="img-fluid" alt="Orthopedics">
+                                <img src="{% static 'assets/img/specialities/specialities-03.png' %}" class="img-fluid" alt="Chấn thương chỉnh hình">
                                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                             </div>
-                            <p>Orthopedics</p>
+                            <p>Chấn thương chỉnh hình</p>
                         </div>
-                        <!-- /Slider Item -->
+                        <!-- /Mục Slider -->
 
-                        <!-- Slider Item -->
+                        <!-- Mục Slider -->
                         <div class="speicality-item text-center">
                             <div class="speicality-img">
-                                <img src="{% static 'assets/img/specialities/specialities-04.png' %}" class="img-fluid" alt="Pediatrics">
+                                <img src="{% static 'assets/img/specialities/specialities-04.png' %}" class="img-fluid" alt="Nhi khoa">
                                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                             </div>
-                            <p>Pediatrics</p>
+                            <p>Nhi khoa</p>
                         </div>
-                        <!-- /Slider Item -->
+                        <!-- /Mục Slider -->
 
-                        <!-- Slider Item -->
+                        <!-- Mục Slider -->
                         <div class="speicality-item text-center">
                             <div class="speicality-img">
-                                <img src="{% static 'assets/img/specialities/specialities-05.png' %}" class="img-fluid" alt="Dentistry">
+                                <img src="{% static 'assets/img/specialities/specialities-05.png' %}" class="img-fluid" alt="Nha khoa">
                                 <span><i class="fa fa-circle" aria-hidden="true"></i></span>
                             </div>
-                            <p>Dentistry</p>
+                            <p>Nha khoa</p>
                         </div>
-                        <!-- /Slider Item -->
+                        <!-- /Mục Slider -->
 
                     </div>
                     <!-- /Slider -->
@@ -107,32 +107,32 @@
             </div>
         </div>
     </section>
-    <!-- Clinic and Specialities -->
+    <!-- /Chuyên khoa -->
 
-    <!-- Popular Section -->
+    <!-- Đặt lịch khám -->
     <section class="section section-doctor">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-4">
                     <div class="section-header">
-                        <h2>Book Appointments Online</h2>
-                        <p>Connect with Expert Healthcare Professionals</p>
+                        <h2>Đặt lịch hẹn trực tuyến</h2>
+                        <p>Kết nối với các chuyên gia y tế hàng đầu</p>
                     </div>
                     <div class="about-content">
-                        <p>Access quality healthcare from the comfort of your home. Our platform connects you with experienced doctors who provide personalized medical consultations.</p>
-                        <p>Choose from a wide network of verified specialists, check their availability in real-time, and book appointments instantly. We're committed to making healthcare accessible and convenient for everyone in Bangladesh.</p>
-                        <a href="{% url 'doctors:list' %}">View all doctors</a>
+                        <p>Tiếp cận dịch vụ chăm sóc sức khỏe chất lượng ngay tại nhà. Nền tảng của chúng tôi kết nối bạn với các bác sĩ giàu kinh nghiệm để được tư vấn y tế cá nhân hóa.</p>
+                        <p>Lựa chọn từ mạng lưới bác sĩ chuyên khoa đã được xác minh, kiểm tra lịch trống theo thời gian thực và đặt lịch hẹn ngay lập tức. Chúng tôi cam kết mang lại dịch vụ chăm sóc sức khỏe dễ tiếp cận và thuận tiện cho mọi người.</p>
+                        <a href="{% url 'doctors:list' %}">Xem tất cả bác sĩ</a>
                     </div>
                 </div>
                 <div class="col-lg-8">
                     <div class="doctor-slider slider">
 
                         {% for doctor in doctors %}
-                            <!-- Doctor Widget -->
+                            <!-- Thẻ bác sĩ -->
                             <div class="profile-widget">
                                 <div class="doc-img">
                                     <a href="{% url 'doctors:doctor-profile' doctor.username %}">
-                                        <img class="img-fluid" alt="Doctor Image" src="{{ doctor.profile.image }}">
+                                        <img class="img-fluid" alt="Ảnh bác sĩ" src="{{ doctor.profile.image }}">
                                     </a>
                                     <a href="javascript:void(0)" class="fav-btn">
                                         <i class="far fa-bookmark"></i>
@@ -140,7 +140,7 @@
                                 </div>
                                 <div class="pro-content">
                                     <h3 class="title">
-                                        <a href="{% url 'doctors:doctor-profile' doctor.username %}">Dr. {{ doctor.get_full_name }}</a>
+                                        <a href="{% url 'doctors:doctor-profile' doctor.username %}">BS. {{ doctor.get_full_name }}</a>
                                         <i class="fas fa-check-circle verified"></i>
                                     </h3>
                                     <p class="speciality">{{ doctor.profile.specialization }}</p>
@@ -149,21 +149,21 @@
                                             <i class="fas fa-map-marker-alt"></i> {{ doctor.profile.city }}, {{ doctor.profile.country }}
                                         </li>
                                         <li>
-                                            <i class="far fa-money-bill-alt"></i> ৳{{ doctor.profile.price_per_consultation }}
-                                            <i class="fas fa-info-circle" data-toggle="tooltip" title="Consultation Fee"></i>
+                                            <i class="far fa-money-bill-alt"></i> ₫{{ doctor.profile.price_per_consultation }}
+                                            <i class="fas fa-info-circle" data-toggle="tooltip" title="Phí tư vấn"></i>
                                         </li>
                                     </ul>
                                     <div class="row row-sm">
                                         <div class="col-6">
-                                            <a href="{% url 'doctors:doctor-profile' doctor.username %}" class="btn view-btn">View Profile</a>
+                                            <a href="{% url 'doctors:doctor-profile' doctor.username %}" class="btn view-btn">Xem hồ sơ</a>
                                         </div>
                                         <div class="col-6">
-                                            <a href="{% url 'bookings:doctor-booking-view' doctor.username %}" class="btn book-btn">Book Now</a>
+                                            <a href="{% url 'bookings:doctor-booking-view' doctor.username %}" class="btn book-btn">Đặt lịch ngay</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- /Doctor Widget -->
+                            <!-- /Thẻ bác sĩ -->
                         {% endfor %}
 
                     </div>
@@ -171,50 +171,50 @@
             </div>
         </div>
     </section>
-    <!-- /Popular Section -->
+    <!-- /Đặt lịch khám -->
 
-    <!-- Features Section -->
+    <!-- Tính năng nổi bật -->
     <section class="section section-features">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4 features-img">
-                    <img src="{% static 'assets/img/features/feature.png' %}" class="img-fluid" alt="Feature">
+                    <img src="{% static 'assets/img/features/feature.png' %}" class="img-fluid" alt="Tính năng">
                 </div>
                 <div class="col-md-8">
                     <div class="section-header">
-                        <h2 class="mt-2">Why choose DocCure?</h2>
-                        <p>We provide comprehensive healthcare solutions with a focus on quality and accessibility</p>
+                        <h2 class="mt-2">Tại sao chọn DocCure?</h2>
+                        <p>Chúng tôi cung cấp giải pháp chăm sóc sức khỏe toàn diện với trọng tâm là chất lượng và khả năng tiếp cận</p>
                     </div>
                     <div class="features-slider slider">
                         <div class="feature-item text-center">
-                            <img src="{% static 'assets/img/features/feature-01.jpg' %}" class="img-fluid" alt="Verified Doctors">
-                            <p>Verified Doctors</p>
+                            <img src="{% static 'assets/img/features/feature-01.jpg' %}" class="img-fluid" alt="Bác sĩ đã xác minh">
+                            <p>Bác sĩ đã xác minh</p>
                         </div>
 
                         <div class="feature-item text-center">
-                            <img src="{% static 'assets/img/features/feature-02.jpg' %}" class="img-fluid" alt="Easy Booking">
-                            <p>Easy Booking</p>
+                            <img src="{% static 'assets/img/features/feature-02.jpg' %}" class="img-fluid" alt="Đặt lịch dễ dàng">
+                            <p>Đặt lịch dễ dàng</p>
                         </div>
 
                         <div class="feature-item text-center">
-                            <img src="{% static 'assets/img/features/feature-03.jpg' %}" class="img-fluid" alt="Digital Records">
-                            <p>Digital Records</p>
+                            <img src="{% static 'assets/img/features/feature-03.jpg' %}" class="img-fluid" alt="Hồ sơ điện tử">
+                            <p>Hồ sơ điện tử</p>
                         </div>
 
                         <div class="feature-item text-center">
-                            <img src="{% static 'assets/img/features/feature-04.jpg' %}" class="img-fluid" alt="Instant Access">
-                            <p>Instant Access</p>
+                            <img src="{% static 'assets/img/features/feature-04.jpg' %}" class="img-fluid" alt="Truy cập tức thì">
+                            <p>Truy cập tức thì</p>
                         </div>
 
                         <div class="feature-item text-center">
-                            <img src="{% static 'assets/img/features/feature-05.jpg' %}" class="img-fluid" alt="Secure Platform">
-                            <p>Secure Platform</p>
+                            <img src="{% static 'assets/img/features/feature-05.jpg' %}" class="img-fluid" alt="Nền tảng bảo mật">
+                            <p>Nền tảng bảo mật</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <!-- /Features Section -->
+    <!-- /Tính năng nổi bật -->
 
 {% endblock %}

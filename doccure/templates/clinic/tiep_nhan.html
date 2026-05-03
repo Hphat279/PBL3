@@ -1,0 +1,140 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Tiếp nhận bệnh nhân{% endblock %}
+
+{% block content %}
+<!-- Tiêu đề trang -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">🏥 Tiếp nhận bệnh nhân</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin-dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Tiếp nhận</li>
+            </ul>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'clinic:tao-lich-hen' %}" class="btn btn-primary">
+                <i class="fe fe-plus"></i> Tạo lịch hẹn mới
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Thống kê nhanh hôm nay -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h2 class="mb-0">{{ tong_so }}</h2>
+                <p class="mb-0">Tổng lịch hẹn hôm nay</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h2 class="mb-0">{{ cho_kham }}</h2>
+                <p class="mb-0">Đang chờ khám</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h2 class="mb-0">{{ da_kham }}</h2>
+                <p class="mb-0">Đã hoàn thành</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hàng đợi bệnh nhân hôm nay -->
+<div class="card card-table">
+    <div class="card-header">
+        <h4 class="card-title">
+            <i class="fe fe-list"></i>
+            Hàng đợi ngày {{ ngay_hom_nay|date:"d/m/Y" }}
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-center mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Bệnh nhân</th>
+                        <th>Giờ hẹn</th>
+                        <th>Bác sĩ</th>
+                        <th>Lý do khám</th>
+                        <th>Trạng thái</th>
+                        <th>Sinh hiệu</th>
+                        <th class="text-right">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lich_hen in hang_doi %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <h2 class="table-avatar">
+                                <span class="avatar avatar-sm mr-2 bg-primary text-white d-flex align-items-center justify-content-center rounded-circle" style="width:32px;height:32px;font-size:14px;">
+                                    {{ lich_hen.patient.full_name|first|upper }}
+                                </span>
+                                <div>
+                                    <a href="{% url 'clinic:benh-an' lich_hen.patient.pk %}">
+                                        <strong>{{ lich_hen.patient.full_name }}</strong>
+                                    </a>
+                                    <small class="text-muted d-block">{{ lich_hen.patient.patient_code }}</small>
+                                </div>
+                            </h2>
+                        </td>
+                        <td>
+                            <strong>{{ lich_hen.appointment_date|time:"H:i" }}</strong>
+                        </td>
+                        <td>{{ lich_hen.doctor.full_name }}</td>
+                        <td>{{ lich_hen.reason|default:"—"|truncatechars:40 }}</td>
+                        <td>
+                            {% if lich_hen.status == "scheduled" %}
+                                <span class="badge badge-pill badge-warning">Chờ khám</span>
+                            {% elif lich_hen.status == "confirmed" %}
+                                <span class="badge badge-pill badge-info">Đã nhận</span>
+                            {% elif lich_hen.status == "completed" %}
+                                <span class="badge badge-pill badge-success">Hoàn thành</span>
+                            {% else %}
+                                <span class="badge badge-pill badge-danger">Đã hủy</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if lich_hen.vital_signs %}
+                                <span class="badge badge-success">✓ Đã đo</span>
+                            {% else %}
+                                <span class="badge badge-secondary">Chưa đo</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right">
+                            <a href="{% url 'clinic:sinh-hieu' lich_hen.pk %}" 
+                               class="btn btn-sm btn-outline-primary" title="Nhập sinh hiệu">
+                                <i class="fe fe-activity"></i> Sinh hiệu
+                            </a>
+                            <a href="{% url 'clinic:benh-an' lich_hen.patient.pk %}" 
+                               class="btn btn-sm btn-primary" title="Mở bệnh án">
+                                <i class="fe fe-file-text"></i> Bệnh án
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="fe fe-inbox" style="font-size:48px;display:block;margin-bottom:8px;"></i>
+                            Không có lịch hẹn nào hôm nay
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

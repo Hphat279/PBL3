@@ -1,6 +1,6 @@
 {% extends "dashboard/base.html" %}
 
-{% block title %}Doctors{% endblock %}
+{% block title %}Bác sĩ{% endblock %}
 
 {% block content %}
 
@@ -8,9 +8,9 @@
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
-            <h3 class="page-title">Doctors</h3>
+            <h3 class="page-title">Bác sĩ</h3>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item active">Doctors</li>
+                <li class="breadcrumb-item active">Bác sĩ</li>
             </ul>
         </div>
     </div>
@@ -24,12 +24,12 @@
                     <table class="datatable table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Speciality</th>
-                                <th>Member Since</th>
-                                <th>Earned</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Ngày tham gia</th>
+                                <th>Thu nhập</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,7 +40,7 @@
                                         <a href="{% url 'doctors:doctor-profile' doctor.username %}" class="avatar avatar-sm mr-2">
                                             <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="User Image">
                                         </a>
-                                        <a href="{% url 'doctors:doctor-profile' doctor.username %}">Dr. {{ doctor.get_full_name }}</a>
+                                        <a href="{% url 'doctors:doctor-profile' doctor.username %}">BS. {{ doctor.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>{{ doctor.profile.specialization }}</td>
@@ -52,26 +52,26 @@
                                 <td>৳{{ doctor.earned|default:"0" }}</td>
                                 <td>
                                     <span class="badge badge-pill {% if doctor.is_active %}bg-success-light{% else %}bg-danger-light{% endif %}">
-                                        {{ doctor.is_active|yesno:"Active,Inactive" }}
+                                        {{ doctor.is_active|yesno:"Hoạt động,Không hoạt động" }}
                                     </span>
                                 </td>
                                 <td>
                                     <div class="actions">
                                         <a href="{% url 'doctors:doctor-profile' doctor.username %}" class="btn btn-sm bg-info-light">
-                                            <i class="fe fe-eye"></i> View
+                                            <i class="fe fe-eye"></i> Xem
                                         </a>
                                         <a href="#" class="btn btn-sm bg-success-light">
-                                            <i class="fe fe-check"></i> Approve
+                                            <i class="fe fe-check"></i> Phê duyệt
                                         </a>
                                         <a href="#" class="btn btn-sm bg-danger-light">
-                                            <i class="fe fe-times"></i> Block
+                                            <i class="fe fe-times"></i> Chặn
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="6" class="text-center">No doctors found</td>
+                                <td colspan="6" class="text-center">Không tìm thấy bác sĩ nào</td>
                             </tr>
                             {% endfor %}
                         </tbody>

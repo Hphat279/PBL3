@@ -31,6 +31,7 @@ urlpatterns = (
         path("patients/", include("patients.urls")),
         path("doctors/", include("doctors.urls")),
         path("bookings/", include("bookings.urls")),
+        path("clinic/", include("clinic.urls")),
         path("", include("core.urls")),
         path("__debug__/", include(debug_toolbar.urls)),
         path("ckeditor/", include("ckeditor_uploader.urls")),

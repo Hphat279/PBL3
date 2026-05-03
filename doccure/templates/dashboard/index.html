@@ -1,20 +1,20 @@
 {% extends "dashboard/base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Bảng điều khiển{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
-            <h3 class="page-title">Dashboard</h3>
+            <h3 class="page-title">Bảng điều khiển</h3>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item active">Bảng điều khiển</li>
             </ul>
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 <div class="row">
     <div class="col-xl-3 col-sm-6 col-12">
         <div class="card">
@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Doctors</h6>
+                    <h6 class="text-muted">Bác sĩ</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-primary w-50"></div>
                     </div>
@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Patients</h6>
+                    <h6 class="text-muted">Bệnh nhân</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-success w-50"></div>
                     </div>
@@ -68,7 +68,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Appointment</h6>
+                    <h6 class="text-muted">Lịch hẹn</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-danger w-50"></div>
                     </div>
@@ -84,11 +84,11 @@
                         <i class="fe fe-folder"></i>
                     </span>
                     <div class="dash-count">
-                        <h3>৳{{ total_revenue }}</h3>
+                        <h3>₫{{ total_revenue }}</h3>
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Revenue</h6>
+                    <h6 class="text-muted">Doanh thu</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-warning w-50"></div>
                     </div>
@@ -100,51 +100,51 @@
 <div class="row">
     <div class="col-md-12 col-lg-6">
     
-        <!-- Sales Chart -->
+        <!-- Biểu đồ doanh thu -->
         <div class="card card-chart">
             <div class="card-header">
-                <h4 class="card-title">Revenue</h4>
+                <h4 class="card-title">Doanh thu</h4>
             </div>
             <div class="card-body">
                 <div id="morrisArea"></div>
             </div>
         </div>
-        <!-- /Sales Chart -->
+        <!-- /Biểu đồ doanh thu -->
         
     </div>
     <div class="col-md-12 col-lg-6">
     
-        <!-- Invoice Chart -->
+        <!-- Biểu đồ trạng thái -->
         <div class="card card-chart">
             <div class="card-header">
-                <h4 class="card-title">Status</h4>
+                <h4 class="card-title">Trạng thái</h4>
             </div>
             <div class="card-body">
                 <div id="morrisLine"></div>
             </div>
         </div>
-        <!-- /Invoice Chart -->
+        <!-- /Biểu đồ trạng thái -->
         
     </div>	
 </div>
 <div class="row">
     <div class="col-md-6 d-flex">
     
-        <!-- Recent Orders -->
+        <!-- Danh sách bác sĩ -->
         <div class="card card-table flex-fill">
             <div class="card-header">
-                <h4 class="card-title">Doctors List</h4>
-                <a href="{% url 'admin-doctors' %}" class="btn btn-primary">View All</a>
+                <h4 class="card-title">Danh sách bác sĩ</h4>
+                <a href="{% url 'admin-doctors' %}" class="btn btn-primary">Xem tất cả</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Speciality</th>
-                                <th>Earned</th>
-                                <th>Reviews</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Thu nhập</th>
+                                <th>Đánh giá</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -153,13 +153,13 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="Ảnh bác sĩ">
                                         </a>
-                                        <a href="#">Dr. {{ doctor.get_full_name }}</a>
+                                        <a href="#">BS. {{ doctor.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>{{ doctor.profile.specialization }}</td>
-                                <td>৳{{ doctor.earned }}</td>
+                                <td>₫{{ doctor.earned }}</td>
                                 <td>
                                     <i class="fe fe-star text-warning"></i>
                                     <span>({{ doctor.reviews_count }})</span>
@@ -171,26 +171,26 @@
                 </div>
             </div>
         </div>
-        <!-- /Recent Orders -->
+        <!-- /Danh sách bác sĩ -->
         
     </div>
     <div class="col-md-6 d-flex">
     
-        <!-- Feed Activity -->
+        <!-- Danh sách bệnh nhân -->
         <div class="card  card-table flex-fill">
             <div class="card-header">
-                <h4 class="card-title">Patients List</h4>
-                <a href="{% url 'admin-patients' %}" class="btn btn-primary">View All</a>
+                <h4 class="card-title">Danh sách bệnh nhân</h4>
+                <a href="{% url 'admin-patients' %}" class="btn btn-primary">Xem tất cả</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-center mb-0">
                         <thead>
-                            <tr>													
-                                <th>Patient Name</th>
-                                <th>Phone</th>
-                                <th>Last Visit</th>
-                                <th>Paid</th>													
+                            <tr>								
+                                <th>Tên bệnh nhân</th>
+                                <th>Điện thoại</th>
+                                <th>Lần khám gần nhất</th>
+                                <th>Đã thanh toán</th>								
                             </tr>
                         </thead>
                         <tbody>
@@ -199,14 +199,14 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="Ảnh bệnh nhân">
                                         </a>
                                         <a href="#">{{ patient.get_full_name }}</a>
                                     </h2>
                                 </td>
-                                <td>{{ patient.profile.phone|default:"N/A" }}</td>
-                                <td>{{ patient.last_visit|date:"d M Y"|default:"No visits" }}</td>
-                                <td class="text-right">৳{{ patient.total_paid }}</td>
+                                <td>{{ patient.profile.phone|default:"Không có" }}</td>
+                                <td>{{ patient.last_visit|date:"d M Y"|default:"Chưa khám" }}</td>
+                                <td class="text-right">₫{{ patient.total_paid }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -214,29 +214,29 @@
                 </div>
             </div>
         </div>
-        <!-- /Feed Activity -->
+        <!-- /Danh sách bệnh nhân -->
         
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
     
-        <!-- Recent Orders -->
+        <!-- Danh sách lịch hẹn -->
         <div class="card card-table">
             <div class="card-header">
-                <h4 class="card-title">Appointment List</h4>
+                <h4 class="card-title">Danh sách lịch hẹn</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Speciality</th>
-                                <th>Patient Name</th>
-                                <th>Apointment Time</th>
-                                <th>Status</th>
-                                <th class="text-right">Amount</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Tên bệnh nhân</th>
+                                <th>Thời gian hẹn</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Phí khám</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,16 +245,16 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Doctor Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Ảnh bác sĩ">
                                         </a>
-                                        <a href="#">Dr. {{ appointment.doctor.get_full_name }}</a>
+                                        <a href="#">BS. {{ appointment.doctor.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>{{ appointment.doctor.profile.specialization }}</td>
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Patient Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Ảnh bệnh nhân">
                                         </a>
                                         <a href="#">{{ appointment.patient.get_full_name }}</a>
                                     </h2>
@@ -269,7 +269,7 @@
                                     </span>
                                 </td>
                                 <td class="text-right">
-                                    ৳{{ appointment.doctor.profile.price_per_consultation }}
+                                    ₫{{ appointment.doctor.profile.price_per_consultation }}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -278,7 +278,7 @@
                 </div>
             </div>
         </div>
-        <!-- /Recent Orders -->
+        <!-- /Danh sách lịch hẹn -->
         
     </div>
 </div>
