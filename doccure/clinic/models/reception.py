@@ -42,6 +42,15 @@ class Appointment(models.Model):
         default=TrangThai.CHO_KHAM,
         verbose_name="Trạng thái",
     )
+    # Liên kết tùy chọn: nếu lịch hẹn được tạo từ đặt lịch online
+    booking = models.OneToOneField(
+        "bookings.Booking",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="clinic_appointment",
+        verbose_name="Đặt lịch online (nếu có)",
+    )
 
     class Meta:
         db_table = "clinic_appointments"

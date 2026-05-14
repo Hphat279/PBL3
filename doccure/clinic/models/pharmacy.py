@@ -73,6 +73,15 @@ class ClinicPrescription(models.Model):
         auto_now_add=True,
         verbose_name="Ngày kê đơn",
     )
+    # Liên kết tùy chọn: nếu đơn thuốc được tạo từ hệ thống online
+    booking_prescription = models.OneToOneField(
+        "bookings.Prescription",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="clinic_prescription_link",
+        verbose_name="Đơn thuốc online (nếu có)",
+    )
 
     class Meta:
         db_table = "prescriptions"

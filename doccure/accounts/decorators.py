@@ -7,7 +7,7 @@ class AdminRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_superuser:
             messages.error(
-                request, "You are not authorized to access this page."
+                request, "Bạn không có quyền truy cập trang này."
             )
             return redirect("core:home")
         return super().dispatch(request, *args, **kwargs)

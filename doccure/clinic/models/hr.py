@@ -1,22 +1,26 @@
 """
 clinic/models/hr.py
- Nhân viên & Bệnh nhân 
-Hồ sơ nhân viên và thông tin bệnh nhân.
+Nhóm 2: Nhân viên & Bệnh nhân.
+
+- StaffProfile: Hồ sơ chuyên môn của nhân viên (liên kết accounts.User).
+  Dùng cho bác sĩ, điều dưỡng, tiếp tân, dược sĩ...
+- Patient: Hồ sơ bệnh nhân phòng khám — độc lập, không bắt buộc có tài khoản.
+  Có thể liên kết tùy chọn với accounts.User nếu bệnh nhân có tài khoản online.
 """
 
+from django.conf import settings
 from django.db import models
-from clinic.models.access import ClinicUser
 
 
 class StaffProfile(models.Model):
     """
-    Bảng `staff_profiles` .
-    Mở rộng từ ClinicUser, lưu thông tin chuyên môn.
+    Bảng `staff_profiles` — Hồ sơ chuyên môn nhân viên phòng khám.
+    Liên kết OneToOne với accounts.User (hệ thống đăng nhập chung).
     """
     user = models.OneToOneField(
-        ClinicUser,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="staff_profile",
+        related_name="clinic_staff_profile",
         verbose_name="Tài khoản",
     )
     full_name = models.CharField(max_length=100, verbose_name="Họ và tên")
@@ -50,13 +54,27 @@ class StaffProfile(models.Model):
 
 class Patient(models.Model):
     """
-    Bảng `patients` .
-    Mã bệnh nhân tự sinh theo định dạng BN2026xxxx.
+    Bảng `clinic_patients` — Hồ sơ bệnh nhân phòng khám.
+    Mã bệnh nhân tự sinh theo định dạng BN<năm><số thứ tự> (VD: BN20260001).
+
+    Field `user` là tùy chọn (nullable):
+    - Nếu bệnh nhân có tài khoản Doccure → liên kết vào accounts.User
+    - Nếu bệnh nhân walk-in (vãng lai) → để trống (null)
     """
     class GioiTinh(models.TextChoices):
-        NAM = "male", "Nam"
-        NU = "female", "Nữ"
-        KHAC = "other", "Khác"
+        NAM  = "male",   "Nam"
+        NU   = "female", "Nữ"
+        KHAC = "other",  "Khác"
+
+    # Liên kết tùy chọn với tài khoản Doccure (nullable)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="clinic_patient_profile",
+        verbose_name="Tài khoản Doccure (nếu có)",
+    )
 
     # Mã bệnh nhân: BN2026xxxx
     patient_code = models.CharField(

@@ -2,10 +2,10 @@
 clinic/models/__init__.py
 Export tất cả model của clinic app để dùng như:
     from clinic.models import Patient, MedicalRecord, ...
-"""
 
-# Nhóm 1: Quản trị & Phân quyền
-from clinic.models.access import Role, ClinicUser, UserRole
+Lưu ý: ClinicUser đã bị xoá — hệ thống giờ dùng accounts.User chung.
+Lưu ý: Role/UserRole đã bị xoá — phân quyền dùng accounts.User.role.
+"""
 
 # Nhóm 2: Nhân viên & Bệnh nhân
 from clinic.models.hr import StaffProfile, Patient
@@ -28,10 +28,6 @@ from clinic.models.pharmacy import Medicine, ClinicPrescription, PrescriptionIte
 from clinic.models.billing import Invoice, Payment
 
 __all__ = [
-    # Quản trị & Phân quyền
-    "Role",
-    "ClinicUser",
-    "UserRole",
     # Nhân viên & Bệnh nhân
     "StaffProfile",
     "Patient",

@@ -1,9 +1,6 @@
 from django.contrib import admin
 
 from clinic.models import (
-    Role,
-    ClinicUser,
-    UserRole,
     StaffProfile,
     Patient,
     Appointment,
@@ -23,11 +20,6 @@ from clinic.models import (
 # ---------------------------------------------------------------------------
 # Inline helpers
 # ---------------------------------------------------------------------------
-
-class UserRoleInline(admin.TabularInline):
-    model = UserRole
-    extra = 1
-
 
 class VitalSignsInline(admin.StackedInline):
     model = VitalSigns
@@ -53,39 +45,41 @@ class PaymentInline(admin.TabularInline):
 # Model admins
 # ---------------------------------------------------------------------------
 
-@admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
-    list_display = ("id", "role_name", "description")
-    search_fields = ("role_name",)
-
-
-@admin.register(ClinicUser)
-class ClinicUserAdmin(admin.ModelAdmin):
-    list_display = ("id", "username", "email", "status", "created_at")
-    list_filter = ("status",)
-    search_fields = ("username", "email")
-    inlines = [UserRoleInline]
-
-
 @admin.register(StaffProfile)
 class StaffProfileAdmin(admin.ModelAdmin):
-    list_display = ("id", "full_name", "specialty", "phone", "certificate_code")
-    search_fields = ("full_name", "specialty")
+    list_display = ("id", "full_name", "get_username", "get_role", "specialty", "phone", "certificate_code")
+    search_fields = ("full_name", "specialty", "user__username")
+
+    @admin.display(description="Tài khoản")
+    def get_username(self, obj):
+        return obj.user.username
+
+    @admin.display(description="Vai trò")
+    def get_role(self, obj):
+        return obj.user.get_role_display()
 
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ("id", "patient_code", "full_name", "gender", "birthday", "phone")
+    list_display = ("id", "patient_code", "full_name", "gender", "birthday", "phone", "get_linked_user")
     search_fields = ("patient_code", "full_name", "phone")
     list_filter = ("gender", "blood_type")
+
+    @admin.display(description="Tài khoản Doccure")
+    def get_linked_user(self, obj):
+        return obj.user.username if obj.user else "—"
 
 
 @admin.register(Appointment)
 class AppointmentAdmin(admin.ModelAdmin):
-    list_display = ("id", "patient", "doctor", "appointment_date", "status")
+    list_display = ("id", "patient", "doctor", "appointment_date", "status", "get_booking_source")
     list_filter = ("status",)
     search_fields = ("patient__full_name", "doctor__full_name")
     inlines = [VitalSignsInline]
+
+    @admin.display(description="Nguồn đặt lịch")
+    def get_booking_source(self, obj):
+        return "Online" if obj.booking else "Tại phòng khám"
 
 
 @admin.register(MedicalRecord)

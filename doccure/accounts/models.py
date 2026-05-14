@@ -12,48 +12,59 @@ from utils.file_utils import (
 
 class User(AbstractUser):
     """
-    Custom user model with extra fields
+    Model người dùng tuỳ chỉnh – hệ thống đăng nhập chung cho toàn bộ Doccure.
+    Vai trò (role) quyết định quyền truy cập và giao diện hiển thị.
     """
 
     class RoleChoices(models.TextChoices):
-        DOCTOR = "doctor", "Doctor"
-        PATIENT = "patient", "Patient"
+        DOCTOR       = "doctor",       "Bác sĩ"
+        PATIENT      = "patient",      "Bệnh nhân"
+        NURSE        = "nurse",        "Điều dưỡng"
+        RECEPTIONIST = "receptionist", "Tiếp tân"
+        PHARMACIST   = "pharmacist",   "Dược sĩ"
+        ADMIN        = "admin",        "Quản trị viên"
 
-    username = models.CharField(max_length=30, unique=True)
+    username = models.CharField(max_length=30, unique=True, verbose_name="Tên đăng nhập")
     role = models.CharField(
         choices=RoleChoices.choices,
         max_length=20,
         default="patient",
-        error_messages={"required": "Role must be provided"},
+        error_messages={"required": "Vai trò là bắt buộc"},
+        verbose_name="Vai trò",
     )
     email = models.EmailField(
         blank=True,
         error_messages={
-            "unique": "A user with that email already exists.",
+            "unique": "Email này đã được sử dụng.",
         },
+        verbose_name="Email",
     )
-    first_name = models.CharField(max_length=150, blank=True)
-    last_name = models.CharField(max_length=150, blank=True)
-    registration_number = models.IntegerField(null=True, blank=True)
+    first_name = models.CharField(max_length=150, blank=True, verbose_name="Họ")
+    last_name = models.CharField(max_length=150, blank=True, verbose_name="Tên")
+    registration_number = models.IntegerField(null=True, blank=True, verbose_name="Số đăng ký hành nghề")
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
+    class Meta:
+        verbose_name = "Người dùng"
+        verbose_name_plural = "Người dùng"
+
     def __unicode__(self):
         return self.username
 
     def get_full_name(self):
         """
-        Return the first_name plus the last_name, with a space in between.
+        Trả về họ tên đầy đủ, nếu không có thì trả về username.
         """
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip() or self.username
 
     def get_doctor_profile(self):
         """
-        Return doctor profile URL
+        Trả về URL hồ sơ bác sĩ.
         """
         return reverse(
             "doctors:doctor-profile", kwargs={"username": self.username}
@@ -83,34 +94,36 @@ class User(AbstractUser):
 
 
 class Profile(models.Model):
-    """
-    User profile
-    """
+    """Hồ sơ chi tiết người dùng – thông tin cá nhân, y tế, địa chỉ."""
 
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="profile"
+        User, on_delete=models.CASCADE, related_name="profile",
+        verbose_name="Người dùng",
     )
     avatar = models.ImageField(
-        default="defaults/user.png", upload_to=profile_photo_directory_path
+        default="defaults/user.png", upload_to=profile_photo_directory_path,
+        verbose_name="Ảnh đại diện",
     )
-    phone = models.CharField(max_length=20, blank=True, null=True)
-    dob = models.DateField(blank=True, null=True)
-    about = models.TextField(blank=True, null=True)
-    specialization = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Số điện thoại")
+    dob = models.DateField(blank=True, null=True, verbose_name="Ngày sinh")
+    about = models.TextField(blank=True, null=True, verbose_name="Giới thiệu")
+    specialization = models.CharField(max_length=255, blank=True, null=True, verbose_name="Chuyên khoa")
     gender = models.CharField(
         max_length=10,
-        choices=[("male", "Male"), ("female", "Female"), ("other", "Other")],
+        choices=[("male", "Nam"), ("female", "Nữ"), ("other", "Khác")],
         blank=True,
+        verbose_name="Giới tính",
     )
-    address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True)
-    state = models.CharField(max_length=100, blank=True)
-    postal_code = models.CharField(max_length=20, blank=True)
-    country = models.CharField(max_length=100, blank=True)
+    address = models.TextField(blank=True, null=True, verbose_name="Địa chỉ")
+    city = models.CharField(max_length=100, blank=True, verbose_name="Thành phố")
+    state = models.CharField(max_length=100, blank=True, verbose_name="Tỉnh/Bang")
+    postal_code = models.CharField(max_length=20, blank=True, verbose_name="Mã bưu điện")
+    country = models.CharField(max_length=100, blank=True, verbose_name="Quốc gia")
     price_per_consultation = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
+        max_digits=10, decimal_places=2, null=True, blank=True,
+        verbose_name="Giá khám (VNĐ)",
     )
-    is_available = models.BooleanField(default=True)
+    is_available = models.BooleanField(default=True, verbose_name="Đang hoạt động")
     blood_group = models.CharField(
         max_length=5,
         choices=[
@@ -125,12 +138,17 @@ class Profile(models.Model):
         ],
         blank=True,
         null=True,
+        verbose_name="Nhóm máu",
     )
-    allergies = models.TextField(blank=True, null=True)
-    medical_conditions = models.TextField(blank=True, null=True)
+    allergies = models.TextField(blank=True, null=True, verbose_name="Dị ứng")
+    medical_conditions = models.TextField(blank=True, null=True, verbose_name="Bệnh nền")
+
+    class Meta:
+        verbose_name = "Hồ sơ"
+        verbose_name_plural = "Hồ sơ"
 
     def __str__(self):
-        return "Profile of {}".format(self.user.username)
+        return "Hồ sơ của {}".format(self.user.username)
 
     @property
     def image(self):

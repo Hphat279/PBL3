@@ -25,12 +25,14 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Count statistics
+        # ---------------------------------------------------------------
+        # Thống kê hệ thống online (bookings)
+        # ---------------------------------------------------------------
         context["doctors_count"] = User.objects.filter(role="doctor").count()
         context["patients_count"] = User.objects.filter(role="patient").count()
         context["appointments_count"] = Booking.objects.count()
 
-        # Calculate total revenue
+        # Doanh thu từ đặt lịch online
         context["total_revenue"] = (
             Booking.objects.filter(status="completed").aggregate(
                 total=Sum("doctor__profile__price_per_consultation")
@@ -38,7 +40,35 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
             or 0
         )
 
-        # Get recent doctors with their stats
+        # ---------------------------------------------------------------
+        # Thống kê hệ thống phòng khám (clinic)
+        # ---------------------------------------------------------------
+        from clinic.models import (
+            Patient as ClinicPatient,
+            Appointment as ClinicAppointment,
+            MedicalRecord,
+            Invoice,
+        )
+
+        context["clinic_patients_count"] = ClinicPatient.objects.count()
+        context["clinic_appointments_count"] = ClinicAppointment.objects.count()
+        context["medical_records_count"] = MedicalRecord.objects.count()
+
+        # Doanh thu từ hóa đơn phòng khám (thực tế hơn)
+        context["clinic_revenue"] = (
+            Invoice.objects.filter(payment_status="paid").aggregate(
+                total=Sum("final_amount")
+            )["total"]
+            or 0
+        )
+        context["unpaid_invoices_count"] = Invoice.objects.filter(
+            payment_status="unpaid"
+        ).count()
+
+        # ---------------------------------------------------------------
+        # Danh sách gần đây
+        # ---------------------------------------------------------------
+        # Bác sĩ gần đây
         doctors = User.objects.filter(role="doctor").select_related("profile")[:5]
         for doctor in doctors:
             doctor.earned = (
@@ -47,10 +77,10 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
                 )["total"]
                 or 0
             )
-            doctor.reviews_count = 0  # Add review logic when implemented
+            doctor.reviews_count = doctor.reviews_received.count()
         context["recent_doctors"] = doctors
 
-        # Get recent patients with their appointments
+        # Bệnh nhân gần đây
         patients = User.objects.filter(role="patient").select_related("profile")[:5]
         for patient in patients:
             latest_appointment = (
@@ -69,15 +99,23 @@ class AdminDashboardView(AdminRequiredMixin, TemplateView):
             )
         context["recent_patients"] = patients
 
-        # Get recent appointments
+        # Lịch hẹn gần đây (online)
         context["recent_appointments"] = Booking.objects.select_related(
             "doctor", "doctor__profile", "patient", "patient__profile"
         ).order_by("-appointment_date")[:5]
 
-        # Add recent prescriptions
+        # Đơn thuốc gần đây (online)
         context["recent_prescriptions"] = Prescription.objects.select_related(
             "doctor", "patient", "booking"
         ).order_by("-created_at")[:10]
+
+        # Lịch hẹn phòng khám hôm nay
+        today = timezone.now().date()
+        context["clinic_today_appointments"] = (
+            ClinicAppointment.objects.filter(
+                appointment_date__date=today
+            ).exclude(status="cancelled").count()
+        )
 
         return context
 
