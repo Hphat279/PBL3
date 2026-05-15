@@ -1,14 +1,14 @@
 {% extends "includes/doctor-sidebar.html" %}
 {% load static %}
 
-{% block title %}Appointments{% endblock %}
+{% block title %}Lịch hẹn{% endblock %}
 {% block css %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 {% endblock %}
 
-{% block page_name1 %}Dashboard{% endblock %}
-{% block page_name2 %}Appointments{% endblock %}
+{% block page_name1 %}Bảng điều khiển{% endblock %}
+{% block page_name2 %}Lịch hẹn{% endblock %}
 
 {% block main %}
 <div class="appointments">
@@ -41,7 +41,7 @@
                                 <h5><i class="fas fa-phone"></i> {{ appointment.patient.profile.phone }}</h5>
                             {% endif %}
                             {% if appointment.patient.profile.blood_group %}
-                                <h5><i class="fas fa-tint"></i> Blood Group: {{ appointment.patient.profile.blood_group }}</h5>
+                                <h5><i class="fas fa-tint"></i> Nhóm máu: {{ appointment.patient.profile.blood_group }}</h5>
                             {% endif %}
                             {% if appointment.patient.profile.age %}
                                 <h5><i class="fas fa-birthday-cake"></i> Tuổi: {{ appointment.patient.profile.age }} tuổi</h5>
@@ -71,7 +71,12 @@
                         {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
                         {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
                         {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
-                        {{ appointment.status|title }}
+                        {% if appointment.status == 'pending' %}Đang chờ
+                        {% elif appointment.status == 'confirmed' %}Đã xác nhận
+                        {% elif appointment.status == 'completed' %}Hoàn thành
+                        {% elif appointment.status == 'cancelled' %}Đã hủy
+                        {% else %}{{ appointment.status|title }}
+                        {% endif %}
                     </span>
                     <div class="btn-group">
                         <a href="{% url 'doctors:appointment-detail' appointment.pk %}" class="btn btn-sm bg-info-light ml-2 mr-2">
@@ -94,7 +99,7 @@
                         {% if appointment.status == 'confirmed' %}
                             <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'completed' %}" style="display: inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-sm bg-info-light mr-2 ml-2" onclick="return confirm('Are you sure you want to mark this appointment as completed?')">
+                                <button type="submit" class="btn btn-sm bg-info-light mr-2 ml-2" onclick="return confirm('Bạn có chắc muốn đánh dấu cuộc hẹn này là hoàn thành không?')">
                                     <i class="fas fa-check"></i> Mark as Completed
                                 </button>
                             </form>
@@ -102,7 +107,7 @@
                         {% if appointment.status == 'completed' %}
                             {% if not appointment.prescription %}
                                 <a href="{% url 'doctors:add-prescription' appointment.pk %}" class="btn btn-sm bg-success-light mr-2 ml-2">
-                                    <i class="fas fa-file-medical"></i> Create Prescription
+                                    <i class="fas fa-file-medical"></i> Tạo đơn thuốc
                                 </a>
                             {% else %}
                                 <a href="{% url 'doctors:prescription-detail' appointment.prescription.pk %}" class="btn btn-sm bg-success-light mr-2 ml-2">
