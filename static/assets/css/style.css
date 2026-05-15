@@ -2237,8 +2237,6 @@ html.menu-opened body {
 -----------------------*/
 
 .section-search { 
-	background: #f9f9f9 url(../img/search-bg.png) no-repeat bottom center;
-    min-height: 450px;
     background-size: 100% auto;
     position: relative;
     background-blend-mode: Darken;
@@ -2301,7 +2299,7 @@ html.menu-opened body {
     width: 240px;
 }
 .search-location .form-control {
-	background: #fff url(../img/location.png) no-repeat 10px center;
+	background: none;
 }
 .search-box .search-info {
     -ms-flex: 0 0 490px;
@@ -2311,7 +2309,7 @@ html.menu-opened body {
     width: 490px;
 }
 .search-info .form-control {
-	background: #fff url(../img/search.png) no-repeat 10px center;
+	background: none;
 }
 .search-box .search-btn {
     width: 46px;
