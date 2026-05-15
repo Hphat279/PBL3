@@ -519,15 +519,13 @@ class AppointmentActionView(DoctorRequiredMixin, View):
 
         if action == "accept":
             appointment.status = "confirmed"
-            messages.success(request, "Appointment confirmed successfully")
+            messages.success(request, "Xác nhận cuộc hẹn thành công")
         elif action == "cancel":
             appointment.status = "cancelled"
-            messages.success(request, "Appointment cancelled successfully")
+            messages.success(request, "Đã huỷ cuộc hẹn thành công")
         elif action == "completed":
             appointment.status = "completed"
-            messages.success(
-                request, "Appointment marked as completed successfully"
-            )
+            messages.success(request, "Đã đánh dấu cuộc hẹn là hoàn thành")
 
         appointment.save()
         return redirect("doctors:dashboard")
@@ -609,10 +607,10 @@ class DoctorChangePasswordView(DoctorRequiredMixin, View):
                 # Update session to prevent logout
                 update_session_auth_hash(request, user)
 
-                messages.success(request, "Password changed successfully")
+                messages.success(request, "Đổi mật khẩu thành công")
                 return redirect("doctors:dashboard")
             else:
-                messages.error(request, "Current password is incorrect")
+                messages.error(request, "Mật khẩu hiện tại không đúng")
 
         return render(request, self.template_name, {"form": form})
 
@@ -639,14 +637,14 @@ class PrescriptionCreateView(DoctorRequiredMixin, CreateView):
         if booking.status != "completed":
             messages.error(
                 self.request,
-                "Can only add prescription for completed appointments",
+                "Chỉ có thể thêm đơn thuốc cho các cuộc hẹn đã hoàn thành",
             )
             return redirect("doctors:appointment-detail", pk=booking_id)
 
         form.instance.booking = booking
         form.instance.doctor = self.request.user
         form.instance.patient = booking.patient
-        messages.success(self.request, "Prescription added successfully")
+        messages.success(self.request, "Thêm đơn thuốc thành công")
         return super().form_valid(form)
 
     def get_success_url(self):

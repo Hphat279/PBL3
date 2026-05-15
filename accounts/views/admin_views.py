@@ -173,7 +173,7 @@ class SpecialityCreateView(AdminRequiredMixin, CreateView):
     success_url = reverse_lazy("admin-specialities")
 
     def form_valid(self, form):
-        messages.success(self.request, "Speciality created successfully.")
+        messages.success(self.request, "Tạo chuyên khoa thành công.")
         return super().form_valid(form)
 
 
@@ -184,7 +184,7 @@ class SpecialityUpdateView(AdminRequiredMixin, UpdateView):
     success_url = reverse_lazy("admin-specialities")
 
     def form_valid(self, form):
-        messages.success(self.request, "Speciality updated successfully.")
+        messages.success(self.request, "Cập nhật chuyên khoa thành công.")
         return super().form_valid(form)
 
 
@@ -193,7 +193,7 @@ class SpecialityDeleteView(AdminRequiredMixin, DeleteView):
     success_url = reverse_lazy("admin-specialities")
 
     def delete(self, request, *args, **kwargs):
-        messages.success(request, "Speciality deleted successfully.")
+        messages.success(request, "Xoá chuyên khoa thành công.")
         return super().delete(request, *args, **kwargs)
 
 

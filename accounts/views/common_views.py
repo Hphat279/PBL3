@@ -112,7 +112,7 @@ class LogoutView(RedirectView):
 
     def get(self, request, *args, **kwargs):
         auth.logout(request)
-        messages.success(request, "You are now logged out")
+        messages.success(request, "Bạn đã đăng xuất")
         return super(LogoutView, self).get(request, *args, **kwargs)
 
 

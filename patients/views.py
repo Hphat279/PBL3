@@ -69,11 +69,11 @@ class PatientProfileUpdateView(PatientRequiredMixin, UpdateView):
         user.save()
         profile.save()
 
-        messages.success(self.request, "Profile updated successfully")
+        messages.success(self.request, "Cập nhật hồ sơ thành công")
         return redirect(self.success_url)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below")
+        messages.error(self.request, "Vui lòng sửa các lỗi bên dưới")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -114,7 +114,7 @@ class AppointmentCancelView(View):
         appointment.status = "cancelled"
         appointment.save()
 
-        messages.success(request, "Appointment cancelled successfully")
+        messages.success(request, "Đã huỷ cuộc hẹn thành công")
         return redirect("patients:dashboard")
 
 
@@ -154,10 +154,10 @@ class ChangePasswordView(PatientRequiredMixin, View):
                 # Update session to prevent logout
                 update_session_auth_hash(request, user)
 
-                messages.success(request, "Password changed successfully")
+                messages.success(request, "Đổi mật khẩu thành công")
                 return redirect("patients:dashboard")
             else:
-                messages.error(request, "Current password is incorrect")
+                messages.error(request, "Mật khẩu hiện tại không đúng")
 
         return render(request, self.template_name, {"form": form})
 
@@ -174,21 +174,17 @@ class AddReviewView(PatientRequiredMixin, CreateView):
         )
 
         if booking.status != "completed":
-            messages.error(
-                self.request, "You can only review completed appointments."
-            )
+            messages.error(self.request, "Chỉ có thể đánh giá các cuộc hẹn đã hoàn thành.")
             return redirect("patients:appointment-detail", pk=booking_id)
 
         if Review.objects.filter(booking=booking).exists():
-            messages.error(
-                self.request, "You have already reviewed this appointment."
-            )
+            messages.error(self.request, "Bạn đã đánh giá cuộc hẹn này rồi.")
             return redirect("patients:appointment-detail", pk=booking_id)
 
         form.instance.patient = self.request.user
         form.instance.doctor = booking.doctor
         form.instance.booking = booking
-        messages.success(self.request, "Thank you for your review!")
+        messages.success(self.request, "Cảm ơn bạn đã đánh giá!")
         return super().form_valid(form)
 
     def get_success_url(self):

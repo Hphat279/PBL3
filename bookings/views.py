@@ -129,7 +129,7 @@ class BookingCreateView(LoginRequiredMixin, View):
 
         if not date or not time:
             messages.error(
-                request, "Please select both date and time for the appointment"
+                request, "Vui lòng chọn cả ngày và giờ cho cuộc hẹn"
             )
             return redirect("bookings:doctor-booking-view", username=username)
 
@@ -146,11 +146,11 @@ class BookingCreateView(LoginRequiredMixin, View):
                 appointment_time=appointment_time,
             )
 
-            messages.success(request, "Appointment booked successfully!")
+            messages.success(request, "Đặt lịch thành công!")
             return redirect("bookings:booking-success", booking_id=booking.id)
 
         except ValueError:
-            messages.error(request, "Invalid date or time format")
+            messages.error(request, "Định dạng ngày hoặc giờ không hợp lệ")
         except Exception as e:
             messages.error(request, str(e))
 
