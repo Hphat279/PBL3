@@ -1,8 +1,8 @@
-# Tài Liệu Dự Án PBL3 - DocCure Hệ Thống Đặt Lịch Khám Bệnh
+# Tài Liệu Dự Án PBL3 - Hệ Thống Đặt Lịch Khám Bệnh
 
 ## Tổng Quan Dự Án
 
-DocCure là một hệ thống đặt lịch khám bệnh hiện đại kết nối bệnh nhân với bác sĩ. Nền tảng này đơn giản hóa quy trình tìm bác sĩ, đặt lịch hẹn và quản lý tư vấn y tế.
+PBL3 là một hệ thống đặt lịch khám bệnh hiện đại kết nối bệnh nhân với bác sĩ. Nền tảng này đơn giản hóa quy trình tìm bác sĩ, đặt lịch hẹn và quản lý tư vấn y tế.
 
 ### Mục Tiêu
 - Hiện đại hóa việc tiếp cận chăm sóc sức khỏe tại Việt Nam

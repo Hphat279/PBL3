@@ -2,7 +2,7 @@
 
 PBL3 is a modern healthcare appointment booking system that connects patients with doctors. The platform streamlines the process of finding doctors, booking appointments, and managing medical consultations.
 
-Live: [Demo](http://doccure.manjurulhoque.com/)
+Live: [Demo](http://pbl3.example/)
 
 ## Features
 
@@ -78,8 +78,8 @@ Live: [Demo](http://doccure.manjurulhoque.com/)
 1. Clone the repository
 
 bash
-git clone https://github.com/manjurulhoque/doccure.git
-cd doccure
+git clone https://github.com/your-org/pbl3.git
+cd pbl3
 
 2. Create a virtual environment
 ```bash
