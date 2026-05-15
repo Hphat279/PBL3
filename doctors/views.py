@@ -181,45 +181,41 @@ class DoctorProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         doctor = self.object
 
-        # Get current day name
-        current_day = datetime.now().strftime("%A")
+        # Get current day name (map to Vietnamese for display)
+        eng_today = datetime.now().strftime("%A")
+        day_map = {
+            "Sunday": "Chủ Nhật",
+            "Monday": "Thứ Hai",
+            "Tuesday": "Thứ Ba",
+            "Wednesday": "Thứ Tư",
+            "Thursday": "Thứ Năm",
+            "Friday": "Thứ Sáu",
+            "Saturday": "Thứ Bảy",
+        }
+        current_day = day_map.get(eng_today, eng_today)
 
-        # Prepare business hours
+        # Prepare business hours with Vietnamese day labels for display
         business_hours = {
-            "Sunday": (
-                doctor.sunday.time_range.all()
-                if hasattr(doctor, "sunday")
-                else []
+            day_map["Sunday"]: (
+                doctor.sunday.time_range.all() if hasattr(doctor, "sunday") else []
             ),
-            "Monday": (
-                doctor.monday.time_range.all()
-                if hasattr(doctor, "monday")
-                else []
+            day_map["Monday"]: (
+                doctor.monday.time_range.all() if hasattr(doctor, "monday") else []
             ),
-            "Tuesday": (
-                doctor.tuesday.time_range.all()
-                if hasattr(doctor, "tuesday")
-                else []
+            day_map["Tuesday"]: (
+                doctor.tuesday.time_range.all() if hasattr(doctor, "tuesday") else []
             ),
-            "Wednesday": (
-                doctor.wednesday.time_range.all()
-                if hasattr(doctor, "wednesday")
-                else []
+            day_map["Wednesday"]: (
+                doctor.wednesday.time_range.all() if hasattr(doctor, "wednesday") else []
             ),
-            "Thursday": (
-                doctor.thursday.time_range.all()
-                if hasattr(doctor, "thursday")
-                else []
+            day_map["Thursday"]: (
+                doctor.thursday.time_range.all() if hasattr(doctor, "thursday") else []
             ),
-            "Friday": (
-                doctor.friday.time_range.all()
-                if hasattr(doctor, "friday")
-                else []
+            day_map["Friday"]: (
+                doctor.friday.time_range.all() if hasattr(doctor, "friday") else []
             ),
-            "Saturday": (
-                doctor.saturday.time_range.all()
-                if hasattr(doctor, "saturday")
-                else []
+            day_map["Saturday"]: (
+                doctor.saturday.time_range.all() if hasattr(doctor, "saturday") else []
             ),
         }
 

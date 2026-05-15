@@ -160,7 +160,7 @@
                                                             <div class="timeline-content">
                                                                 <a href="#" class="name">{{ experience.institution }}</a>
                                                                 <div>{{ experience.designation }}</div>
-                                                                <span class="time">{{ experience.from_year }} - {% if experience.to_year %}{{ experience.to_year }}{% else %}Present{% endif %}</span>
+                                                                <span class="time">{{ experience.from_year }} - {% if experience.to_year %}{{ experience.to_year }}{% else %}Hiện tại{% endif %}</span>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -206,7 +206,7 @@
                                                             {% endfor %}
                                                         {% else %}
                                                             <span class="time">
-                                                                <span class="badge bg-danger-light">Closed</span>
+                                                                <span class="badge bg-danger-light">Đóng</span>
                                                             </span>
                                                         {% endif %}
                                                     </div>
@@ -232,7 +232,7 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h4 class="card-title d-flex justify-content-between">
-                                                        <span>Reviews</span>
+                                                        <span>Đánh giá</span>
                                                         <span class="average-rating">
                                                             <i class="fas fa-star {% if doctor.average_rating >= 1 %}text-yellow{% endif %}"></i>
                                                             <i class="fas fa-star {% if doctor.average_rating >= 2 %}text-yellow{% endif %}"></i>
