@@ -34,7 +34,8 @@
                                     <strong class="customer-text">Hóa đơn từ</strong>
                                     <p class="invoice-details invoice-details-two">
                                         Bác sĩ {{ booking.doctor.get_full_name }} <br>
-                                        {% if booking.doctor.profile.address %}
+                                        {# Only show full street address if it contains the doctor's city (case-insensitive) to avoid mismatched fixtures #}
+                                        {% if booking.doctor.profile.address and booking.doctor.profile.city and booking.doctor.profile.city|lower in booking.doctor.profile.address|lower %}
                                             {{ booking.doctor.profile.address }}<br>
                                         {% endif %}
                                         {{ booking.doctor.profile.city }}{% if booking.doctor.profile.state %}, {{ booking.doctor.profile.state }}{% endif %}<br>
@@ -103,13 +104,18 @@
                     <!-- Invoice Information -->
                     <div class="other-info">
                         <h4>Thông tin đặt lịch</h4>
-                        <p class="text-muted mb-0">
+                                <p class="text-muted mb-0">
                             Trạng thái: <span class="badge badge-pill 
                                 {% if booking.status == 'confirmed' %}bg-success-light{% endif %}
                                 {% if booking.status == 'pending' %}bg-warning-light{% endif %}
                                 {% if booking.status == 'cancelled' %}bg-danger-light{% endif %}
                                 {% if booking.status == 'completed' %}bg-info-light{% endif %}">
-                                {{ booking.status|title }}
+                                {% if booking.status == 'pending' %}Đang chờ
+                                {% elif booking.status == 'confirmed' %}Đã xác nhận
+                                {% elif booking.status == 'completed' %}Hoàn thành
+                                {% elif booking.status == 'cancelled' %}Đã hủy
+                                {% else %}{{ booking.status|title }}
+                                {% endif %}
                             </span>
                         </p>
                     </div>
