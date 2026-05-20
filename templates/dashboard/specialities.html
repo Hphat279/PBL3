@@ -1,0 +1,227 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Chuyên khoa{% endblock %}
+
+{% block content %}
+<!-- Modal thêm -->
+<div class="modal fade" id="Add_Specialities_details" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm chuyên khoa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'admin-speciality-create' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row form-row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Tên chuyên khoa</label>
+                                <input type="text" name="name" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Mô tả</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Ảnh</label>
+                                <input type="file" name="image" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal thêm -->
+
+<!-- Modal chỉnh sửa -->
+<div class="modal fade" id="edit_specialities_details" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa chuyên khoa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row form-row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Tên chuyên khoa</label>
+                                <input type="text" name="name" class="form-control edit-name" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Mô tả</label>
+                                <textarea name="description" class="form-control edit-description" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Ảnh</label>
+                                <input type="file" name="image" class="form-control">
+                                <small class="form-text text-muted">Để trống để giữ ảnh hiện tại</small>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="is_active" class="custom-control-input edit-active">
+                                    <span class="custom-control-label">Hoạt động</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal chỉnh sửa -->
+
+<!-- Modal xóa -->
+<div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-content p-2">
+                    <h4 class="modal-title">Xóa</h4>
+                    <p class="mb-4">Bạn có chắc muốn xóa chuyên khoa này không?</p>
+                    <form id="delete-form" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Modal xóa -->
+
+<!-- Tiêu đề trang -->
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-7 col-auto">
+            <h3 class="page-title">Chuyên khoa</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin-dashboard' %}">Bảng điều khiển</a></li>
+                <li class="breadcrumb-item active">Chuyên khoa</li>
+            </ul>
+        </div>
+        <div class="col-sm-5 col">
+            <a href="#Add_Specialities_details" data-toggle="modal" class="btn btn-primary float-right mt-2">Thêm</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="datatable table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Chuyên khoa</th>
+                                <th>Bác sĩ</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for speciality in specialities %}
+                            <tr>
+                                <td>#SP{{ speciality.id|stringformat:"03d" }}</td>
+                                <td>
+                                    <h2 class="table-avatar">
+                                        <a href="{{ speciality.get_absolute_url }}" class="avatar avatar-sm mr-2">
+                                            <img class="avatar-img" src="{{ speciality.image_url }}" alt="Chuyên khoa">
+                                        </a>
+                                        <a href="{{ speciality.get_absolute_url }}">{{ speciality.name }}</a>
+                                    </h2>
+                                </td>
+                                <td>
+                                    {% comment %} {{ speciality.doctor_count }} {% endcomment %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-pill {% if speciality.is_active %}bg-success-light{% else %}bg-danger-light{% endif %}">
+                                        {{ speciality.is_active|yesno:"Hoạt động,Không hoạt động" }}
+                                    </span>
+                                </td>
+                                <td class="text-right">
+                                    <div class="actions">
+                                        <a class="btn btn-sm bg-success-light edit-speciality" 
+                                           data-toggle="modal" 
+                                           href="#edit_specialities_details"
+                                           data-id="{{ speciality.id }}"
+                                           data-name="{{ speciality.name }}"
+                                           data-description="{{ speciality.description }}"
+                                           data-active="{{ speciality.is_active|yesno:'true,false' }}">
+                                            <i class="fe fe-pencil"></i> Chỉnh sửa
+                                        </a>
+                                        <a class="btn btn-sm bg-danger-light delete-speciality"
+                                           data-toggle="modal" 
+                                           href="#delete_modal"
+                                           data-id="{{ speciality.id }}">
+                                            <i class="fe fe-trash"></i> Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Không tìm thấy chuyên khoa</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                {% include "includes/pagination.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    // Edit Speciality
+    $('.edit-speciality').click(function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var description = $(this).data('description');
+        var active = $(this).data('active');
+        
+        $('#edit_specialities_details .edit-name').val(name);
+        $('#edit_specialities_details .edit-description').val(description);
+        $('#edit_specialities_details .edit-active').prop('checked', active === 'true');
+        $('#edit-form').attr('action', "{% url 'admin-specialities' %}/" + id + "/update/");
+    });
+
+    // Delete Speciality
+    $('.delete-speciality').click(function() {
+        var id = $(this).data('id');
+        $('#delete-form').attr('action', "{% url 'admin-specialities' %}/" + id + "/delete/");
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% load currency_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chi tiết lịch khám - In</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .details { margin-bottom: 20px; }
+        .details table { width: 100%; border-collapse: collapse; }
+        .details td { padding: 8px; border: 1px solid #ddd; }
+        .footer { margin-top: 50px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Chi tiết lịch khám</h1>
+            <p>Mã đặt lịch: #{{ appointment.pk }}</p>
+        </div>
+        
+        <div class="details">
+            <table>
+                <tr>
+                    <td><strong>Bác sĩ:</strong></td>
+                    <td>Bác sĩ {{ appointment.doctor.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Chuyên khoa:</strong></td>
+                    <td>{{ appointment.doctor.profile.specialization }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Bệnh nhân:</strong></td>
+                    <td>{{ appointment.patient.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Giờ khám:</strong></td>
+                    <td>{{ appointment.appointment_time|time:"h:i A" }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Ngày khám:</strong></td>
+                    <td>{{ appointment.appointment_date|date_vn }}</td>
+                </tr>
+                                <tr>
+                                    <td><strong>Ngày đặt:</strong></td>
+                                    <td>{{ appointment.booking_date|date_vn }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trạng thái:</strong></td>
+                                    <td>{{ appointment.status|status_label }}</td>
+                                </tr>
+                <tr>
+                    <td><strong>Phí khám:</strong></td>
+                    <td>{{ appointment.doctor.profile.price_per_consultation|vnd }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>Tài liệu được tạo tự động.</p>
+        </div>
+    </div>
+    <script>
+        window.onload = function() { window.print(); }
+    </script>
+</body>
+</html> 

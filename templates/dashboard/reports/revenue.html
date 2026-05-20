@@ -1,0 +1,226 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Báo cáo doanh thu{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="page-title">Báo cáo doanh thu</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Thẻ tóm tắt -->
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header d-flex flex-column align-items-center">
+                    <div class="text-center">
+                        <h3>{{ total_revenue|vnd }}</h3>
+                        <h6>Tổng doanh thu</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header d-flex flex-column align-items-center">
+                    <div class="text-center">
+                        <h3>{{ total_appointments }}</h3>
+                        <h6>Tổng số lượt khám</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header d-flex flex-column align-items-center">
+                    <div class="text-center">
+                        <h3>{{ average_revenue_per_appointment|floatformat:2|default:0|floatformat:2 }}</h3>
+                        <h6>Doanh thu trung bình / lượt khám</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="dash-widget-header d-flex flex-column align-items-center">
+                    <div class="text-center">
+                        <h3>{{ highest_revenue_day.total|default:0|vnd }}</h3>
+                        <h6>Doanh thu cao nhất trong ngày</h6>
+                        <small>{{ highest_revenue_day.day|date_vn|default:"Chưa có" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Biểu đồ doanh thu theo tháng -->
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Doanh thu theo tháng</h4>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Doanh thu theo bác sĩ -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Doanh thu theo bác sĩ</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Bác sĩ</th>
+                                <th>Lượt khám</th>
+                                <th>Doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in doctor_revenue %}
+                            <tr>
+                                <td>Bác sĩ {{ stat.doctor__first_name }} {{ stat.doctor__last_name }}</td>
+                                <td>{{ stat.appointments }}</td>
+                                <td>{{ stat.revenue|vnd }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm biểu đồ bổ sung nếu cần -->
+{% comment %} <div class="row">
+    <!-- Doanh thu theo chuyên khoa -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Doanh thu theo chuyên khoa</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Chuyên khoa</th>
+                                <th>Lượt khám</th>
+                                <th>Doanh thu</th>
+                                <th>Doanh thu trung bình / lượt khám</th>
+                                <th>% trên tổng doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in specialization_revenue %}
+                            <tr>
+                                <td>{{ stat.doctor__profile__specialization__name }}</td>
+                                <td>{{ stat.appointments }}</td>
+                                <td>{{ stat.revenue|vnd }}</td>
+                                <td>{{ stat.revenue|div:stat.appointments|floatformat:2 }}</td>
+                                <td>{{ stat.revenue|div:total_revenue|multiply:100|floatformat:1 }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> {% endcomment %}
+
+<!-- Thêm biểu đồ cho doanh thu theo chuyên khoa -->
+<script>
+    // Biểu đồ doanh thu theo chuyên khoa
+    const specializationData = {{ specialization_revenue|safe }};
+    new Chart(document.getElementById('specializationChart'), {
+        type: 'pie',
+        data: {
+            labels: specializationData.map(d => d.doctor__profile__specialization__name),
+            datasets: [{
+                data: specializationData.map(d => d.revenue),
+                backgroundColor: [
+                    '#20c0f3', '#28a745', '#dc3545', '#ffc107',
+                    '#17a2b8', '#6610f2', '#e83e8c', '#fd7e14'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value * 100) / total).toFixed(1);
+                            return `₫${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Monthly Revenue Chart
+    const revenueData = JSON.parse('{{ monthly_revenue_stats|safe }}');
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+            labels: revenueData.map(d => {
+                const date = new Date(d.month);
+                return date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+            }),
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenueData.map(d => d.revenue),
+                backgroundColor: '#20c0f3'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₫' + value;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '₫' + context.parsed.y;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

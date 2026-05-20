@@ -1,0 +1,118 @@
+{% extends 'includes/doctor-sidebar.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Chi tiết đơn thuốc{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Chi tiết đơn thuốc</h4>
+            </div>
+            <div class="card-body">
+                <!-- Thông tin bệnh nhân -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="patient-info">
+                            <h5>Thông tin bệnh nhân</h5>
+                            <div class="info-block">
+                                    <p><strong>Họ tên:</strong> {{ prescription.patient.get_full_name }}</p>
+                                    <p><strong>Tuổi:</strong> {% if prescription.patient.profile.age %}{{ prescription.patient.profile.age }} tuổi{% else %}Chưa xác định{% endif %}</p>
+                                    <p><strong>Giới tính:</strong> {{ prescription.patient.profile.get_gender_display|default:"Chưa xác định" }}</p>
+                                    <p><strong>Nhóm máu:</strong> {{ prescription.patient.profile.blood_group|default:"Chưa xác định" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="prescription-meta">
+                            <h5>Chi tiết đơn thuốc</h5>
+                            <div class="info-block">
+                                <p><strong>Ngày:</strong> {{ prescription.created_at|date_vn }}</p>
+                                <p><strong>Ngày khám:</strong> {{ prescription.booking.appointment_date|date_vn }}</p>
+                                <p><strong>Bác sĩ:</strong> Bác sĩ {{ prescription.doctor.get_full_name }}</p>
+                                <p><strong>Chuyên khoa:</strong> {{ prescription.doctor.profile.specialization }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Thông tin y tế -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="medical-info">
+                            <h5>Triệu chứng</h5>
+                            <p>{{ prescription.symptoms }}</p>
+
+                            <h5 class="mt-4">Chẩn đoán</h5>
+                            <p>{{ prescription.diagnosis }}</p>
+
+                            <h5 class="mt-4">Thuốc & Hướng dẫn</h5>
+                            <div class="medication-details">
+                                {{ prescription.medications|safe }}
+                            </div>
+
+                            {% if prescription.notes %}
+                            <h5 class="mt-4">Ghi chú bổ sung</h5>
+                            <p>{{ prescription.notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hành động -->
+                <div class="row mt-4">
+                    <div class="col-md-12 text-right">
+                        <button onclick="window.print()" class="btn btn-primary">
+                            <i class="fas fa-print"></i> In đơn thuốc
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .card-body h5 {
+        color: #272b41;
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    .info-block {
+        margin-bottom: 20px;
+    }
+    .info-block p {
+        margin-bottom: 8px;
+        color: #757575;
+    }
+    .info-block strong {
+        color: #272b41;
+    }
+    .medical-info p {
+        color: #757575;
+        line-height: 1.6;
+    }
+    .medication-details {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+    }
+    @media print {
+        .sidebar-menu,
+        .header,
+        .btn {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}
+{% endblock %} 

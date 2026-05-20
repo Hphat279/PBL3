@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block content %}
+<div id="content-main">
+  <h1>Lịch sử đối tượng</h1>
+  {% if actions %}
+    <ul>
+    {% for action in actions %}
+      <li>{{ action }}</li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p>Không có lịch sử nào.</p>
+  {% endif %}
+  <p><a href="{% url opts|admin_urlname:'changelist' %}">Trở về</a></p>
+</div>
+{% endblock %}

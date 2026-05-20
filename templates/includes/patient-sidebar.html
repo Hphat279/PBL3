@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Cài đặt hồ sơ{% endblock %}
+
+{% load static %}
+{% load currency_filters %}
+
+{% block content %}
+
+    <!-- Thanh điều hướng -->
+    <div class="breadcrumb-bar">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-12 col-12">
+                    <nav aria-label="breadcrumb" class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{% block page_name1 %}{% endblock %}</li>
+                        </ol>
+                    </nav>
+                    <h2 class="breadcrumb-title">{% block page_name2 %}{% endblock %}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Thanh điều hướng -->
+
+    <!-- Nội dung trang -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- Sidebar hồ sơ -->
+                <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
+                    <div class="profile-sidebar">
+                        <div class="widget-profile pro-widget-content">
+                            <div class="profile-info-widget">
+                                <a href="#" class="booking-doc-img">
+                                    <img src="{{ user.profile.image }}" alt="Ảnh người dùng">
+                                </a>
+                                <div class="profile-det-info">
+                                    <h3>{{ user.get_full_name }}</h3>
+                                    <div class="patient-details">
+                                        {% if user.profile.dob %}
+                                            <h5><i class="fas fa-birthday-cake"></i> {{ user.profile.dob|date_vn }}</h5>
+                                        {% endif %}
+                                        {% if user.profile.city and user.profile.country %}
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-map-marker-alt"></i> 
+                                                {{ user.profile.city }}, {{ user.profile.country }}
+                                            </h5>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-widget">
+                            <nav class="dashboard-menu">
+                                <ul>
+                                    <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                                        <a href="{% url 'patients:dashboard' %}">
+                                            <i class="fas fa-columns"></i>
+                                            <span>Bảng điều khiển</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'booking-list' %}active{% endif %}">
+                                        <a href="{% url 'bookings:booking-list' %}">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>Đặt lịch</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'profile-setting' %}active{% endif %}">
+                                        <a href="{% url 'patients:profile-setting' %}">
+                                            <i class="fas fa-user-cog"></i>
+                                            <span>Cài đặt hồ sơ</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if request.resolver_match.url_name == 'change-password' %}active{% endif %}">
+                                        <a href="{% url 'patients:change-password' %}">
+                                            <i class="fas fa-lock"></i>
+                                            <span>Đổi mật khẩu</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'accounts:logout' %}">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>Đăng xuất</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /Sidebar hồ sơ -->
+
+                <div class="col-md-7 col-lg-8 col-xl-9">
+                    {% block main %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /Page Content -->
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Lịch khám của tôi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Lịch khám của tôi</h1>
+            
+            {% if bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Ngày</th>
+                                <th>Giờ</th>
+                                {% if user.role == 'doctor' %}
+                                    <th>Bệnh nhân</th>
+                                {% else %}
+                                    <th>Bác sĩ</th>
+                                {% endif %}
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                                <tr>
+                                    <td>{{ booking.appointment_date|date_vn }}</td>
+                                    <td>{{ booking.appointment_time|time:"g:i A" }}</td>
+                                    {% if user.role == 'doctor' %}
+                                        <td>{{ booking.patient.get_full_name }}</td>
+                                    {% else %}
+                                        <td>Bác sĩ {{ booking.doctor.get_full_name }}</td>
+                                    {% endif %}
+                                    <td>
+                                            <span class="badge {% if booking.status == 'confirmed' %}badge-success
+                                                          {% elif booking.status == 'pending' %}badge-warning
+                                                          {% elif booking.status == 'completed' %}badge-info
+                                                          {% elif booking.status == 'cancelled' %}badge-danger
+                                                          {% else %}badge-secondary{% endif %}">
+                                            {{ booking.status|status_label }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'bookings:booking-invoice' booking.id %}" class="btn btn-sm btn-primary">
+                                            Xem chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Bạn chưa có lịch khám nào.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

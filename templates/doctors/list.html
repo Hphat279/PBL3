@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}
+    Bác sĩ
+{% endblock %}
+
+{% block content %}
+
+    <!-- Thanh điều hướng -->
+    <div class="breadcrumb-bar">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8 col-12">
+                    <nav aria-label="breadcrumb" class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Bác sĩ</li>
+                        </ol>
+                    </nav>
+                    {% if search_query %}
+                        <h2 class="breadcrumb-title">{{ doctors.count }} matches found for: {{ search_query }}</h2>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 col-12 d-md-block d-none">
+                    <div class="sort-by mr-5">
+                        <span class="sort-title">Sắp xếp</span>
+                        <span class="sortby-fliter">
+                            <select class="select" name="sort" onchange="updateSort(this.value)">
+                                <option value="">Chọn</option>
+                                {% comment %} <option value="rating" {% if request.GET.sort == 'rating' %}selected{% endif %}>Rating</option> {% endcomment %}
+                                <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>Giá - Thấp đến Cao</option>
+                                <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>Giá - Cao đến Thấp</option>
+                                <option value="experience" {% if request.GET.sort == 'experience' %}selected{% endif %}>Kinh nghiệm</option>
+                            </select>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- /Thanh điều hướng -->
+
+    <!-- Nội dung trang -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-lg-4 col-xl-3 theiaStickySidebar">
+                    <!-- Bộ lọc tìm kiếm -->
+                    <form method="get" action="{% url 'doctors:list' %}" class="card search-filter">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Bộ lọc tìm kiếm</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-widget">
+                                <h4>Giới tính</h4>
+                                <div>
+                                    <label class="custom_check">
+                                        <input type="checkbox" name="gender" value="male" {% if 'male' in selected_genders %}checked{% endif %}>
+                                        <span class="checkmark"></span> Nam
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="custom_check">
+                                        <input type="checkbox" name="gender" value="female" {% if 'female' in selected_genders %}checked{% endif %}>
+                                        <span class="checkmark"></span> Nữ
+                                    </label>
+                                </div>
+                            </div>
+                            <script>
+                                // Ensure tooltips are initialized (kept for compatibility)
+                                document.addEventListener('DOMContentLoaded', function(){
+                                    $('[data-toggle="tooltip"]').tooltip();
+                                });
+                            </script>
+                            <div class="filter-widget">
+                                <h4>Chọn chuyên khoa</h4>
+                                {% for specialization in specializations %}
+                                    <div>
+                                        <label class="custom_check">
+                                            <input type="checkbox" name="specialization" value="{{ specialization }}"
+                                                {% if specialization in selected_specializations %}checked{% endif %}>
+                                            <span class="checkmark"></span> {{ specialization }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="btn-search">
+                                <button type="submit" class="btn btn-block">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- /Bộ lọc tìm kiếm -->
+                </div>
+
+                <div class="col-md-12 col-lg-8 col-xl-9">
+                    {% if doctors %}
+                        {% for doctor in doctors %}
+                            <!-- Khung bác sĩ -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="doctor-widget">
+                                        <div class="doc-info-left">
+                                            <div class="doctor-img">
+                                                <a href="{% url 'doctors:doctor-profile' doctor.username %}">
+                                                    <img src="{{ doctor.profile.image }}" class="img-fluid" alt="{{ doctor.get_full_name }}">
+                                                </a>
+                                            </div>
+                                            <div class="doc-info-cont">
+                                                <h4 class="doc-name">
+                                                    <a href="{% url 'doctors:doctor-profile' doctor.username %}">Bác sĩ {{ doctor.get_full_name }}</a>
+                                                </h4>
+                                                <p class="doc-speciality">{{ doctor.profile.specialization }}</p>
+                                                <div class="rating">
+                                                    <i class="fas fa-star {% if doctor.rating >= 1 %}filled{% endif %}"></i>
+                                                    <i class="fas fa-star {% if doctor.rating >= 2 %}filled{% endif %}"></i>
+                                                    <i class="fas fa-star {% if doctor.rating >= 3 %}filled{% endif %}"></i>
+                                                    <i class="fas fa-star {% if doctor.rating >= 4 %}filled{% endif %}"></i>
+                                                    <i class="fas fa-star {% if doctor.rating >= 5 %}filled{% endif %}"></i>
+                                                    <span class="d-inline-block average-rating">({{ doctor.reviews_count|default:0 }})</span>
+                                                </div>
+                                                <div class="clinic-services">
+                                                    <span>{{ doctor.profile.specialization }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="doc-info-right">
+                                            <div class="clini-infos">
+                                                <ul>
+                                                    <li><i class="fas fa-map-marker-alt"></i> {{ doctor.profile.city }}</li>
+                                                    <li><i class="far fa-money-bill-alt"></i> {{ doctor.profile.price_per_consultation|vnd }} <i class="fas fa-info-circle" data-toggle="tooltip" title="Phí khám"></i></li>
+                                                    <li><i class="fas fa-phone"></i> {{ doctor.profile.phone }}</li>
+                                                </ul>
+                                            </div>
+                                            <div class="clinic-booking">
+                                                <a class="view-pro-btn" href="{% url 'doctors:doctor-profile' doctor.username %}">Xem hồ sơ</a>
+                                                <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Khung bác sĩ -->
+                        {% endfor %}
+
+                        {% if is_paginated %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% for s in selected_specializations %}specialization={{ s }}&{% endfor %}{% for g in selected_genders %}gender={{ g }}&{% endfor %}{% if selected_sort %}sort={{ selected_sort }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary prev-arrow mr-1">
+                                            <i class="fas fa-chevron-left"></i> Trước
+                                        </a>
+                                    {% endif %}
+
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <a href="#" class="btn btn-primary mx-1">{{ num }}</a>
+                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% for s in selected_specializations %}specialization={{ s }}&{% endfor %}{% for g in selected_genders %}gender={{ g }}&{% endfor %}{% if selected_sort %}sort={{ selected_sort }}&{% endif %}page={{ num }}" class="btn btn-outline-primary mx-1">{{ num }}</a>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <a href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% for s in selected_specializations %}specialization={{ s }}&{% endfor %}{% for g in selected_genders %}gender={{ g }}&{% endfor %}{% if selected_sort %}sort={{ selected_sort }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-outline-primary next-arrow ml-1">
+                                            Tiếp <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center">
+                            <p>Không tìm thấy bác sĩ phù hợp.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- /Nội dung trang -->
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateSort(value) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+
+        if (value) {
+            params.set('sort', value);
+        } else {
+            params.delete('sort');
+        }
+
+        window.location.href = `${url.pathname}?${params.toString()}`;
+    }
+
+    $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% load i18n %}
+<div id="content-main">
+  {% for app in app_list %}
+  <section class="app-{{ app.app_label }} module">
+    <h2>{{ app.name }}</h2>
+    <ul>
+    {% for model in app.models %}
+      <li class="model-{{ model.object_name|lower }}">
+        <a href="{{ model.admin_url }}">{{ model.name }}</a>
+        {% if show_changelinks %}
+          <span class="changelink"> <a href="{{ model.add_url }}">Thêm</a></span>
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+</div>

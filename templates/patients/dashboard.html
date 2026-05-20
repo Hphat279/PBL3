@@ -1,0 +1,124 @@
+{% extends 'includes/patient-sidebar.html' %}
+
+{% load currency_filters %}
+{% block page_name1 %}Bảng điều khiển{% endblock %}
+{% block page_name2 %}Bảng điều khiển{% endblock %}
+
+{% block main %}
+    <div class="card">
+        <div class="card-body pt-0">
+            <!-- Tab Menu -->
+            <nav class="user-tabs mb-4">
+                <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#pat_appointments" data-toggle="tab">Lịch khám</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_prescriptions" data-toggle="tab">Đơn thuốc</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_medical_records" data-toggle="tab">Hồ sơ y tế</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pat_billing" data-toggle="tab">Thanh toán</a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /Tab Menu -->
+
+            <!-- Tab Content -->
+            <div class="tab-content pt-0">
+                <!-- Appointment Tab -->
+                <div id="pat_appointments" class="tab-pane fade show active">
+                    <div class="card card-table mb-0">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-center mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>Bác sĩ</th>
+                                        <th>Ngày khám</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for appointment in appointments %}
+                                    <tr>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                    <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}" class="avatar avatar-sm mr-2">
+                                                        <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Ảnh bác sĩ">
+                                                    </a>
+                                                    <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}">
+                                                           Bác sĩ {{ appointment.doctor.get_full_name }}
+                                                        {% if appointment.doctor.profile.specialization %}
+                                                            <span>{{ appointment.doctor.profile.specialization }}</span>
+                                                        {% endif %}
+                                                    </a>
+                                            </h2>
+                                        </td>
+                                            <td>
+                                                {{ appointment.appointment_date|date_vn }}
+                                                <span class="d-block text-info">
+                                                    {{ appointment.appointment_time|time:"h:i A" }}
+                                                </span>
+                                            </td>
+                                            <td>{{ appointment.booking_date|date_vn }}</td>
+                                            <td>
+                                                <span class="badge badge-pill 
+                                                    {% if appointment.status == 'confirmed' %}bg-success-light{% endif %}
+                                                    {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
+                                                    {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
+                                                    {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
+                                                    {{ appointment.status|status_label }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                            <div class="table-action">
+                                                    {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+                                                        <form method="post" action="{% url 'patients:appointment-cancel' appointment.pk %}" style="display: inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-sm bg-danger-light" onclick="return confirm('Bạn có chắc muốn hủy lịch này không?')">
+                                                                <i class="fas fa-times"></i> Hủy
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    <a href="{% url 'patients:appointment-detail' appointment.pk %}" class="btn btn-sm bg-info-light">
+                                                        <i class="far fa-eye"></i> Xem
+                                                    </a>
+                                                    <a href="{% url 'patients:appointment-print' appointment.pk %}" target="_blank" class="btn btn-sm bg-primary-light">
+                                                    <i class="fas fa-print"></i> In
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">Không tìm thấy lịch khám</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Appointment Tab -->
+
+                <!-- Other tabs remain unchanged -->
+                <div class="tab-pane fade" id="pat_prescriptions">
+                    <!-- Prescription content -->
+                </div>
+                <div class="tab-pane fade" id="pat_medical_records">
+                    <!-- Medical Records content -->
+                </div>
+                <div class="tab-pane fade" id="pat_billing">
+                    <!-- Billing content -->
+                </div>
+            </div>
+            <!-- /Tab Content -->
+        </div>
+    </div>
+{% endblock %}

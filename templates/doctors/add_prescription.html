@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Thêm đơn thuốc
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Thêm đơn thuốc</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    
+                                    <div class="form-group">
+                                        <label>Triệu chứng</label>
+                                        {{ form.symptoms }}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Chẩn đoán</label>
+                                        {{ form.diagnosis }}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Thuốc & Hướng dẫn</label>
+                                        {{ form.medications }}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Ghi chú thêm</label>
+                                        {{ form.notes }}
+                                    </div>
+                                    
+                                    <div class="submit-section">
+                                        <button type="submit" class="btn btn-primary submit-btn">Lưu đơn thuốc</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ form.media }}
+{% endblock %} 

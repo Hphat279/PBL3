@@ -1,0 +1,283 @@
+{% extends 'includes/doctor-sidebar.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block page_name1 %}Bảng điều khiển{% endblock %}
+{% block page_name2 %}Bảng điều khiển bác sĩ{% endblock %}
+
+{% block title %}Bảng điều khiển bác sĩ{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card dash-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-4">
+                            <div class="dash-widget dct-border-rht">
+                                <div class="circle-bar circle-bar1">
+                                    <div class="circle-graph1" data-percent="75">
+                                        <img src="{% static 'assets/img/icon-01.png' %}" class="img-fluid" alt="Biểu tượng bệnh nhân">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Tổng bệnh nhân</h6>
+                                    <h3>{{ total_patients }}</h3>
+                                    <p class="text-muted">Tính đến hôm nay</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-4">
+                            <div class="dash-widget dct-border-rht">
+                                <div class="circle-bar circle-bar2">
+                                    <div class="circle-graph2" data-percent="65">
+                                        <img src="{% static 'assets/img/icon-02.png' %}" class="img-fluid" alt="Biểu tượng bệnh nhân">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Bệnh nhân hôm nay</h6>
+                                    <h3>{{ today_patients }}</h3>
+                                    <p class="text-muted">{{ today|date_vn }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-4">
+                            <div class="dash-widget">
+                                <div class="circle-bar circle-bar3">
+                                    <div class="circle-graph3" data-percent="50">
+                                        <img src="{% static 'assets/img/icon-03.png' %}" class="img-fluid" alt="Biểu tượng bệnh nhân">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Tổng số lượt khám</h6>
+                                    <h3>{{ total_appointments }}</h3>
+                                    <p class="text-muted">Tính đến hôm nay</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="mb-4">Lịch khám bệnh nhân</h4>
+            <div class="appointment-tab">
+                <!-- Tab cuộc hẹn -->
+                <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#upcoming-appointments" data-toggle="tab">Sắp tới</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#today-appointments" data-toggle="tab">Hôm nay</a>
+                    </li>
+                </ul>
+                <!-- /Tab cuộc hẹn -->
+
+                <div class="tab-content">
+                    <!-- Tab cuộc hẹn sắp tới -->
+                    <div class="tab-pane show active" id="upcoming-appointments">
+                        <div class="card card-table mb-0">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên bệnh nhân</th>
+                                                <th>Ngày khám</th>
+                                                <th>Trạng thái</th>
+                                                <th class="text-center">Số tiền</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for appointment in upcoming_appointments %}
+                                            <tr>
+                                                <td>
+                                                    <h2 class="table-avatar">
+                                                        <a href="#" class="avatar avatar-sm mr-2">
+                                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Ảnh bệnh nhân">
+                                                        </a>
+                                                        <a href="#">{{ appointment.patient.get_full_name }}</a>
+                                                    </h2>
+                                                </td>
+                                                <td>
+                                                    {{ appointment.appointment_date|date_vn }}
+                                                    <span class="d-block text-info">{{ appointment.appointment_time|time:"h:i A" }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-pill 
+                                                        {% if appointment.status == 'confirmed' %}bg-success-light{% endif %}
+                                                        {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
+                                                        {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
+                                                        {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
+                                                        {{ appointment.status|status_label }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">{{ appointment.doctor.profile.price_per_consultation|vnd }}</td>
+                                                <td>
+                                                    <div class="table-action">
+                                                        <a href="{% url 'doctors:appointment-detail' appointment.pk %}" class="btn btn-sm bg-info-light">
+                                                            <i class="far fa-eye"></i> Xem
+                                                        </a>
+                                                        {% if appointment.status == 'pending' %}
+                                                            <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'accept' %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-sm bg-success-light" onclick="return confirm('Bạn có chắc muốn chấp nhận cuộc hẹn này không?')">
+                                                                    <i class="fas fa-check"></i> Chấp nhận
+                                                                </button>
+                                                            </form>
+                                                            <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'cancel' %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-sm bg-danger-light" onclick="return confirm('Bạn có chắc muốn hủy cuộc hẹn này không?')">
+                                                                    <i class="fas fa-times"></i> Hủy
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="5" class="text-center">Không có lịch khám sắp tới</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Tab cuộc hẹn sắp tới -->
+
+                    <!-- Tab cuộc hẹn hôm nay -->
+                    <div class="tab-pane" id="today-appointments">
+                        <div class="card card-table mb-0">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên bệnh nhân</th>
+                                                <th>Giờ khám</th>
+                                                <th>Trạng thái</th>
+                                                <th class="text-center">Số tiền</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for appointment in today_appointments %}
+                                            <tr>
+                                                <td>
+                                                    <h2 class="table-avatar">
+                                                        <a href="#" class="avatar avatar-sm mr-2">
+                                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Ảnh bệnh nhân">
+                                                        </a>
+                                                        <a href="#">{{ appointment.patient.get_full_name }}</a>
+                                                    </h2>
+                                                </td>
+                                                <td>
+                                                    <span class="d-block text-info">{{ appointment.appointment_time|time:"h:i A" }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge badge-pill 
+                                                        {% if appointment.status == 'confirmed' %}bg-success-light{% endif %}
+                                                        {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
+                                                        {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
+                                                        {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
+                                                        {{ appointment.status|status_label }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-center">{{ appointment.doctor.profile.price_per_consultation|vnd }}</td>
+                                                <td class="text-right">
+                                                    <div class="table-action">
+                                                        <a href="{% url 'doctors:appointment-detail' appointment.pk %}" class="btn btn-sm bg-info-light">
+                                                            <i class="far fa-eye"></i> Xem
+                                                        </a>
+                                                        {% if appointment.status == 'pending' %}
+                                                            <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'accept' %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-sm bg-success-light" onclick="return confirm('Bạn có chắc muốn chấp nhận cuộc hẹn này không?')">
+                                                                    <i class="fas fa-check"></i> Chấp nhận
+                                                                </button>
+                                                            </form>
+                                                            <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'cancel' %}" style="display: inline;">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-sm bg-danger-light" onclick="return confirm('Bạn có chắc muốn hủy cuộc hẹn này không?')">
+                                                                    <i class="fas fa-times"></i> Hủy
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="5" class="text-center">Không có lịch khám hôm nay</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Tab cuộc hẹn hôm nay -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Đơn thuốc gần đây</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Bệnh nhân</th>
+                                    <th>Chẩn đoán</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prescription in recent_prescriptions %}
+                                <tr>
+                                    <td>{{ prescription.created_at|date_vn }}</td>
+                                    <td>
+                                        <h2 class="table-avatar">
+                                            <a href="#" class="avatar avatar-sm mr-2">
+                                                <img class="avatar-img rounded-circle" src="{{ prescription.patient.profile.image }}" alt="Ảnh bệnh nhân">
+                                            </a>
+                                            <a href="#">{{ prescription.patient.get_full_name }}</a>
+                                        </h2>
+                                    </td>
+                                    <td>{{ prescription.diagnosis|truncatechars:50 }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm bg-info-light">
+                                            <i class="far fa-eye"></i> Xem
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">Không tìm thấy đơn thuốc</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

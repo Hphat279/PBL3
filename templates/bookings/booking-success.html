@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Đặt lịch thành công{% endblock %}
+
+{% block content %}
+<div class="content success-page-cont">
+    <div class="container-fluid">
+    
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+            
+                <!-- Thẻ thành công -->
+                <div class="card success-card">
+                    <div class="card-body">
+                        <div class="success-cont">
+                            <i class="fas fa-check"></i>
+                            <h3>Đặt lịch thành công!</h3>
+                            <p>Cuộc hẹn đã được đặt với <strong>{{ booking.doctor.get_full_name }}</strong><br> vào <strong>{{ booking.appointment_date }} {{ booking.appointment_time }}</strong></p>
+                            <a href="{% url 'bookings:booking-invoice' booking.id %}" class="btn btn-primary view-inv-btn">Xem hóa đơn</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Thẻ thành công -->
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
