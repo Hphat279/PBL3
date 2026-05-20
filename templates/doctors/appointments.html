@@ -1,5 +1,6 @@
 {% extends "includes/doctor-sidebar.html" %}
 {% load static %}
+{% load currency_filters %}
 
 {% block title %}Lịch hẹn{% endblock %}
 {% block css %}
@@ -19,21 +20,21 @@
                     <a href="#" class="booking-doc-img">
                         {% if appointment.patient.profile.image %}
                             <img src="{{ appointment.patient.profile.image }}" alt="{{ appointment.patient.get_full_name }}">
-                        {% else %}
-                            <img src="https://via.placeholder.com/150x150?text=Patient" alt="Default Patient Image">
+                            {% else %}
+                            <img src="https://via.placeholder.com/150x150?text=Patient" alt="Ảnh mặc định bệnh nhân">
                         {% endif %}
                     </a>
                     <div class="profile-det-info">
                         <h3>
                             <a href="#">{{ appointment.patient.get_full_name }}</a>
                             {% if appointment.patient.profile.gender %}
-                                <small>({{ appointment.patient.profile.gender|title }})</small>
+                                <small>({{ appointment.patient.profile.get_gender_display }})</small>
                             {% endif %}
                         </h3>
                         <div class="patient-details">
                             <h5>
                                 <i class="far fa-clock"></i> 
-                                {{ appointment.appointment_date|date:"d M Y" }}, 
+                                {{ appointment.appointment_date|date_vn }}, 
                                 <span class="text-primary">{{ appointment.appointment_time|time:"h:i A" }}</span>
                             </h5>
                             <h5><i class="fas fa-envelope"></i> {{ appointment.patient.email }}</h5>
@@ -52,13 +53,13 @@
                                 {% if appointment.patient.profile.medical_conditions %}
                                     <p class="text-muted mb-1">
                                         <i class="fas fa-notes-medical"></i> 
-                                        <strong>Medical Conditions:</strong> {{ appointment.patient.profile.medical_conditions }}
+                                        <strong>Bệnh lý:</strong> {{ appointment.patient.profile.medical_conditions }}
                                     </p>
                                 {% endif %}
                                 {% if appointment.patient.profile.allergies %}
                                     <p class="text-muted mb-0">
                                         <i class="fas fa-allergies"></i> 
-                                        <strong>Allergies:</strong> {{ appointment.patient.profile.allergies }}
+                                        <strong>Dị ứng:</strong> {{ appointment.patient.profile.allergies }}
                                     </p>
                                 {% endif %}
                             </div>
@@ -75,7 +76,7 @@
                         {% elif appointment.status == 'confirmed' %}Đã xác nhận
                         {% elif appointment.status == 'completed' %}Hoàn thành
                         {% elif appointment.status == 'cancelled' %}Đã hủy
-                        {% else %}{{ appointment.status|title }}
+                        {% else %}{{ appointment.status|status_label }}
                         {% endif %}
                     </span>
                     <div class="btn-group">
@@ -99,9 +100,9 @@
                         {% if appointment.status == 'confirmed' %}
                             <form method="post" action="{% url 'doctors:appointment-action' appointment.pk 'completed' %}" style="display: inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-sm bg-info-light mr-2 ml-2" onclick="return confirm('Bạn có chắc muốn đánh dấu cuộc hẹn này là hoàn thành không?')">
-                                    <i class="fas fa-check"></i> Mark as Completed
-                                </button>
+                                    <button type="submit" class="btn btn-sm bg-info-light mr-2 ml-2" onclick="return confirm('Bạn có chắc muốn đánh dấu cuộc hẹn này là hoàn thành không?')">
+                                    <i class="fas fa-check"></i> Đánh dấu hoàn thành
+                                    </button>
                             </form>
                         {% endif %}
                         {% if appointment.status == 'completed' %}

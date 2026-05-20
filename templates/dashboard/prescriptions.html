@@ -1,25 +1,26 @@
 {% extends "dashboard/base.html" %}
+{% load currency_filters %}
 
-{% block title %}Prescriptions{% endblock %}
+{% block title %}Đơn thuốc{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
-        <div class="col-sm-12">
-            <h3 class="page-title">Prescriptions</h3>
+            <div class="col-sm-12">
+            <h3 class="page-title">Đơn thuốc</h3>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'admin-dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Prescriptions</li>
+                <li class="breadcrumb-item"><a href="{% url 'admin-dashboard' %}">Bảng điều khiển</a></li>
+                <li class="breadcrumb-item active">Đơn thuốc</li>
             </ul>
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 
 <div class="row">
     <div class="col-sm-12">
-        <!-- Stats -->
+        <!-- Thống kê -->
         <div class="row">
             <div class="col-md-6 col-lg-6 col-xl-6">
                 <div class="card">
@@ -30,7 +31,7 @@
                             </span>
                             <div class="dash-count">
                                 <h3>{{ total_prescriptions }}</h3>
-                                <h6>Total Prescriptions</h6>
+                                <h6>Tổng số đơn thuốc</h6>
                             </div>
                         </div>
                     </div>
@@ -45,14 +46,14 @@
                             </span>
                             <div class="dash-count">
                                 <h3>{{ prescriptions_today }}</h3>
-                                <h6>Today's Prescriptions</h6>
+                                <h6>Đơn thuốc hôm nay</h6>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /Stats -->
+        <!-- /Thống kê -->
 
         <div class="card">
             <div class="card-body">
@@ -60,21 +61,21 @@
                     <table class="datatable table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Doctor</th>
-                                <th>Patient</th>
-                                <th>Diagnosis</th>
+                                <th>Ngày</th>
+                                <th>Bác sĩ</th>
+                                <th>Bệnh nhân</th>
+                                <th>Chẩn đoán</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for prescription in prescriptions %}
                             <tr>
-                                <td>{{ prescription.created_at|date:"d M Y" }}</td>
+                                <td>{{ prescription.created_at|date_vn }}</td>
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="{% url 'doctors:doctor-profile' prescription.doctor.username %}" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ prescription.doctor.profile.image }}" alt="Doctor Image">
+                                            <img class="avatar-img rounded-circle" src="{{ prescription.doctor.profile.image }}" alt="Ảnh bác sĩ">
                                         </a>
                                         <a href="{% url 'doctors:doctor-profile' prescription.doctor.username %}">Bác sĩ {{ prescription.doctor.get_full_name }}</a>
                                     </h2>
@@ -82,7 +83,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ prescription.patient.profile.image }}" alt="Patient Image">
+                                            <img class="avatar-img rounded-circle" src="{{ prescription.patient.profile.image }}" alt="Ảnh bệnh nhân">
                                         </a>
                                         <a href="#">{{ prescription.patient.get_full_name }}</a>
                                     </h2>
@@ -95,12 +96,12 @@
                                 </td>
                             </tr>
 
-                            <!-- Prescription Details Modal -->
+                            <!-- Modal chi tiết đơn thuốc -->
                             <div class="modal fade" id="prescription_{{ prescription.id }}" tabindex="-1" role="dialog">
                                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title">Prescription Details</h5>
+                                            <h5 class="modal-title">Chi tiết đơn thuốc</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -112,13 +113,13 @@
                                                         <div class="info-header">
                                                             <div class="row">
                                                                 <div class="col-md-6">
-                                                                    <h5>Doctor</h5>
+                                                                    <h5>Bác sĩ</h5>
                                                                     <p>Bác sĩ {{ prescription.doctor.get_full_name }}</p>
                                                                     <p>{{ prescription.doctor.profile.specialization }}</p>
                                                                 </div>
                                                                 <div class="col-md-6 text-right">
-                                                                    <h5>Date</h5>
-                                                                    <p>{{ prescription.created_at|date:"d M Y" }}</p>
+                                                                    <h5>Ngày</h5>
+                                                                    <p>{{ prescription.created_at|date_vn }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -126,17 +127,17 @@
                                                         <hr>
                                                         
                                                         <div class="info-body">
-                                                            <h5>Symptoms</h5>
+                                                            <h5>Triệu chứng</h5>
                                                             <p>{{ prescription.symptoms }}</p>
                                                             
-                                                            <h5>Diagnosis</h5>
+                                                            <h5>Chẩn đoán</h5>
                                                             <p>{{ prescription.diagnosis }}</p>
                                                             
-                                                            <h5>Medications & Instructions</h5>
+                                                            <h5>Thuốc & Hướng dẫn</h5>
                                                             <div>{{ prescription.medications|safe }}</div>
                                                             
                                                             {% if prescription.notes %}
-                                                                <h5>Additional Notes</h5>
+                                                                <h5>Ghi chú thêm</h5>
                                                                 <p>{{ prescription.notes }}</p>
                                                             {% endif %}
                                                         </div>
@@ -147,7 +148,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- /Prescription Details Modal -->
+                            <!-- /Modal chi tiết đơn thuốc -->
                             {% empty %}
                             <tr>
                                 <td colspan="5" class="text-center">Không tìm thấy đơn thuốc</td>

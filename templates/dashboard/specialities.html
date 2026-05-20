@@ -3,7 +3,7 @@
 {% block title %}Chuyên khoa{% endblock %}
 
 {% block content %}
-<!-- Add Modal -->
+<!-- Modal thêm -->
 <div class="modal fade" id="Add_Specialities_details" aria-hidden="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -42,9 +42,9 @@
         </div>
     </div>
 </div>
-<!-- /ADD Modal -->
+<!-- /Modal thêm -->
 
-<!-- Edit Modal -->
+<!-- Modal chỉnh sửa -->
 <div class="modal fade" id="edit_specialities_details" aria-hidden="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -60,7 +60,7 @@
                     <div class="row form-row">
                         <div class="col-12">
                             <div class="form-group">
-                                <label>Speciality Name</label>
+                                <label>Tên chuyên khoa</label>
                                 <input type="text" name="name" class="form-control edit-name" required>
                             </div>
                         </div>
@@ -92,9 +92,9 @@
         </div>
     </div>
 </div>
-<!-- /Edit Modal -->
+<!-- /Modal chỉnh sửa -->
 
-<!-- Delete Modal -->
+<!-- Modal xóa -->
 <div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -112,9 +112,9 @@
         </div>
     </div>
 </div>
-<!-- /Delete Modal -->
+<!-- /Modal xóa -->
 
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-7 col-auto">
@@ -152,7 +152,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="{{ speciality.get_absolute_url }}" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img" src="{{ speciality.image_url }}" alt="Speciality">
+                                            <img class="avatar-img" src="{{ speciality.image_url }}" alt="Chuyên khoa">
                                         </a>
                                         <a href="{{ speciality.get_absolute_url }}">{{ speciality.name }}</a>
                                     </h2>
@@ -162,7 +162,7 @@
                                 </td>
                                 <td>
                                     <span class="badge badge-pill {% if speciality.is_active %}bg-success-light{% else %}bg-danger-light{% endif %}">
-                                        {{ speciality.is_active|yesno:"Active,Inactive" }}
+                                        {{ speciality.is_active|yesno:"Hoạt động,Không hoạt động" }}
                                     </span>
                                 </td>
                                 <td class="text-right">
@@ -180,7 +180,7 @@
                                            data-toggle="modal" 
                                            href="#delete_modal"
                                            data-id="{{ speciality.id }}">
-                                            <i class="fe fe-trash"></i> Delete
+                                            <i class="fe fe-trash"></i> Xóa
                                         </a>
                                     </div>
                                 </td>

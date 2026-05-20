@@ -1,10 +1,11 @@
 {% extends "dashboard/base.html" %}
+{% load currency_filters %}
 
 {% block title %}Bác sĩ{% endblock %}
 
 {% block content %}
 
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
@@ -15,7 +16,7 @@
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -38,18 +39,18 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="{% url 'doctors:doctor-profile' doctor.username %}" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="{% url 'doctors:doctor-profile' doctor.username %}">Bác sĩ {{ doctor.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>{{ doctor.profile.specialization }}</td>
                                 <td>
-                                    {{ doctor.date_joined|date:"d M Y" }}
+                                    {{ doctor.date_joined|date_vn }}
                                     <br>
                                     <small>{{ doctor.date_joined|time:"h:i A" }}</small>
                                 </td>
-                                <td>₫{{ doctor.earned|default:"0" }}</td>
+                                <td>{{ doctor.earned|vnd }}</td>
                                 <td>
                                         <span class="badge badge-pill {% if doctor.is_active %}bg-success-light{% else %}bg-danger-light{% endif %}">
                                         {{ doctor.is_active|yesno:"Hoạt động,Không hoạt động" }}

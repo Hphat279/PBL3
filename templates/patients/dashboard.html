@@ -1,5 +1,6 @@
 {% extends 'includes/patient-sidebar.html' %}
 
+{% load currency_filters %}
 {% block page_name1 %}Bảng điều khiển{% endblock %}
 {% block page_name2 %}Bảng điều khiển{% endblock %}
 
@@ -48,7 +49,7 @@
                                         <td>
                                             <h2 class="table-avatar">
                                                     <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}" class="avatar avatar-sm mr-2">
-                                                        <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Doctor Image">
+                                                        <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Ảnh bác sĩ">
                                                     </a>
                                                     <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}">
                                                            Bác sĩ {{ appointment.doctor.get_full_name }}
@@ -59,19 +60,19 @@
                                             </h2>
                                         </td>
                                             <td>
-                                                {{ appointment.appointment_date }}
+                                                {{ appointment.appointment_date|date_vn }}
                                                 <span class="d-block text-info">
                                                     {{ appointment.appointment_time|time:"h:i A" }}
                                                 </span>
                                             </td>
-                                            <td>{{ appointment.booking_date|date:"d M Y" }}</td>
+                                            <td>{{ appointment.booking_date|date_vn }}</td>
                                             <td>
                                                 <span class="badge badge-pill 
                                                     {% if appointment.status == 'confirmed' %}bg-success-light{% endif %}
                                                     {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
                                                     {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
                                                     {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
-                                                    {{ appointment.status|title }}
+                                                    {{ appointment.status|status_label }}
                                                 </span>
                                             </td>
                                             <td>

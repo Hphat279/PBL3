@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    <!-- Breadcrumb -->
+    <!-- Thanh điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
             <div class="row align-items-center">
@@ -41,9 +41,9 @@
             </div>
         </div>
     </div>
-    <!-- /Breadcrumb -->
+        <!-- /Thanh điều hướng -->
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container-fluid">
             <div class="row">
@@ -59,22 +59,20 @@
                                 <div>
                                     <label class="custom_check">
                                         <input type="checkbox" name="gender" value="male" {% if 'male' in selected_genders %}checked{% endif %}>
-                                        <span class="checkmark"></span> Male Doctor
+                                        <span class="checkmark"></span> Nam
                                     </label>
                                 </div>
                                 <div>
                                     <label class="custom_check">
                                         <input type="checkbox" name="gender" value="female" {% if 'female' in selected_genders %}checked{% endif %}>
-                                        <span class="checkmark"></span> Female Doctor
+                                        <span class="checkmark"></span> Nữ
                                     </label>
                                 </div>
                             </div>
                             <script>
-                                // Localize gender labels
+                                // Ensure tooltips are initialized (kept for compatibility)
                                 document.addEventListener('DOMContentLoaded', function(){
-                                    document.querySelectorAll('.filter-widget .custom_check').forEach(function(el){
-                                        el.innerHTML = el.innerHTML.replace('Male Doctor', 'Nam').replace('Female Doctor', 'Nữ');
-                                    });
+                                    $('[data-toggle="tooltip"]').tooltip();
                                 });
                             </script>
                             <div class="filter-widget">
@@ -100,7 +98,7 @@
                 <div class="col-md-12 col-lg-8 col-xl-9">
                     {% if doctors %}
                         {% for doctor in doctors %}
-                            <!-- Doctor Widget -->
+                            <!-- Khung bác sĩ -->
                             <div class="card">
                                 <div class="card-body">
                                     <div class="doctor-widget">
@@ -144,7 +142,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- /Doctor Widget -->
+                            <!-- /Khung bác sĩ -->
                         {% endfor %}
 
                         {% if is_paginated %}
@@ -183,7 +181,7 @@
             </div>
         </div>
     </div>
-    <!-- /Page Content -->
+        <!-- /Nội dung trang -->
 
 {% endblock %}
 

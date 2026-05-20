@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load currency_filters %}
 
 {% block title %}Chi tiết cuộc hẹn{% endblock %}
 
@@ -10,7 +11,7 @@
             <div class="card-body">
                 <div class="booking-doc-info">
                     <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}" class="booking-doc-img">
-                        <img src="{{ appointment.doctor.profile.image }}" alt="Doctor Image">
+                        <img src="{{ appointment.doctor.profile.image }}" alt="Ảnh bác sĩ">
                     </a>
                     <div class="booking-info">
                         <h4><a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}">Bác sĩ {{ appointment.doctor.get_full_name }}</a></h4>
@@ -25,7 +26,7 @@
                 <div class="booking-summary">
                     <div class="booking-item-wrap">
                         <ul class="booking-date">
-                            <li>Ngày <span>{{ appointment.appointment_date }}</span></li>
+                            <li>Ngày <span>{{ appointment.appointment_date|date_vn }}</span></li>
                             <li>Giờ <span>{{ appointment.appointment_time|time:"h:i A" }}</span></li>
                         </ul>
                         <ul class="booking-fee">
@@ -41,7 +42,7 @@
                                             {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
                                             {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
                                             {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
-                                            {{ appointment.status|title }}
+                                            {{ appointment.status|status_label }}
                                         </span>
                                     </span>
                                 </li>

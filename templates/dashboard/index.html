@@ -1,20 +1,21 @@
 {% extends "dashboard/base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Bảng điều khiển{% endblock %}
+{% load currency_filters %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
-            <h3 class="page-title">Dashboard</h3>
+            <h3 class="page-title">Bảng điều khiển</h3>
             <ul class="breadcrumb">
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item active">Bảng điều khiển</li>
             </ul>
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 <div class="row">
     <div class="col-xl-3 col-sm-6 col-12">
         <div class="card">
@@ -28,7 +29,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Doctors</h6>
+                    <h6 class="text-muted">Bác sĩ</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-primary w-50"></div>
                     </div>
@@ -48,7 +49,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Patients</h6>
+                    <h6 class="text-muted">Bệnh nhân</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-success w-50"></div>
                     </div>
@@ -68,7 +69,7 @@
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Appointment</h6>
+                    <h6 class="text-muted">Lượt khám</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-danger w-50"></div>
                     </div>
@@ -84,11 +85,11 @@
                         <i class="fe fe-folder"></i>
                     </span>
                     <div class="dash-count">
-                        <h3>₫{{ total_revenue }}</h3>
+                        <h3>{{ total_revenue|vnd }}</h3>
                     </div>
                 </div>
                 <div class="dash-widget-info">
-                    <h6 class="text-muted">Revenue</h6>
+                    <h6 class="text-muted">Doanh thu</h6>
                     <div class="progress progress-sm">
                         <div class="progress-bar bg-warning w-50"></div>
                     </div>
@@ -100,40 +101,40 @@
 <div class="row">
     <div class="col-md-12 col-lg-6">
     
-        <!-- Sales Chart -->
+        <!-- Biểu đồ doanh số -->
         <div class="card card-chart">
-            <div class="card-header">
-                <h4 class="card-title">Revenue</h4>
+                <div class="card-header">
+                <h4 class="card-title">Doanh thu</h4>
             </div>
             <div class="card-body">
                 <div id="morrisArea"></div>
             </div>
         </div>
-        <!-- /Sales Chart -->
+        <!-- /Biểu đồ doanh số -->
         
     </div>
     <div class="col-md-12 col-lg-6">
     
-        <!-- Invoice Chart -->
+        <!-- Biểu đồ hóa đơn -->
         <div class="card card-chart">
-            <div class="card-header">
-                <h4 class="card-title">Status</h4>
+                <div class="card-header">
+                <h4 class="card-title">Trạng thái</h4>
             </div>
             <div class="card-body">
                 <div id="morrisLine"></div>
             </div>
         </div>
-        <!-- /Invoice Chart -->
+        <!-- /Biểu đồ hóa đơn -->
         
     </div>	
 </div>
 <div class="row">
     <div class="col-md-6 d-flex">
     
-        <!-- Recent Orders -->
+        <!-- Danh sách gần đây -->
         <div class="card card-table flex-fill">
             <div class="card-header">
-                <h4 class="card-title">Doctors List</h4>
+                <h4 class="card-title">Danh sách bác sĩ</h4>
                 <a href="{% url 'admin-doctors' %}" class="btn btn-primary">Xem tất cả</a>
             </div>
             <div class="card-body">
@@ -141,10 +142,10 @@
                     <table class="table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Speciality</th>
-                                <th>Earned</th>
-                                <th>Reviews</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Đã kiếm</th>
+                                <th>Đánh giá</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -153,13 +154,13 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ doctor.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="#">Bác sĩ {{ doctor.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>{{ doctor.profile.specialization }}</td>
-                                <td>₫{{ doctor.earned }}</td>
+                                <td>{{ doctor.earned|vnd }}</td>
                                 <td>
                                     <i class="fe fe-star text-warning"></i>
                                     <span>({{ doctor.reviews_count }})</span>
@@ -176,10 +177,10 @@
     </div>
     <div class="col-md-6 d-flex">
     
-        <!-- Feed Activity -->
+        <!-- Hoạt động gần đây -->
         <div class="card  card-table flex-fill">
             <div class="card-header">
-                <h4 class="card-title">Patients List</h4>
+                <h4 class="card-title">Danh sách bệnh nhân</h4>
                 <a href="{% url 'admin-patients' %}" class="btn btn-primary">Xem tất cả</a>
             </div>
             <div class="card-body">
@@ -187,10 +188,10 @@
                     <table class="table table-hover table-center mb-0">
                         <thead>
                             <tr>													
-                                <th>Patient Name</th>
-                                <th>Phone</th>
-                                <th>Last Visit</th>
-                                <th>Paid</th>													
+                                <th>Tên bệnh nhân</th>
+                                <th>Điện thoại</th>
+                                <th>Lần khám cuối</th>
+                                <th>Đã thanh toán</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,14 +200,14 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="#">{{ patient.get_full_name }}</a>
                                     </h2>
                                 </td>
-                                <td>{{ patient.profile.phone|default:"N/A" }}</td>
-                                <td>{{ patient.last_visit|date:"d M Y"|default:"No visits" }}</td>
-                                <td class="text-right">₫{{ patient.total_paid }}</td>
+                                <td>{{ patient.profile.phone|default:"Chưa xác định" }}</td>
+                                <td>{{ patient.last_visit|date_vn|default:"Chưa có" }}</td>
+                                <td class="text-right">{{ patient.total_paid|vnd }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -221,22 +222,22 @@
 <div class="row">
     <div class="col-md-12">
     
-        <!-- Recent Orders -->
+        <!-- Danh sách gần đây -->
         <div class="card card-table">
             <div class="card-header">
-                <h4 class="card-title">Appointment List</h4>
+                <h4 class="card-title">Danh sách lịch khám</h4>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Speciality</th>
-                                <th>Patient Name</th>
-                                <th>Apointment Time</th>
-                                <th>Status</th>
-                                <th class="text-right">Amount</th>
+                                <th>Tên bác sĩ</th>
+                                <th>Chuyên khoa</th>
+                                <th>Tên bệnh nhân</th>
+                                <th>Thời gian khám</th>
+                                <th>Trạng thái</th>
+                                <th class="text-right">Số tiền</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -245,7 +246,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Doctor Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Ảnh bác sĩ">
                                         </a>
                                         <a href="#">Bác sĩ {{ appointment.doctor.get_full_name }}</a>
                                     </h2>
@@ -254,18 +255,18 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Patient Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Ảnh bệnh nhân">
                                         </a>
                                         <a href="#">{{ appointment.patient.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>
-                                    {{ appointment.appointment_date|date:"d M Y" }}
+                                    {{ appointment.appointment_date|date_vn }}
                                     <span class="text-primary d-block">{{ appointment.appointment_time|time:"h:i A" }}</span>
                                 </td>
                                 <td>
                                     <span class="badge badge-pill bg-{{ appointment.status }}-light">
-                                        {{ appointment.status|title }}
+                                        {{ appointment.status|status_label }}
                                     </span>
                                 </td>
                                 <td class="text-right">

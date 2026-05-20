@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -559,6 +559,27 @@ class MyPatientsView(DoctorRequiredMixin, ListView):
                 ),
             )
             patient_stats[patient.id] = stats
+            # Compute age from DOB for display (integer years)
+            if getattr(patient, 'profile', None) and patient.profile.dob:
+                today = date.today()
+                patient.profile.age = (
+                    today.year
+                    - patient.profile.dob.year
+                    - (
+                        (today.month, today.day)
+                        < (patient.profile.dob.month, patient.profile.dob.day)
+                    )
+                )
+            else:
+                if getattr(patient, 'profile', None):
+                    patient.profile.age = None
+            # Attach last visit (most recent appointment) to patient for template
+            last_visit = (
+                Booking.objects.filter(doctor=self.request.user, patient=patient)
+                .order_by("-appointment_date", "-appointment_time")
+                .first()
+            )
+            patient.last_visit = last_visit
         context["patient_stats"] = patient_stats
         return context
 

@@ -6,7 +6,7 @@
 {% block title %}Đặt lịch khám với Bác sĩ {{ doctor.get_full_name }}{% endblock %}
 
 {% block content %}
-    <!-- Breadcrumb -->
+    <!-- Thanh điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
             <div class="row align-items-center">
@@ -22,14 +22,14 @@
             </div>
         </div>
     </div>
-    <!-- /Breadcrumb -->
+    <!-- /Thanh điều hướng -->
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <!-- Doctor Info -->
+                    <!-- Thông tin bác sĩ -->
                     <div class="card">
                         <div class="card-body">
                             <div class="booking-doc-info">
@@ -58,15 +58,15 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /Doctor Info -->
+                    <!-- /Thông tin bác sĩ -->
 
-                    <!-- Schedule Widget -->
+                    <!-- Widget lịch -->
                     <div class="card booking-schedule schedule-widget">
-                        <!-- Schedule Header -->
+                        <!-- Tiêu đề lịch -->
                         <div class="schedule-header">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <!-- Day Slot -->
+                                    <!-- Khung ngày -->
                                     <div class="day-slot">
                                         <ul>
                                             {% for date in week_dates %}
@@ -80,17 +80,17 @@
                                             {% endfor %}
                                         </ul>
                                     </div>
-                                    <!-- /Day Slot -->
+                                    <!-- /Khung ngày -->
                                 </div>
                             </div>
                         </div>
-                        <!-- /Schedule Header -->
+                        <!-- /Tiêu đề lịch -->
 
-                        <!-- Schedule Content -->
+                        <!-- Nội dung lịch -->
                         <div class="schedule-cont">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <!-- Time Slot -->
+                                    <!-- Khung giờ -->
                                     <div class="time-slot">
                                         <ul class="clearfix">
                                             {% for date in week_dates %}
@@ -110,15 +110,15 @@
                                             {% endfor %}
                                         </ul>
                                     </div>
-                                    <!-- /Time Slot -->
+                                    <!-- /Khung giờ -->
                                 </div>
                             </div>
                         </div>
-                        <!-- /Schedule Content -->
+                        <!-- /Nội dung lịch -->
                     </div>
-                    <!-- /Schedule Widget -->
+                    <!-- /Widget lịch -->
 
-                    <!-- Submit Section -->
+                    <!-- Phần gửi -->
                     <form method="post" action="{% url 'bookings:create-booking' doctor.username %}" id="booking-form">
                         {% csrf_token %}
                         <input type="hidden" name="selected_date" id="selected_date">
@@ -127,7 +127,7 @@
                             <button type="submit" class="btn btn-primary submit-btn" disabled>Proceed to Book</button>
                         </div>
                     </form>
-                    <!-- /Submit Section -->
+                    <!-- /Phần gửi -->
                 </div>
             </div>
         </div>

@@ -4,10 +4,10 @@
 
 {% block scripts %}
 
-    <!-- Circle Progress JS -->
+    <!-- JS vòng tiến trình -->
     <script src="{% static 'assets/js/circle-progress.min.js' %}"></script>
 
-    <!-- Sticky Sidebar JS -->
+    <!-- JS thanh bên cố định -->
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
 
@@ -15,7 +15,7 @@
 
 {% block content %}
 
-    <!-- Breadcrumb -->
+    <!-- Thanh điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
             <div class="row align-items-center">
@@ -31,21 +31,21 @@
             </div>
         </div>
     </div>
-    <!-- /Breadcrumb -->
+    <!-- /Thanh điều hướng -->
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container-fluid">
 
             <div class="row">
                 <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
 
-                    <!-- Profile Sidebar -->
+                    <!-- Sidebar hồ sơ -->
                     <div class="profile-sidebar">
                         <div class="widget-profile pro-widget-content">
                             <div class="profile-info-widget">
                                 <a href="#" class="booking-doc-img">
-                                    <img src="{{ user.profile.image }}" alt="User Image">
+                                    <img src="{{ user.profile.image }}" alt="Ảnh người dùng">
                                 </a>
                                 <div class="profile-det-info">
                                     <h3>Bác sĩ {{ user.get_full_name }}</h3>
@@ -119,7 +119,7 @@
                             </nav>
                         </div>
                     </div>
-                    <!-- /Profile Sidebar -->
+                    <!-- /Sidebar hồ sơ -->
 
                 </div>
 
@@ -133,6 +133,6 @@
         </div>
 
     </div>
-    <!-- /Page Content -->
+    <!-- /Nội dung trang -->
 
 {% endblock %}

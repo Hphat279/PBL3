@@ -1,19 +1,19 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 
-{% block title %}Appointment Reports{% endblock %}
+{% block title %}Báo cáo lượt khám{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <div class="row">
-        <div class="col-sm-12">
-            <h3 class="page-title">Appointment Reports</h3>
-        </div>
+            <div class="col-sm-12">
+                <h3 class="page-title">Báo cáo lượt khám</h3>
+            </div>
     </div>
 </div>
 
 <div class="row">
-    <!-- Summary Cards -->
+    <!-- Thẻ tóm tắt -->
     <div class="col-xl-4 col-sm-6 col-12">
         <div class="card">
             <div class="card-body">
@@ -32,7 +32,7 @@
                 <div class="dash-widget-header">
                     <div class="dash-count">
                         <h3>{{ completed_appointments }}</h3>
-                        <h6>Completed</h6>
+                        <h6>Hoàn thành</h6>
                     </div>
                 </div>
             </div>
@@ -44,7 +44,7 @@
                 <div class="dash-widget-header">
                     <div class="dash-count">
                         <h3>{{ cancelled_appointments }}</h3>
-                        <h6>Cancelled</h6>
+                        <h6>Đã huỷ</h6>
                     </div>
                 </div>
             </div>
@@ -53,11 +53,11 @@
 </div>
 
 <div class="row">
-    <!-- Monthly Trend Chart -->
+    <!-- Biểu đồ xu hướng theo tháng -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Monthly Appointment Trends</h4>
+                <h4 class="card-title">Xu hướng lượt khám theo tháng</h4>
                 <div style="width: 100%; height: 100%;">
                     <canvas id="appointmentTrends"></canvas>
                 </div>
@@ -65,11 +65,11 @@
         </div>
     </div>
     
-    <!-- Status Distribution -->
+    <!-- Phân bố trạng thái -->
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Status Distribution</h4>
+                <h4 class="card-title">Phân bố trạng thái</h4>
                 <div style="width: 50%; height: 20%;">
                     <canvas id="statusChart"></canvas>
                 </div>
@@ -77,19 +77,19 @@
         </div>
     </div>
     
-    <!-- Doctor Performance -->
+    <!-- Hiệu suất bác sĩ -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Doctor Performance</h4>
+                <h4 class="card-title">Hiệu suất bác sĩ</h4>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Doctor</th>
-                                <th>Total</th>
-                                <th>Completed</th>
-                                <th>Cancelled</th>
+                                <th>Bác sĩ</th>
+                                <th>Tổng</th>
+                                <th>Hoàn thành</th>
+                                <th>Đã huỷ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,26 +112,26 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Monthly Trends Chart
+    // Biểu đồ xu hướng theo tháng
     const monthlyData = JSON.parse('{{ monthly_stats|safe }}');
     console.log(monthlyData);
     new Chart(document.getElementById('appointmentTrends'), {
         type: 'line',
-        data: {
+                data: {
             labels: monthlyData.map(d => {
                 const date = new Date(d.month);
-                return date.toLocaleDateString('default', { month: 'long', year: 'numeric' });
+                return date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
             }),
             datasets: [{
-                label: 'Total',
+                label: 'Tổng',
                 data: monthlyData.map(d => d.total),
                 borderColor: '#20c0f3'
             }, {
-                label: 'Completed',
+                label: 'Hoàn thành',
                 data: monthlyData.map(d => d.completed),
                 borderColor: '#28a745'
             }, {
-                label: 'Cancelled',
+                label: 'Đã huỷ',
                 data: monthlyData.map(d => d.cancelled),
                 borderColor: '#dc3545'
             }]
@@ -154,7 +154,10 @@
     new Chart(document.getElementById('statusChart'), {
         type: 'pie',
         data: {
-            labels: statusData.map(d => d.status.charAt(0).toUpperCase() + d.status.slice(1)),
+            labels: statusData.map(function(d){
+                const map = {confirmed: 'Đã xác nhận', pending: 'Đang chờ', cancelled: 'Đã huỷ', completed: 'Hoàn thành'};
+                return map[d.status] || d.status;
+            }),
             datasets: [{
                 data: statusData.map(d => d.count),
                 backgroundColor: ['#20c0f3', '#28a745', '#dc3545', '#ffc107']

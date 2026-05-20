@@ -44,6 +44,10 @@ class  User(AbstractUser):
     def __unicode__(self):
         return self.username
 
+    class Meta:
+        verbose_name = "Người dùng"
+        verbose_name_plural = "Người dùng"
+
     def get_full_name(self):
         """
         Return the first_name plus the last_name, with a space in between.
@@ -99,7 +103,7 @@ class Profile(models.Model):
     specialization = models.CharField(max_length=255, blank=True, null=True)
     gender = models.CharField(
         max_length=10,
-        choices=[("male", "Male"), ("female", "Female"), ("other", "Other")],
+        choices=[("male", "Nam"), ("female", "Nữ"), ("other", "Khác")],
         blank=True,
     )
     address = models.TextField(blank=True, null=True)
@@ -131,6 +135,10 @@ class Profile(models.Model):
 
     def __str__(self):
         return "Profile of {}".format(self.user.username)
+
+    class Meta:
+        verbose_name = "Hồ sơ"
+        verbose_name_plural = "Hồ sơ"
 
     @property
     def image(self):

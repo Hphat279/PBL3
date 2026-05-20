@@ -14,17 +14,17 @@
                 {% endfor %}
             {% endif %}
 
-            <!-- Profile Settings Form -->
+            <!-- Form cài đặt hồ sơ -->
             <form action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="row form-row">
-                    <!-- Profile Photo -->
+                    <!-- Ảnh hồ sơ -->
                     <div class="col-12 col-md-12">
                         <div class="form-group">
                             <div class="change-avatar">
                                 <div class="profile-img">
-                                    <img src="{{ user.profile.image }}" alt="User Image">
+                                    <img src="{{ user.profile.image }}" alt="Ảnh người dùng">
                                 </div>
                                 <div class="upload-img">
                                         <div class="change-photo-btn">
@@ -37,7 +37,7 @@
                         </div>
                     </div>
 
-                    <!-- Basic Information -->
+                    <!-- Thông tin cơ bản -->
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -130,7 +130,7 @@
                         </div>
                     </div>
 
-                    <!-- Medical Information -->
+                    <!-- Thông tin y tế -->
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -157,7 +157,7 @@
                         </div>
                     </div>
 
-                    <!-- Address Information -->
+                    <!-- Thông tin địa chỉ -->
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
@@ -210,7 +210,7 @@
                     <button type="submit" class="btn btn-primary submit-btn">Lưu thay đổi</button>
                 </div>
             </form>
-            <!-- /Profile Settings Form -->
+            <!-- /Form cài đặt hồ sơ -->
         </div>
     </div>
 {% endblock %}

@@ -10,21 +10,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <title>{% block title %}{% endblock %} - PBL3</title>
 
-    <!-- Favicons -->
+    <!-- Biểu tượng trang (favicon) -->
     <link type="image/x-icon" href="{% static 'assets/img/favicon.png' %}" rel="icon">
 
-    <!-- Bootstrap CSS -->
+    <!-- CSS Bootstrap -->
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
 
-    <!-- Fontawesome CSS -->
+    <!-- CSS Fontawesome -->
     <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-    <!-- Main CSS -->
+    <!-- CSS chính -->
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- HTML5 shim và Respond.js (hỗ trợ IE8 cho HTML5 và media queries) -->
     <!--[if lt IE 9]>
     <script src="{% static 'assets/js/html5shiv.min.js' %}"></script>
     <script src="{% static 'assets/js/respond.min.js' %}"></script>
@@ -49,7 +49,7 @@
 </head>
 <body class="account-page" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
-<!-- Main Wrapper -->
+<!-- Vùng chính -->
 <div class="main-wrapper">
 
     {% include 'includes/navbar.html' %}
@@ -72,19 +72,19 @@
     {% include 'includes/footer.html' %}
 
 </div>
-<!-- /Main Wrapper -->
+<!-- /Vùng chính -->
 
 <!-- jQuery -->
 <script src="{% static 'assets/js/jquery.min.js' %}"></script>
 
-<!-- Bootstrap Core JS -->
+<!-- JS Bootstrap core -->
 <script src="{% static 'assets/js/popper.min.js' %}"></script>
 <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
 
-<!-- Slick JS -->
+<!-- JS Slick (thư viện slider) -->
 <script src="{% static 'assets/js/slick.js' %}"></script>
 
-<!-- Custom JS -->
+<!-- JS tuỳ chỉnh -->
 <script src="{% static 'assets/js/script.js' %}"></script>
 <script defer type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 

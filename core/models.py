@@ -11,8 +11,8 @@ class Speciality(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Speciality"
-        verbose_name_plural = "Specialities"
+        verbose_name = "Chuyên khoa"
+        verbose_name_plural = "Chuyên khoa"
         ordering = ["name"]
 
     def __str__(self):
@@ -65,6 +65,8 @@ class Review(models.Model):
     class Meta:
         ordering = ["-created_at"]
         unique_together = ["patient", "booking"]
+        verbose_name = "Đánh giá"
+        verbose_name_plural = "Đánh giá"
 
     def __str__(self):
         return f"Review by {self.patient} for Dr. {self.doctor}"

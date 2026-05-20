@@ -1,9 +1,10 @@
 {% extends "dashboard/base.html" %}
+{% load currency_filters %}
 
 {% block title %}Đánh giá{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
@@ -15,7 +16,7 @@
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 
 <div class="row">
     <div class="col-sm-12">
@@ -25,12 +26,12 @@
                     <table class="datatable table table-hover table-center mb-0">
                         <thead>
                             <tr>
-                                <th>Patient</th>
-                                <th>Doctor</th>
-                                <th>Rating</th>
-                                <th>Description</th>
-                                <th>Date</th>
-                                <th>Hành động</th>
+                                <th>Bệnh nhân</th>
+                                    <th>Bác sĩ</th>
+                                    <th>Đánh giá</th>
+                                    <th>Mô tả</th>
+                                    <th>Ngày</th>
+                                    <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,7 +40,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ review.patient.profile.image }}" alt="Patient Image">
+                                            <img class="avatar-img rounded-circle" src="{{ review.patient.profile.image }}" alt="Ảnh bệnh nhân">
                                         </a>
                                         <a href="#">{{ review.patient.get_full_name }}</a>
                                     </h2>
@@ -47,7 +48,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="{% url 'doctors:doctor-profile' review.doctor.username %}" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ review.doctor.profile.image }}" alt="Doctor Image">
+                                            <img class="avatar-img rounded-circle" src="{{ review.doctor.profile.image }}" alt="Ảnh bác sĩ">
                                         </a>
                                         <a href="{% url 'doctors:doctor-profile' review.doctor.username %}">Bác sĩ {{ review.doctor.get_full_name }}</a>
                                     </h2>
@@ -61,7 +62,7 @@
                                     </div>
                                 </td>
                                 <td>{{ review.review|truncatechars:100 }}</td>
-                                <td>{{ review.created_at|date:"d M Y" }}</td>
+                                <td>{{ review.created_at|date_vn }}</td>
                                 <td>
                                     <button type="button" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#review_{{ review.id }}">
                                         <i class="far fa-eye"></i> Xem
@@ -69,7 +70,7 @@
                                 </td>
                             </tr>
 
-                            <!-- Review Details Modal -->
+                            <!-- Modal chi tiết đánh giá -->
                             <div class="modal fade" id="review_{{ review.id }}" tabindex="-1" role="dialog">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
@@ -93,7 +94,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6 text-right">
-                                                                    <span class="review-date">{{ review.created_at|date:"d M Y" }}</span>
+                                                                    <span class="review-date">{{ review.created_at|date_vn }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -105,7 +106,7 @@
                                                             <div class="review-meta mt-3">
                                                                 <p><strong>Bệnh nhân:</strong> {{ review.patient.get_full_name }}</p>
                                                                 <p><strong>Bác sĩ:</strong> Bác sĩ {{ review.doctor.get_full_name }}</p>
-                                                                <p><strong>Ngày khám:</strong> {{ review.booking.appointment_date }}</p>
+                                                                <p><strong>Ngày khám:</strong> {{ review.booking.appointment_date|date_vn }}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -115,7 +116,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- /Review Details Modal -->
+                            <!-- /Modal chi tiết đánh giá -->
                             {% empty %}
                             <tr>
                                 <td colspan="6" class="text-center">Không tìm thấy đánh giá</td>

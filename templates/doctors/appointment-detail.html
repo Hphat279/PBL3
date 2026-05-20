@@ -8,13 +8,13 @@
 <div class="content">
     <div class="container">
         <div class="row">
-            <!-- Patient Info Card -->
+            <!-- Thẻ thông tin bệnh nhân -->
             <div class="col-md-7">
                 <div class="card">
                     <div class="card-body">
                         <div class="booking-doc-info">
                             <a href="#" class="booking-doc-img">
-                                <img src="{{ appointment.patient.profile.image }}" alt="Patient Image">
+                                <img src="{{ appointment.patient.profile.image }}" alt="Ảnh bệnh nhân">
                             </a>
                             <div class="booking-info">
                                 <h4>{{ appointment.patient.get_full_name }}</h4>
@@ -29,7 +29,7 @@
                             </div>
                         </div>
 
-                        <!-- Patient Medical Info -->
+                        <!-- Thông tin y tế bệnh nhân -->
                         <div class="patient-info mt-4">
                             <div class="row">
                                 <div class="col-md-6">
@@ -41,7 +41,7 @@
                                 <div class="col-md-6">
                                     <div class="info-block">
                                         <h5><i class="fas fa-venus-mars"></i> Giới tính</h5>
-                                        <p>{{ appointment.patient.profile.gender|title|default:"Chưa xác định" }}</p>
+                                        <p>{{ appointment.patient.profile.get_gender_display|default:"Chưa xác định" }}</p>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -62,14 +62,14 @@
                                 <div class="medical-info mt-4">
                                     {% if appointment.patient.profile.medical_conditions %}
                                         <div class="info-block">
-                                            <h5><i class="fas fa-notes-medical"></i> Medical Conditions</h5>
+                                            <h5><i class="fas fa-notes-medical"></i> Bệnh lý</h5>
                                             <p>{{ appointment.patient.profile.medical_conditions }}</p>
                                         </div>
                                     {% endif %}
                                     
                                     {% if appointment.patient.profile.allergies %}
                                         <div class="info-block">
-                                            <h5><i class="fas fa-allergies"></i> Allergies</h5>
+                                            <h5><i class="fas fa-allergies"></i> Dị ứng</h5>
                                             <p>{{ appointment.patient.profile.allergies }}</p>
                                         </div>
                                     {% endif %}
@@ -80,7 +80,7 @@
                 </div>
             </div>
 
-            <!-- Appointment Info Card -->
+            <!-- Thẻ thông tin cuộc hẹn -->
             <div class="col-md-5">
                 <div class="card">
                     <div class="card-header">
@@ -90,7 +90,7 @@
                         <div class="info-block">
                             <h5><i class="far fa-calendar-alt"></i> Ngày &amp; Giờ</h5>
                             <p>
-                                {{ appointment.appointment_date }}<br>
+                                {{ appointment.appointment_date|date_vn }}<br>
                                 <span class="text-primary">{{ appointment.appointment_time|time:"h:i A" }}</span>
                             </p>
                         </div>
@@ -102,7 +102,7 @@
                                 {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
                                 {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
                                 {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
-                                {{ appointment.status|title }}
+                                {{ appointment.status|status_label }}
                             </span>
                         </div>
 
@@ -141,7 +141,7 @@
                     </div>
                 </div>
 
-                <!-- Patient History Card -->
+                <!-- Thẻ lịch sử bệnh nhân -->
                 {% if patient_history %}
                     <div class="card mt-4">
                         <div class="card-header">
@@ -160,7 +160,7 @@
                                     <tbody>
                                         {% for visit in patient_history %}
                                         <tr>
-                                            <td>{{ visit.appointment_date }}</td>
+                                            <td>{{ visit.appointment_date|date_vn }}</td>
                                             <td>{{ visit.appointment_time|time:"h:i A" }}</td>
                                             <td>
                                                 <span class="badge badge-pill 
@@ -168,11 +168,7 @@
                                                     {% if visit.status == 'pending' %}bg-warning-light{% endif %}
                                                     {% if visit.status == 'cancelled' %}bg-danger-light{% endif %}
                                                     {% if visit.status == 'completed' %}bg-info-light{% endif %}">
-                                                    {% if visit.status == 'pending' %}Đang chờ
-                                                    {% elif visit.status == 'confirmed' %}Đã xác nhận
-                                                    {% elif visit.status == 'completed' %}Hoàn thành
-                                                    {% elif visit.status == 'cancelled' %}Đã hủy
-                                                    {% else %}{{ visit.status|title }}{% endif %}
+                                                    {{ visit.status|status_label }}
                                                 </span>
                                             </td>
                                         </tr>

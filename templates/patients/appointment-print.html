@@ -35,21 +35,21 @@
                     <td>{{ appointment.patient.get_full_name }}</td>
                 </tr>
                 <tr>
-                    <td><strong>Ngày khám:</strong></td>
-                    <td>{{ appointment.appointment_date }}</td>
-                </tr>
-                <tr>
                     <td><strong>Giờ khám:</strong></td>
                     <td>{{ appointment.appointment_time|time:"h:i A" }}</td>
                 </tr>
                 <tr>
-                    <td><strong>Ngày đặt:</strong></td>
-                    <td>{{ appointment.booking_date }}</td>
+                    <td><strong>Ngày khám:</strong></td>
+                    <td>{{ appointment.appointment_date|date_vn }}</td>
                 </tr>
-                <tr>
-                    <td><strong>Trạng thái:</strong></td>
-                    <td>{{ appointment.status|title }}</td>
-                </tr>
+                                <tr>
+                                    <td><strong>Ngày đặt:</strong></td>
+                                    <td>{{ appointment.booking_date|date_vn }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trạng thái:</strong></td>
+                                    <td>{{ appointment.status|status_label }}</td>
+                                </tr>
                 <tr>
                     <td><strong>Phí khám:</strong></td>
                     <td>{{ appointment.doctor.profile.price_per_consultation|vnd }}</td>

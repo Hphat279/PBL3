@@ -35,6 +35,8 @@ class Booking(models.Model):
         ordering = ["-appointment_date", "-appointment_time"]
         # Ensure no double bookings for same doctor at same time
         unique_together = ["doctor", "appointment_date", "appointment_time"]
+        verbose_name = "Lịch khám"
+        verbose_name_plural = "Lịch khám"
 
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.get_full_name()} on {self.appointment_date} at {self.appointment_time}"
@@ -66,3 +68,5 @@ class Prescription(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Đơn thuốc"
+        verbose_name_plural = "Đơn thuốc"

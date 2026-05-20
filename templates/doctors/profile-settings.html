@@ -45,23 +45,23 @@
 
     {{ block.super }}
 
-    <!-- Sticky Sidebar JS -->
+    <!-- JS thanh bên cố định -->
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
 
-    <!-- Select2 JS -->
+    <!-- JS Select2 -->
     <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
 
-    <!-- Dropzone JS -->
+    <!-- JS Dropzone -->
     <script src="{% static 'assets/plugins/dropzone/dropzone.min.js' %}"></script>
 
-    <!-- Bootstrap Tagsinput JS -->
+    <!-- JS Bootstrap Tagsinput -->
     <script src="{% static 'assets/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.js' %}"></script>
 
-    <!-- Profile Settings JS -->
+    <!-- JS cài đặt hồ sơ -->
     <script src="{% static 'assets/js/profile-settings.js' %}"></script>
 
-    <!-- Custom JS -->
+    <!-- JS tuỳ chỉnh -->
     <script src="{% static 'assets/js/script.js' %}"></script>
 
 {% endblock %}
@@ -71,7 +71,7 @@
 
 {% block main %}
 
-    <!-- Basic Information -->
+    <!-- Thông tin cơ bản -->
     <div class="card">
         <div class="card-body" id="basic-profile-data">
             <h4 class="card-title">Thông tin cơ bản</h4>
@@ -81,7 +81,7 @@
                         <div class="change-avatar">
                             <div class="profile-img">
                                 {% if user.profile.avatar %}
-                                    <img src="{{ user.profile.avatar.url }}" alt="User Image">
+                                    <img src="{{ user.profile.avatar.url }}" alt="Ảnh người dùng">
                                 {% endif %}
                             </div>
                             <div class="upload-img">
@@ -124,7 +124,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Phone Number</label>
+                        <label>Số điện thoại</label>
                         <input type="text" class="form-control" name="phone" value="{{ user.profile.phone|default:'' }}">
                     </div>
                 </div>
@@ -159,9 +159,9 @@
             </button>
         </div>
     </div>
-    <!-- /Basic Information -->
+    <!-- /Thông tin cơ bản -->
 
-    <!-- About Me -->
+    <!-- Giới thiệu về tôi -->
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Về tôi</h4>
@@ -171,9 +171,9 @@
             </div>
         </div>
     </div>
-    <!-- /About Me -->
+    <!-- /Giới thiệu về tôi -->
 
-    <!-- Clinic Info -->
+    <!-- Thông tin phòng khám -->
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Thông tin phòng khám</h4>
@@ -197,13 +197,13 @@
                     </div>
                     <div class="upload-wrap">
                         <div class="upload-images">
-                            <img src="{% static 'assets/img/features/feature-01.jpg' %}" alt="Upload Image">
+                            <img src="{% static 'assets/img/features/feature-01.jpg' %}" alt="Tải ảnh lên">
                             <a href="javascript:void(0);" class="btn btn-icon btn-danger btn-sm">
                                 <i class="far fa-trash-alt"></i>
                             </a>
                         </div>
                         <div class="upload-images">
-                            <img src="{% static 'assets/img/features/feature-02.jpg' %}" alt="Upload Image">
+                            <img src="{% static 'assets/img/features/feature-02.jpg' %}" alt="Tải ảnh lên">
                             <a href="javascript:void(0);" class="btn btn-icon btn-danger btn-sm">
                                 <i class="far fa-trash-alt"></i>
                             </a>
@@ -213,9 +213,9 @@
             </div>
         </div>
     </div>
-    <!-- /Clinic Info -->
+    <!-- /Thông tin phòng khám -->
 
-    <!-- Pricing -->
+    <!-- Giá cả -->
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Giá khám</h4>
@@ -246,22 +246,22 @@
 
         </div>
     </div>
-    <!-- /Pricing -->
+    <!-- /Giá cả -->
 
-    <!-- Services and Specialization -->
+    <!-- Dịch vụ và chuyên khoa -->
     <div class="card services-card">
         <div class="card-body" id="specialization-data">
             <h4 class="card-title">Services and Specialization</h4>
             {#            <div class="form-group">#}
             {#                <label>Services</label>#}
-            {#                <input type="text" data-role="tagsinput" class="input-tags form-control" placeholder="Enter Services"#}
+            {#                <input type="text" data-role="tagsinput" class="input-tags form-control" placeholder="Nhập dịch vụ"#}
             {#                       name="services" value="Tooth cleaning " id="services">#}
             {#                <small class="form-text text-muted">Note : Type & Press enter to add new services</small>#}
             {#            </div>#}
             <div class="form-group mb-0">
                 <label>Specialization </label>
                 <input class="input-tags form-control" type="text" data-role="tagsinput"
-                       placeholder="Enter Specialization" name="specialist" value="{{ user.profile.specialization|default_if_none:'' }}"
+                       placeholder="Nhập chuyên khoa" name="specialist" value="{{ user.profile.specialization|default_if_none:'' }}"
                        id="specialist">
                 <small class="form-text text-muted">Note : Type & Press enter to add new specialization</small>
             </div>
@@ -277,9 +277,9 @@
             </button>
         </div>
     </div>
-    <!-- /Services and Specialization -->
+    <!-- /Dịch vụ và chuyên khoa -->
 
-    <!-- Education -->
+    <!-- Học vấn -->
     <div class="card">
         <div class="card-body" id="education-data">
             <h4 class="card-title">Education</h4>
@@ -336,9 +336,9 @@
             </div>
         </div>
     </div>
-    <!-- /Education -->
+    <!-- /Học vấn -->
 
-    <!-- Experience -->
+    <!-- Kinh nghiệm -->
     <div class="card">
         <div class="card-body" id="experience-data">
             <h4 class="card-title">Experience</h4>
@@ -405,9 +405,9 @@
             </div>
         </div>
     </div>
-    <!-- /Experience -->
+    <!-- /Kinh nghiệm -->
 
-    <!-- Registrations -->
+    <!-- Giấy đăng ký -->
     <div class="card">
         <div class="card-body" id="registration-number-data">
             <h4 class="card-title">Registrations</h4>
@@ -442,7 +442,7 @@
             </div>
         </div>
     </div>
-    <!-- /Registrations -->
+    <!-- /Giấy đăng ký -->
 
     {#    <div class="submit-section submit-btn-bottom">#}
     {#        <button type="submit" class="btn btn-primary submit-btn">Save Changes</button>#}
