@@ -18,6 +18,7 @@ from .views import (
     DoctorChangePasswordView,
     PrescriptionCreateView,
     PrescriptionDetailView,
+    ReviewListView,
 )
 
 app_name = "doctors"
@@ -72,6 +73,7 @@ urlpatterns = [
         name="appointment-action",
     ),
     path("my-patients/", MyPatientsView.as_view(), name="my-patients"),
+    path("reviews/", ReviewListView.as_view(), name="reviews"),
     path(
         "my-patients/<int:patient_id>/history/",
         AppointmentHistoryView.as_view(),

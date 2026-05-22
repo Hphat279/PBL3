@@ -52,8 +52,14 @@
                                     <i class="fas fa-star {% if doctor.rating >= 2 %}filled{% endif %}"></i>
                                     <i class="fas fa-star {% if doctor.rating >= 3 %}filled{% endif %}"></i>
                                     <i class="fas fa-star {% if doctor.rating >= 4 %}filled{% endif %}"></i>
-                                    <i class="fas fa-star {% if doctor.rating >= 5 %}filled{% endif %}"></i>
-                                    <span class="d-inline-block average-rating">({{ doctor.reviews_count|default:0 }})</span>
+                                    {% if doctor.rating >= 5 %}
+                                        <i class="fas fa-star filled"></i>
+                                    {% elif doctor.has_half_star %}
+                                        <i class="fas fa-star-half-alt filled"></i>
+                                    {% else %}
+                                        <i class="fas fa-star"></i>
+                                    {% endif %}
+                                    <span class="d-inline-block average-rating">({{ doctor.reviews_received.count }})</span>
                                 </div>
                             </div>
                         </div>
@@ -78,7 +84,9 @@
                                 </ul>
                             </div>
                             <div class="clinic-booking">
-                                <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                {% if user.is_authenticated and user.role == 'patient' %}
+                                    <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -234,11 +242,15 @@
                                                     <h4 class="card-title d-flex justify-content-between">
                                                         <span>Đánh giá</span>
                                                         <span class="average-rating">
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 1 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 2 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 3 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 4 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 5 %}text-yellow{% endif %}"></i>
+                                                            {% for i in "12345"|make_list %}
+                                                                {% if forloop.counter <= doctor.full_stars %}
+                                                                    <i class="fas fa-star text-yellow"></i>
+                                                                {% elif doctor.has_half_star and forloop.counter == doctor.full_stars|add:"1" %}
+                                                                    <i class="fas fa-star-half-alt text-yellow"></i>
+                                                                {% else %}
+                                                                    <i class="fas fa-star"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
                                                             <span>({{ doctor.reviews_received.count }} đánh giá)</span>
                                                         </span>
                                                     </h4>

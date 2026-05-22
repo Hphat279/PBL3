@@ -1,0 +1,32 @@
+{% load i18n %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% trans "Sign In Via" %} {{ provider.name }}</title>
+</head>
+<body>
+    <h1>{% trans "Sign In Via" %} {{ provider.name }}</h1>
+    <p>{% trans "You are about to sign in using a third-party account from" %} {{ provider.name }}.</p>
+    <form id="sa-form" method="post" action="">
+        {% csrf_token %}
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+        <noscript>
+            <button type="submit">{% trans "Continue" %}</button>
+        </noscript>
+    </form>
+
+    <script>
+        // Immediately submit the POST form so the browser follows the provider redirect.
+        (function(){
+            try {
+                document.getElementById('sa-form').submit();
+            } catch(e) {
+                // ignore - user can still press Continue
+            }
+        })();
+    </script>
+</body>
+</html>

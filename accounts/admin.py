@@ -8,8 +8,9 @@ from .models import User, Profile
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
-    list_display = ["username", "role"]
-    list_filter = ("role",)
+    list_display = ["username", "role", "is_active", "is_staff"]
+    list_filter = ("role", "is_active")
+    actions = ["activate_users"]
     search_fields = (
         "first_name",
         "last_name",
@@ -41,6 +42,12 @@ class UserAdmin(UserAdmin):
             },
         ),
     )
+
+    def activate_users(self, request, queryset):
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f"{updated} tài khoản đã được kích hoạt.")
+
+    activate_users.short_description = "Kích hoạt người dùng đã chọn"
 
 
 @admin.register(Profile)
