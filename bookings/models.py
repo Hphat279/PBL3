@@ -60,6 +60,14 @@ class Prescription(models.Model):
     diagnosis = models.TextField()
     medications = RichTextField()
     notes = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Chờ phát thuốc"),
+            ("dispensed", "Đã phát thuốc"),
+        ],
+        default="pending",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

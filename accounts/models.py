@@ -18,6 +18,7 @@ class  User(AbstractUser):
     class RoleChoices(models.TextChoices):
         DOCTOR = "doctor", "Doctor"
         PATIENT = "patient", "Patient"
+        PHARMACIST = "pharmacist", "Pharmacist"
 
     username = models.CharField(max_length=30, unique=True)
     role = models.CharField(

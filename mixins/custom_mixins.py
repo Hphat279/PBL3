@@ -15,7 +15,7 @@ class PatientRequiredMixin(LoginRequiredMixin):
 
 
 class DoctorRequiredMixin(LoginRequiredMixin):
-    """Verify that the current user is authenticated and user is patient"""
+    """Verify that the current user is authenticated and user is doctor"""
 
     permission_denied_message = "You are not authorized to view this page"
 
@@ -23,5 +23,18 @@ class DoctorRequiredMixin(LoginRequiredMixin):
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         if request.user.role != "doctor":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+
+class PharmacistRequiredMixin(LoginRequiredMixin):
+    """Verify that the current user is authenticated and user is pharmacist"""
+
+    permission_denied_message = "You are not authorized to view this page"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if request.user.role != "pharmacist":
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)

@@ -1,0 +1,136 @@
+{% extends 'includes/pharmacist-sidebar.html' %}
+
+{% block page_name1 %}Kho thuốc{% endblock %}
+{% block page_name2 %}{% if object %}Chỉnh sửa thông tin thuốc{% else %}Thêm thuốc mới vào kho{% endif %}{% endblock %}
+
+{% block title %}{% if object %}Sửa thuốc - {{ object.name }}{% else %}Thêm thuốc mới{% endif %}{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{% if object %}Sửa thuốc: {{ object.name }}{% else %}Nhập thông tin thuốc mới{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Mã thuốc SKU -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Mã thuốc (SKU) <span class="text-danger">*</span></label>
+                                    {{ form.sku }}
+                                    {% if form.sku.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.sku.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Tên thuốc -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tên thuốc <span class="text-danger">*</span></label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.name.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Đơn vị tính -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Đơn vị tính <span class="text-danger">*</span></label>
+                                    {{ form.unit }}
+                                    {% if form.unit.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.unit.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Số lượng tồn kho -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Số lượng tồn kho <span class="text-danger">*</span></label>
+                                    {{ form.quantity }}
+                                    {% if form.quantity.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.quantity.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Đơn giá -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Đơn giá (VNĐ) <span class="text-danger">*</span></label>
+                                    {{ form.price }}
+                                    {% if form.price.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.price.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mô tả chi tiết -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Mô tả chi tiết</label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger mt-1 small">
+                                            {% for error in form.description.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái hoạt động -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check mb-3">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                        Cho phép sử dụng trong kê đơn và phát thuốc
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary submit-btn">Lưu thông tin</button>
+                            <a href="{% url 'pharmacy:medicine-list' %}" class="btn btn-secondary submit-btn bg-secondary text-white border-secondary ml-2">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
