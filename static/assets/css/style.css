@@ -2232,6 +2232,27 @@ html.menu-opened body {
 	color: #fff;
 }
 
+/* Override Google button hover to avoid disappearing and add subtle pulse */
+.btn-google, .btn-outline-google {
+	background-color: #dd4b39 !important;
+	color: #fff !important;
+	border: 1px solid rgba(0,0,0,0.05);
+	transition: transform 120ms ease, box-shadow 120ms ease, opacity 220ms ease;
+}
+.btn-google:hover, .btn-outline-google:hover, .btn-google:focus, .btn-outline-google:focus {
+	background-color: #c43a2b !important;
+	color: #fff !important;
+	animation: pulse-opacity 420ms ease-in-out;
+	box-shadow: 0 6px 14px rgba(196,58,43,0.18);
+	transform: translateY(-1px);
+}
+
+@keyframes pulse-opacity {
+	0% { opacity: 1; }
+	50% { opacity: 0.85; }
+	100% { opacity: 1; }
+}
+
 /*-----------------
 	15. Home
 -----------------------*/

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}
     Đăng ký
@@ -22,7 +23,7 @@
                             </div>
                             <div class="col-md-12 col-lg-6 login-right">
                                 <div class="login-header">
-                                    <h3>Đăng ký bệnh nhân <a href="#">Bạn là bác sĩ?</a></h3>
+                                    <h3>Đăng ký bệnh nhân</h3>
                                 </div>
 
                                 {% if form.errors %}
@@ -111,20 +112,33 @@
                                         <a class="forgot-link" href="{% url 'accounts:login' %}">Đã có tài khoản?</a>
                                     </div>
                                     <button class="btn btn-primary btn-block btn-lg login-btn" type="submit">Đăng ký</button>
-                                    <div class="login-or">
-                                        <span class="or-line"></span>
-                                        <span class="span-or">hoặc</span>
-                                    </div>
-                                    <div class="row form-row social-login">
-                                        <div class="col-6">
-                                            <a href="#" class="btn btn-facebook btn-block"><i class="fab fa-facebook-f mr-1"></i> Đăng nhập</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <a href="#" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng nhập</a>
-                                        </div>
-                                    </div>
                                 </form>
                                 <!-- /Form đăng ký -->
+                                <div class="login-or mt-3">
+                                    <span class="or-line"></span>
+                                    <span class="span-or">hoặc</span>
+                                </div>
+                                <div class="row form-row social-login">
+                                    {% if google_enabled %}
+                                        <div class="col-12">
+                                            <a id="google-signup-btn" href="{% provider_login_url "google" %}" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng ký bằng Google</a>
+                                        </div>
+                                        <script>
+                                            (function(){
+                                                var btn = document.getElementById('google-signup-btn');
+                                                if(!btn) return;
+                                                btn.addEventListener('click', function(e){
+                                                    e.preventDefault();
+                                                    window.location.href = btn.href;
+                                                });
+                                            })();
+                                        </script>
+                                    {% else %}
+                                        <div class="col-12">
+                                            <a href="{% url 'accounts:google-start' %}" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng ký bằng Google</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
 
                             </div>
                         </div>

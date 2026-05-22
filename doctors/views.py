@@ -29,6 +29,7 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
 from bookings.models import Booking, Prescription
+from core.models import Review
 from core.decorators import user_is_doctor
 from doctors.forms import DoctorProfileForm, PrescriptionForm
 from doctors.models import Experience
@@ -93,6 +94,20 @@ class DoctorDashboardView(DoctorRequiredMixin, TemplateView):
             Booking.objects.select_related("patient", "patient__profile")
             .filter(doctor=self.request.user, appointment_date=today)
             .order_by("appointment_time")
+        )
+
+        # Recent reviews for this doctor
+        context["recent_reviews"] = (
+            Review.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")[:10]
+        )
+
+        # Recent prescriptions for display on dashboard
+        context["recent_prescriptions"] = (
+            Prescription.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")[:5]
         )
 
         return context
@@ -430,7 +445,8 @@ class DoctorsListView(ListView):
             elif sort_by == "rating":
                 queryset = queryset.order_by("-rating")
             elif sort_by == "experience":
-                queryset = queryset.order_by("-profile__experience")
+                # Order by number of experience entries (doctors with more experience entries first)
+                queryset = queryset.annotate(exp_count=Count("experiences")).order_by("-exp_count")
         else:
             queryset = queryset.order_by("-pk")
 
@@ -528,6 +544,15 @@ class AppointmentActionView(DoctorRequiredMixin, View):
             messages.success(request, "Đã đánh dấu cuộc hẹn là hoàn thành")
 
         appointment.save()
+        # After accepting, redirect to the appointment detail so the doctor can view details
+        if action == "accept":
+            return redirect("doctors:appointment-detail", pk=appointment.pk)
+
+        # After marking completed, redirect to the prescription creation page for this booking
+        if action == "completed":
+            return redirect("doctors:add-prescription", booking_id=appointment.pk)
+
+        # Default redirect to dashboard for other actions
         return redirect("doctors:dashboard")
 
 
@@ -606,6 +631,20 @@ class AppointmentHistoryView(DoctorRequiredMixin, ListView):
             role="patient",
         )
         return context
+
+
+class ReviewListView(DoctorRequiredMixin, ListView):
+    model = Review
+    template_name = "doctors/reviews.html"
+    context_object_name = "reviews"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            Review.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")
+        )
 
 
 class DoctorChangePasswordView(DoctorRequiredMixin, View):

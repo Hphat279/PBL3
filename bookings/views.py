@@ -12,7 +12,7 @@ from mixins.custom_mixins import PatientRequiredMixin
 from .models import Booking
 
 
-class BookingView(LoginRequiredMixin, View):
+class BookingView(PatientRequiredMixin, View):
     template_name = "bookings/booking.html"
 
     def get_week_dates(self):
@@ -112,7 +112,7 @@ class BookingView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
-class BookingCreateView(LoginRequiredMixin, View):
+class BookingCreateView(PatientRequiredMixin, View):
     template_name = "bookings/booking.html"
 
     def get(self, request: HttpRequest, *args, **kwargs):
