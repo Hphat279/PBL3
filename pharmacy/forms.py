@@ -3,6 +3,9 @@ from .models import Medicine
 
 
 class MedicineForm(forms.ModelForm):
+    """
+    tạo mới hoặc cập nhật thông tin thuốc trong kho 
+    """
     class Meta:
         model = Medicine
         fields = ["sku", "name", "description", "unit", "quantity", "price", "is_active"]
@@ -17,13 +20,17 @@ class MedicineForm(forms.ModelForm):
         }
 
     def clean_sku(self):
+        """
+        Hàm kiểm tra  trường mã thuốc (sku).
+        Đảm bảo mã SKU là duy nhất và không bị trùng lặp trong cơ sở dữ liệu.
+        """
         sku = self.cleaned_data.get("sku")
         if self.instance.pk:
-            # Updating: exclude current instance
+            # Trường hợp cập nhật (Update): Loại trừ chính ID của thuốc hiện tại ra khỏi tầm quét trùng lặp
             if Medicine.objects.filter(sku=sku).exclude(pk=self.instance.pk).exists():
                 raise forms.ValidationError("Mã thuốc (SKU) này đã tồn tại.")
         else:
-            # Creating new
+            # Trường hợp tạo mới (Create): Kiểm tra xem mã SKU đã tồn tại chưa
             if Medicine.objects.filter(sku=sku).exists():
                 raise forms.ValidationError("Mã thuốc (SKU) này đã tồn tại.")
         return sku

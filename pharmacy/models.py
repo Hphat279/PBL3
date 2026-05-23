@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 class Medicine(models.Model):
+    
     sku = models.CharField(max_length=50, unique=True, verbose_name="Mã thuốc")
     name = models.CharField(max_length=255, verbose_name="Tên thuốc")
     description = models.TextField(blank=True, verbose_name="Mô tả")
@@ -19,10 +20,12 @@ class Medicine(models.Model):
         verbose_name_plural = "Thuốc trong kho"
 
     def __str__(self):
+        # Trả về chuỗi mô tả thuốc khi gọi in đối tượng (Ví dụ: "Paracetamol (PM123) - 100 viên còn lại")
         return f"{self.name} ({self.sku}) - {self.quantity} {self.unit} còn lại"
 
 
 class PrescriptionDispensation(models.Model):
+  
     prescription = models.OneToOneField(
         "bookings.Prescription",
         on_delete=models.CASCADE,
@@ -45,14 +48,17 @@ class PrescriptionDispensation(models.Model):
         verbose_name_plural = "Phiếu phát thuốc"
 
     def __str__(self):
+        # Trả về thông tin tóm tắt phiếu phát thuốc
         return f"Dispensation for Prescription #{self.prescription.id} at {self.dispensed_at}"
 
     @property
     def total_cost(self):
+        
         return sum(item.quantity * item.price for item in self.items.all())
 
 
 class PrescriptionDispensationItem(models.Model):
+  
     dispensation = models.ForeignKey(
         PrescriptionDispensation,
         on_delete=models.CASCADE,
@@ -72,4 +78,5 @@ class PrescriptionDispensationItem(models.Model):
         verbose_name_plural = "Chi tiết thuốc phát"
 
     def __str__(self):
+        # Trả về chuỗi mô tả dòng chi tiết (Ví dụ: "Paracetamol x 10")
         return f"{self.medicine.name} x {self.quantity}"
