@@ -16,23 +16,30 @@ class PharmacyTests(TestCase):
     def setUp(self):
         # Hàm thiết lập dữ liệu mẫu (môi trường test) trước khi chạy mỗi ca kiểm thử.
         
-        # 1. Tạo các tài khoản người dùng mẫu
+        # 1. Tạo các tài khoản người dùng mẫu đầy đủ thông tin để pass qua ProfileCompletionMiddleware
         self.pharmacist = User.objects.create_user(
             username="pharmacist_test",
             password="password123",
             role="pharmacist",
             first_name="Dược sĩ",
-            last_name="Test"
+            last_name="Test",
+            email="pharmacist_test@example.com"
         )
         self.doctor = User.objects.create_user(
             username="doctor_test",
             password="password123",
-            role="doctor"
+            role="doctor",
+            first_name="Bác sĩ",
+            last_name="Test",
+            email="doctor_test@example.com"
         )
         self.patient = User.objects.create_user(
             username="patient_test",
             password="password123",
-            role="patient"
+            role="patient",
+            first_name="Bệnh nhân",
+            last_name="Test",
+            email="patient_test@example.com"
         )
 
         # 2. Tạo thuốc mẫu trong kho (cả thuốc đang kích hoạt và đã ẩn)
