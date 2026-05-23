@@ -11,12 +11,17 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "django.contrib.sites",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "debug_toolbar",
     "rest_framework",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
     "core",
     "accounts",
     "doctors",
@@ -33,6 +38,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.middleware.ProfileCompletionMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -102,6 +109,34 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "accounts.User"
 
+# django-allauth settings (for Google social login)
+SITE_ID = 2
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+
+# Default redirect after login (allauth). Avoid redirect to /accounts/profile/ which doesn't exist.
+LOGIN_REDIRECT_URL = "/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        # Force Google to show the account chooser so users can pick which Google account
+        # to authenticate with instead of auto-signing into the currently signed-in account.
+        "AUTH_PARAMS": {"access_type": "online", "prompt": "select_account"},
+    }
+}
+
+# allauth behaviour: auto-create accounts from social logins without asking for password
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "none"
+# use our custom adapter to auto-generate username from email and allow signup
+SOCIALACCOUNT_ADAPTER = "accounts.adapters.SocialAccountAdapter"
+
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
@@ -144,3 +179,18 @@ CKEDITOR_BASEPATH = "/static/ckeditor/ckeditor/"
 DEBUG_TOOLBAR_CONFIG = {
     "IS_RUNNING_TESTS": False,
 }
+
+# Email settings: use environment variables to configure SMTP (e.g. Gmail).
+import os
+
+EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() in ("1", "true", "yes")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "webmaster@localhost")
+
+# If no SMTP credentials provided, fall back to console backend for local dev
+if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")

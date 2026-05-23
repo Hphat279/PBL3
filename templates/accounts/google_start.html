@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Đăng ký bằng Google{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Đăng ký bằng Google</div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="btn btn-primary">Gửi mã xác thực</button>
+                    </form>
+                    <p class="mt-3 text-muted">Lưu ý: để gửi mã tới Gmail thực tế, hãy cấu hình SMTP (Gmail app password) trong biến môi trường rồi khởi động lại server.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

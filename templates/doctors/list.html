@@ -118,8 +118,14 @@
                                                     <i class="fas fa-star {% if doctor.rating >= 2 %}filled{% endif %}"></i>
                                                     <i class="fas fa-star {% if doctor.rating >= 3 %}filled{% endif %}"></i>
                                                     <i class="fas fa-star {% if doctor.rating >= 4 %}filled{% endif %}"></i>
-                                                    <i class="fas fa-star {% if doctor.rating >= 5 %}filled{% endif %}"></i>
-                                                    <span class="d-inline-block average-rating">({{ doctor.reviews_count|default:0 }})</span>
+                                                    {% if doctor.rating >= 5 %}
+                                                        <i class="fas fa-star filled"></i>
+                                                    {% elif doctor.has_half_star %}
+                                                        <i class="fas fa-star-half-alt filled"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% endif %}
+                                                    <span class="d-inline-block average-rating">({{ doctor.reviews_received.count }})</span>
                                                 </div>
                                                 <div class="clinic-services">
                                                     <span>{{ doctor.profile.specialization }}</span>
@@ -136,7 +142,9 @@
                                             </div>
                                             <div class="clinic-booking">
                                                 <a class="view-pro-btn" href="{% url 'doctors:doctor-profile' doctor.username %}">Xem hồ sơ</a>
-                                                <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                                {% if user.is_authenticated and user.role == 'patient' %}
+                                                    <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>

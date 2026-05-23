@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.db.models import Avg
+import math
 
 from accounts.managers import CustomUserManager
 from utils.file_utils import (
@@ -33,6 +34,8 @@ class  User(AbstractUser):
             "unique": "A user with that email already exists.",
         },
     )
+    # provider indicates how this account was created (e.g. 'google', 'local')
+    provider = models.CharField(max_length=32, blank=True, null=True)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     registration_number = models.IntegerField(null=True, blank=True)
@@ -66,14 +69,38 @@ class  User(AbstractUser):
 
     @property
     def rating(self):
-        # Implement your rating logic here
-        return 4  # Default value
+        # Return the average rating as a float (used for display decisions).
+        try:
+            return float(self.average_rating)
+        except Exception:
+            return 0.0
 
     @property
     def average_rating(self):
-        return (
-            self.reviews_received.aggregate(Avg("rating"))["rating__avg"] or 0
-        )
+        # If there are no reviews, default new doctors to 4.5 stars.
+        try:
+            avg = self.reviews_received.aggregate(Avg("rating"))["rating__avg"]
+            if avg is None:
+                return 4.5
+            return float(avg)
+        except Exception:
+            return 4.5
+
+    @property
+    def has_half_star(self):
+        try:
+            avg = float(self.average_rating)
+            frac = avg - int(avg)
+            return frac >= 0.5
+        except Exception:
+            return False
+
+    @property
+    def full_stars(self):
+        try:
+            return int(math.floor(float(self.average_rating)))
+        except Exception:
+            return 4
 
     @property
     def rating_count(self):
@@ -85,6 +112,22 @@ class  User(AbstractUser):
         for rating in self.reviews_received.values_list("rating", flat=True):
             distribution[rating] += 1
         return distribution
+
+    @property
+    def pending_appointments_count(self):
+        try:
+            return self.appointments.filter(status="pending").count()
+        except Exception:
+            return 0
+
+    @property
+    def new_reviews_count(self):
+        try:
+            if self.last_login:
+                return self.reviews_received.filter(created_at__gt=self.last_login).count()
+            return self.reviews_received.count()
+        except Exception:
+            return 0
 
 
 class Profile(models.Model):
@@ -98,6 +141,8 @@ class Profile(models.Model):
     avatar = models.ImageField(
         default="defaults/user.png", upload_to=profile_photo_directory_path
     )
+    # optional remote avatar URL (from social providers)
+    avatar_url = models.URLField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     about = models.TextField(blank=True, null=True)
@@ -148,3 +193,16 @@ class Profile(models.Model):
             if self.avatar.storage.exists(self.avatar.name)
             else "{}defaults/user.png".format(settings.MEDIA_URL)
         )
+
+
+class GoogleVerification(models.Model):
+    """
+    Simple model to store email verification codes for the mock Google flow.
+    """
+    email = models.EmailField()
+    code = models.CharField(max_length=8)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"GoogleVerification({self.email} - {self.code})"

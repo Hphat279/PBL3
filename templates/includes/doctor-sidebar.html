@@ -95,8 +95,20 @@
                                         <a href="{% url 'bookings:booking-list' %}">
                                             <i class="fas fa-calendar-alt"></i>
                                             <span>Đặt lịch</span>
+                                            {% if user.pending_appointments_count and user.pending_appointments_count > 0 %}
+                                                <span class="badge badge-pill badge-danger ml-2">{{ user.pending_appointments_count }}</span>
+                                            {% endif %}
                                         </a>
                                     </li>
+                                       <li class="{% if request.resolver_match.url_name == 'reviews' %}active{% endif %}">
+                                           <a href="{% url 'doctors:reviews' %}">
+                                               <i class="fas fa-star"></i>
+                                               <span>Đánh giá gần đây</span>
+                                               {% if user.new_reviews_count and user.new_reviews_count > 0 %}
+                                                   <span class="badge badge-pill badge-danger ml-2">{{ user.new_reviews_count }}</span>
+                                               {% endif %}
+                                           </a>
+                                       </li>
                                     <li class="{% if request.resolver_match.url_name == 'profile-setting' %}active{% endif %}">
                                         <a href="{% url 'doctors:profile-setting' %}">
                                             <i class="fas fa-user-cog"></i>
@@ -116,6 +128,7 @@
                                         </a>
                                     </li>
                                 </ul>
+                            </nav>
                             </nav>
                         </div>
                     </div>

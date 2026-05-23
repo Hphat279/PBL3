@@ -27,7 +27,9 @@ admin.site.index_title = "Chào mừng đến Cổng quản trị PBL3"
 urlpatterns = (
     [
         path("super-admin/", admin.site.urls),
+        # Include project-level account routes and django-allauth routes.
         path("accounts/", include("accounts.urls")),
+        path("accounts/", include("allauth.urls")),
         path("patients/", include("patients.urls")),
         path("doctors/", include("doctors.urls")),
         path("bookings/", include("bookings.urls")),
