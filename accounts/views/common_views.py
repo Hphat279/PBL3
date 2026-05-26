@@ -311,6 +311,10 @@ class CompleteProfileView(LoginRequiredMixin, FormView):
         next_url = self.request.GET.get('next') or '/'
         return HttpResponseRedirect(next_url)
 
+    def form_invalid(self, form):
+        print("FORM INVALID ERRORS:", form.errors)
+        return super().form_invalid(form)
+
     def dispatch(self, request, *args, **kwargs):
         user = request.user
         if not user.is_authenticated:

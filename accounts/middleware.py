@@ -37,6 +37,10 @@ class ProfileCompletionMiddleware:
         if not user or not user.is_authenticated:
             return None
 
+        # Only enforce profile completion for patient role
+        if getattr(user, 'role', None) != 'patient':
+            return None
+
         path = request.path
         # Allow exempt prefixes
         for p in self.EXEMPT_PATH_PREFIXES:
