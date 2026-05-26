@@ -1,0 +1,1 @@
+# Initialize pharmacy app package

@@ -55,3 +55,13 @@ def date_vn(value):
         return f"{day} Tháng {month}, {year}"
     except Exception:
         return value
+
+
+@register.filter
+def multiply(value, arg):
+    """Multiply two values together."""
+    try:
+        return Decimal(str(value)) * Decimal(str(arg))
+    except Exception:
+        return 0
+

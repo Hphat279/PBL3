@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "patients",
     "bookings",
     "ckeditor",
+    "pharmacy",
 ]
 
 MIDDLEWARE = [

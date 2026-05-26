@@ -137,13 +137,20 @@ class LoginView(FormView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_success_url(self):
-        # If next provided, use it. Otherwise, redirect doctors to their dashboard.
         if "next" in self.request.GET and self.request.GET["next"] != "":
             return self.request.GET["next"]
         user = getattr(self.request, 'user', None)
         try:
-            if user and getattr(user, 'role', None) == 'doctor':
-                return reverse_lazy('doctors:dashboard')
+            if user:
+                role = getattr(user, 'role', None)
+                if role == 'doctor':
+                    return reverse_lazy('doctors:dashboard')
+                elif role == 'dept_doctor':
+                    return reverse_lazy('doctors:dept-dashboard')
+                elif role == 'pharmacist':
+                    return reverse_lazy('pharmacy:dashboard')
+                elif role == 'patient':
+                    return reverse_lazy('patients:dashboard')
         except Exception:
             pass
         return self.success_url
@@ -155,8 +162,15 @@ class LoginView(FormView):
         user = form.get_user()
         auth.login(self.request, user)
         try:
-            if getattr(user, 'role', None) == 'doctor':
+            role = getattr(user, 'role', None)
+            if role == 'doctor':
                 return HttpResponseRedirect(reverse_lazy('doctors:dashboard'))
+            elif role == 'dept_doctor':
+                return HttpResponseRedirect(reverse_lazy('doctors:dept-dashboard'))
+            elif role == 'pharmacist':
+                return HttpResponseRedirect(reverse_lazy('pharmacy:dashboard'))
+            elif role == 'patient':
+                return HttpResponseRedirect(reverse_lazy('patients:dashboard'))
         except Exception:
             pass
         return HttpResponseRedirect(self.get_success_url())

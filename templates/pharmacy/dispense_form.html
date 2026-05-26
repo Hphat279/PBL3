@@ -1,0 +1,287 @@
+{% extends 'includes/pharmacist-sidebar.html' %}
+{% load currency_filters %}
+
+{% block page_name1 %}Đơn thuốc{% endblock %}
+{% block page_name2 %}Phát thuốc theo đơn kê{% endblock %}
+
+{% block title %}Phát thuốc - Đơn #{{ prescription.id }}{% endblock %}
+
+{% block main %}
+    <!-- Thông tin đơn thuốc gốc -->
+    <div class="card">
+        <div class="card-header bg-primary-light">
+            <h4 class="card-title text-primary mb-0"><i class="fas fa-file-invoice"></i> Chi tiết đơn thuốc bác sĩ kê</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6 col-12">
+                    <h5><strong>Thông tin bệnh nhân:</strong></h5>
+                    <p class="mb-1"><strong>Họ tên:</strong> {{ prescription.patient.get_full_name }}</p>
+                    <p class="mb-1"><strong>Username:</strong> {{ prescription.patient.username }}</p>
+                    <p class="mb-1"><strong>Giới tính:</strong> {{ prescription.patient.profile.get_gender_display|default:"Chưa xác định" }}</p>
+                    <p class="mb-0"><strong>Nhóm máu:</strong> {{ prescription.patient.profile.blood_group|default:"Chưa xác định" }}</p>
+                </div>
+                <div class="col-md-6 col-12 text-md-right mt-3 mt-md-0">
+                    <h5><strong>Thông tin bác sĩ & Lịch khám:</strong></h5>
+                    <p class="mb-1"><strong>Bác sĩ kê:</strong> {{ prescription.doctor.get_full_name }}</p>
+                    <p class="mb-1"><strong>Chuyên khoa:</strong> {{ prescription.doctor.profile.specialization|default:"Chưa xác định" }}</p>
+                    <p class="mb-0"><strong>Ngày khám:</strong> {{ prescription.booking.appointment_date|date_vn }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-6 col-12">
+                    <h5 class="text-secondary"><strong>Triệu chứng:</strong></h5>
+                    <p>{{ prescription.symptoms|linebreaks }}</p>
+                </div>
+                <div class="col-md-6 col-12">
+                    <h5 class="text-secondary"><strong>Chẩn đoán:</strong></h5>
+                    <p>{{ prescription.diagnosis|linebreaks }}</p>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="text-danger"><strong><i class="fas fa-pills"></i> Chỉ định thuốc của Bác sĩ:</strong></h5>
+                    <div class="p-3 bg-light rounded border">
+                        {{ prescription.medications|safe }}
+                    </div>
+                </div>
+            </div>
+
+            {% if prescription.notes %}
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h5><strong>Ghi chú của bác sĩ:</strong></h5>
+                        <p class="text-muted">{{ prescription.notes|linebreaks }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- /Thông tin đơn thuốc gốc -->
+
+    <!-- Form phát thuốc -->
+    <div class="card">
+        <div class="card-header bg-success-light">
+            <h4 class="card-title text-success mb-0"><i class="fas fa-prescription-bottle-alt"></i> Xử lý phát thuốc và trừ kho</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" id="dispense-form">
+                {% csrf_token %}
+
+                <div id="medicine-rows-container">
+                    <!-- Dòng thuốc đầu tiên mặc định -->
+                    <div class="row medicine-row mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <label>Chọn thuốc từ kho <span class="text-danger">*</span></label>
+                            <select name="medicine_id[]" class="form-control medicine-select" required>
+                                <option value="" data-price="0" data-stock="0" data-unit="">-- Chọn thuốc --</option>
+                                {% for med in medicines %}
+                                    <option value="{{ med.id }}" data-price="{{ med.price }}" data-stock="{{ med.quantity }}" data-unit="{{ med.unit }}">
+                                        {{ med.name }} (SKU: {{ med.sku }}) - Còn lại: {{ med.quantity }} {{ med.unit }} - Đơn giá: {{ med.price|vnd }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Số lượng phát <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input type="number" name="quantity[]" class="form-control quantity-input" min="1" placeholder="Số lượng" required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text unit-label">đv</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-4 text-right">
+                            <button type="button" class="btn btn-danger remove-medicine-btn btn-block" style="display: none;">
+                                <i class="fas fa-trash-alt"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-outline-primary" id="add-medicine-btn">
+                            <i class="fas fa-plus"></i> Thêm thuốc
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Ghi chú phát thuốc -->
+                <div class="form-group mt-3">
+                    <label>Ghi chú phát thuốc (ví dụ: Hướng dẫn uống, thời gian phát...)</label>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Nhập ghi chú phát thuốc (nếu có)..."></textarea>
+                </div>
+
+                <!-- Tổng tiền dự tính -->
+                <div class="card bg-light border-0 mt-4 mb-4">
+                    <div class="card-body d-flex justify-content-between align-items-center py-3">
+                        <h4 class="mb-0"><strong>Tổng chi phí ước tính:</strong></h4>
+                        <h3 class="text-success mb-0" id="total-estimated-cost"><strong>₫0</strong></h3>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button type="submit" class="btn btn-success submit-btn"><i class="fas fa-check"></i> Xác nhận phát thuốc & In hóa đơn</button>
+                    <a href="{% url 'pharmacy:prescription-list' %}" class="btn btn-secondary submit-btn bg-secondary text-white border-secondary ml-2">Trở lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /Form phát thuốc -->
+
+    <!-- Template dòng thuốc để nhân bản bằng JS (ẩn) -->
+    <div id="medicine-row-template" style="display: none;">
+        <div class="row medicine-row mb-3 align-items-center">
+            <div class="col-md-6">
+                <label>Chọn thuốc từ kho <span class="text-danger">*</span></label>
+                <select name="medicine_id[]" class="form-control medicine-select">
+                    <option value="" data-price="0" data-stock="0" data-unit="">-- Chọn thuốc --</option>
+                    {% for med in medicines %}
+                        <option value="{{ med.id }}" data-price="{{ med.price }}" data-stock="{{ med.quantity }}" data-unit="{{ med.unit }}">
+                            {{ med.name }} (SKU: {{ med.sku }}) - Còn lại: {{ med.quantity }} {{ med.unit }} - Đơn giá: {{ med.price|vnd }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Số lượng phát <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input type="number" name="quantity[]" class="form-control quantity-input" min="1" placeholder="Số lượng">
+                    <div class="input-group-append">
+                        <span class="input-group-text unit-label">đv</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mt-4 text-right">
+                <button type="button" class="btn btn-danger remove-medicine-btn btn-block">
+                    <i class="fas fa-trash-alt"></i> Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function() {
+            const container = $('#medicine-rows-container');
+            const template = $('#medicine-row-template').html();
+
+            // Cập nhật lại nút xóa dòng
+            function updateRemoveButtons() {
+                const rows = container.find('.medicine-row');
+                if (rows.length <= 1) {
+                    rows.find('.remove-medicine-btn').hide();
+                } else {
+                    rows.find('.remove-medicine-btn').show();
+                }
+            }
+
+            // Tính tổng tiền ước tính
+            function calculateTotalCost() {
+                let total = 0;
+                container.find('.medicine-row').each(function() {
+                    const select = $(this).find('.medicine-select');
+                    const qtyInput = $(this).find('.quantity-input');
+                    
+                    const price = parseFloat(select.find('option:selected').attr('data-price') || 0);
+                    const qty = parseInt(qtyInput.val() || 0);
+                    
+                    total += price * qty;
+                });
+
+                // Format VNĐ format
+                const formatted = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
+                $('#total-estimated-cost').text(formatted.replace('₫', '₫ '));
+            }
+
+            // Khi thay đổi loại thuốc
+            container.on('change', '.medicine-select', function() {
+                const option = $(this).find('option:selected');
+                const unit = option.attr('data-unit') || 'đv';
+                const stock = parseInt(option.attr('data-stock') || 0);
+                
+                const row = $(this).closest('.medicine-row');
+                row.find('.unit-label').text(unit);
+                row.find('.quantity-input').attr('max', stock);
+                
+                calculateTotalCost();
+            });
+
+            // Khi thay đổi số lượng
+            container.on('input change', '.quantity-input', function() {
+                const val = parseInt($(this).val() || 0);
+                const max = parseInt($(this).attr('max') || 999999);
+                
+                if (val > max) {
+                    alert(`Số lượng phát vượt quá tồn kho hiện tại (Tồn kho: ${max})`);
+                    $(this).val(max);
+                }
+                calculateTotalCost();
+            });
+
+            // Thêm dòng thuốc mới
+            $('#add-medicine-btn').click(function() {
+                const newRow = $(template);
+                // Cần set lại các trường là required
+                newRow.find('.medicine-select').attr('required', true);
+                newRow.find('.quantity-input').attr('required', true);
+                
+                container.append(newRow);
+                updateRemoveButtons();
+                calculateTotalCost();
+            });
+
+            // Xóa dòng thuốc
+            container.on('click', '.remove-medicine-btn', function() {
+                $(this).closest('.medicine-row').remove();
+                updateRemoveButtons();
+                calculateTotalCost();
+            });
+
+            // Submit Form Validation
+            $('#dispense-form').submit(function(e) {
+                let valid = true;
+                container.find('.medicine-row').each(function() {
+                    const select = $(this).find('.medicine-select');
+                    const qtyInput = $(this).find('.quantity-input');
+                    const stock = parseInt(select.find('option:selected').attr('data-stock') || 0);
+                    const qty = parseInt(qtyInput.val() || 0);
+                    const medName = select.find('option:selected').text().split('(')[0].trim();
+
+                    if (!select.val()) {
+                        alert('Vui lòng chọn thuốc đầy đủ cho các dòng.');
+                        valid = false;
+                        return false;
+                    }
+                    if (qty <= 0) {
+                        alert('Số lượng thuốc phát phải lớn hơn 0.');
+                        valid = false;
+                        return false;
+                    }
+                    if (qty > stock) {
+                        alert(`Thuốc "${medName}" không đủ số lượng trong kho (Yêu cầu: ${qty}, Hiện có: ${stock}).`);
+                        valid = false;
+                        return false;
+                    }
+                });
+
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+
+            updateRemoveButtons();
+        });
+    </script>
+{% endblock %}
