@@ -20,6 +20,7 @@ class  User(AbstractUser):
         DOCTOR = "doctor", "Doctor"
         PATIENT = "patient", "Patient"
         PHARMACIST = "pharmacist", "Pharmacist"
+        DEPARTMENT_DOCTOR = "dept_doctor", "Department Doctor"
 
     username = models.CharField(max_length=30, unique=True)
     role = models.CharField(
@@ -178,6 +179,13 @@ class Profile(models.Model):
     )
     allergies = models.TextField(blank=True, null=True)
     medical_conditions = models.TextField(blank=True, null=True)
+    department = models.ForeignKey(
+        "core.Department",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="profiles",
+    )
 
     def __str__(self):
         return "Profile of {}".format(self.user.username)

@@ -1,0 +1,41 @@
+DEPARTMENT_FIELDS = {
+    "Huyết học": [
+        {"key": "wbc", "label": "Bạch cầu (WBC)", "unit": "G/L", "type": "number", "placeholder": "vd: 7.5"},
+        {"key": "rbc", "label": "Hồng cầu (RBC)", "unit": "T/L", "type": "number", "placeholder": "vd: 4.8"},
+        {"key": "hb", "label": "Hemoglobin (Hb)", "unit": "g/dL", "type": "number", "placeholder": "vd: 14.2"},
+        {"key": "hct", "label": "Hematocrit (HCT)", "unit": "%", "type": "number", "placeholder": "vd: 42"},
+        {"key": "plt", "label": "Tiểu cầu (PLT)", "unit": "G/L", "type": "number", "placeholder": "vd: 250"},
+        {"key": "glucose", "label": "Đường huyết", "unit": "mmol/L", "type": "number", "placeholder": "vd: 5.2"},
+        {"key": "blood_type", "label": "Nhóm máu", "unit": "", "type": "select", "options": ["", "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"]},
+    ],
+    "Chẩn đoán hình ảnh": [
+        {"key": "imaging_type", "label": "Loại chẩn đoán", "unit": "", "type": "select", "options": ["", "X-quang", "Siêu âm", "CT scan", "MRI"]},
+        {"key": "region", "label": "Vị trí chụp", "unit": "", "type": "text", "placeholder": "vd: Ngực thẳng"},
+        {"key": "findings", "label": "Phát hiện", "unit": "", "type": "textarea", "placeholder": "Mô tả chi tiết những gì quan sát được..."},
+        {"key": "impression", "label": "Kết luận", "unit": "", "type": "textarea", "placeholder": "Kết luận chẩn đoán hình ảnh..."},
+    ],
+    "Tim mạch": [
+        {"key": "bp_sys", "label": "Huyết áp tâm thu", "unit": "mmHg", "type": "number", "placeholder": "vd: 120"},
+        {"key": "bp_dia", "label": "Huyết áp tâm trương", "unit": "mmHg", "type": "number", "placeholder": "vd: 80"},
+        {"key": "heart_rate", "label": "Nhịp tim", "unit": "lần/phút", "type": "number", "placeholder": "vd: 72"},
+        {"key": "ecg_result", "label": "Kết quả điện tâm đồ", "unit": "", "type": "textarea", "placeholder": "Mô tả kết quả ECG..."},
+        {"key": "spo2", "label": "SpO2", "unit": "%", "type": "number", "placeholder": "vd: 98"},
+        {"key": "rhythm", "label": "Nhịp", "unit": "", "type": "select", "options": ["", "Xoang đều", "Rung nhĩ", "Ngoại tâm thu", "Khác"]},
+    ],
+    "Xét nghiệm sinh hóa": [
+        {"key": "alt", "label": "ALT (GPT)", "unit": "U/L", "type": "number", "placeholder": "vd: 25"},
+        {"key": "ast", "label": "AST (GOT)", "unit": "U/L", "type": "number", "placeholder": "vd: 22"},
+        {"key": "creatinine", "label": "Creatinine", "unit": "µmol/L", "type": "number", "placeholder": "vd: 80"},
+        {"key": "urea", "label": "Ure", "unit": "mmol/L", "type": "number", "placeholder": "vd: 5.0"},
+        {"key": "sodium", "label": "Natri (Na+)", "unit": "mmol/L", "type": "number", "placeholder": "vd: 140"},
+        {"key": "potassium", "label": "Kali (K+)", "unit": "mmol/L", "type": "number", "placeholder": "vd: 4.2"},
+        {"key": "chloride", "label": "Clo (Cl-)", "unit": "mmol/L", "type": "number", "placeholder": "vd: 102"},
+        {"key": "urinalysis", "label": "Tổng phân tích nước tiểu", "unit": "", "type": "textarea", "placeholder": "Kết quả nước tiểu..."},
+    ],
+    "Nội soi": [
+        {"key": "procedure", "label": "Loại thủ thuật", "unit": "", "type": "select", "options": ["", "Nội soi dạ dày", "Nội soi đại tràng", "Nội soi tai mũi họng", "Khác"]},
+        {"key": "findings", "label": "Phát hiện", "unit": "", "type": "textarea", "placeholder": "Mô tả chi tiết kết quả nội soi..."},
+        {"key": "biopsy", "label": "Kết quả sinh thiết", "unit": "", "type": "textarea", "placeholder": "Nếu có sinh thiết..."},
+        {"key": "conclusion", "label": "Kết luận", "unit": "", "type": "textarea", "placeholder": "Kết luận và đề xuất..."},
+    ],
+}

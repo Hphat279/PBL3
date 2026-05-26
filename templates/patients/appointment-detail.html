@@ -51,6 +51,38 @@
                     </div>
                 </div>
                 
+                {% if referrals %}
+                 <div class="booking-summary mt-3">
+                    <h5>Chỉ định chuyên khoa</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Chuyên khoa</th>
+                                    <th>Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ref in referrals %}
+                                <tr>
+                                    <td>{{ ref.department.name }}</td>
+                                    <td>
+                                        {% if ref.status == 'pending' %}
+                                            <span class="badge badge-pill bg-warning-light">Chờ</span>
+                                        {% elif ref.status == 'in_progress' %}
+                                            <span class="badge badge-pill bg-info-light">Đang khám</span>
+                                        {% elif ref.status == 'completed' %}
+                                            <span class="badge badge-pill bg-success-light">Hoàn thành</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="booking-actions text-right">
                     {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
                     <form method="post" action="{% url 'patients:appointment-cancel' appointment.pk %}" style="display: inline;">

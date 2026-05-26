@@ -107,7 +107,7 @@
                         {% endif %}
                         {% if appointment.status == 'completed' %}
                             {% if not appointment.prescription %}
-                                <a href="{% url 'doctors:add-prescription' appointment.pk %}" class="btn btn-sm bg-success-light mr-2 ml-2">
+                                <a href="{% url 'doctors:prescription-create' appointment.pk %}" class="btn btn-sm bg-success-light mr-2 ml-2">
                                     <i class="fas fa-file-medical"></i> Tạo đơn thuốc
                                 </a>
                             {% else %}

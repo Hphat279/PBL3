@@ -38,3 +38,16 @@ class PharmacistRequiredMixin(LoginRequiredMixin):
         if request.user.role != "pharmacist":
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
+
+
+class DepartmentDoctorRequiredMixin(LoginRequiredMixin):
+    """Verify that the current user is authenticated and user is department doctor"""
+
+    permission_denied_message = "You are not authorized to view this page"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return super().dispatch(request, *args, **kwargs)
+        if request.user.role != "dept_doctor":
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)

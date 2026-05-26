@@ -21,6 +21,8 @@ class ProfileCompletionMiddleware:
         'accounts:login',
         'accounts:patient-register',
         'accounts:doctor-login',
+        'doctors:dept-dashboard',
+        'doctors:dept-referral',
     ]
 
     def __init__(self, get_response):
