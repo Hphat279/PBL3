@@ -16,8 +16,8 @@
             <style>
                 .banner-wrap { position: relative; display: inline-block; }
                 .banner-wrap .img-fluid { display: block; }
-                .banner-text { position: absolute; left: 140px; top: 50%; transform: translateY(-50%); height: 60px; }
-                @media (max-width: 768px) { .banner-text { display: none; } }
+                .banner-text { position: absolute; left: 120px; top: 50%; transform: translateY(-50%); height: 36px; }
+                @media (max-width: 992px) { .banner-text { display: none; } }
             </style>
             {% endblock %}
 
@@ -30,7 +30,7 @@
                             <div class="col-md-7 col-lg-6 login-left">
                                 <div class="banner-wrap">
                                     <img src="{% static 'assets/img/login-banner.png' %}" class="img-fluid" alt="">
-                                    <img src="{% static 'assets/img/logo2.svg' %}" class="banner-text" alt="PBL3">
+                                    <img src="{% static 'assets/img/logo-text.svg' %}" class="banner-text" alt="PBL3">
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-6 login-right">
