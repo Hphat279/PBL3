@@ -14,11 +14,9 @@
 
             {% block css %}
             <style>
-                .banner-wrap { position: relative; display: inline-block; vertical-align: middle; }
-                .banner-wrap .img-fluid { display: block; }
-                /* smaller text, closer to the cross */
-                .banner-text { position: absolute; left: 95px; top: 50%; transform: translateY(-50%); height: 28px; }
-                @media (max-width: 992px) { .banner-text { display: none; } }
+                .brand-wrap { display:flex; align-items:center; justify-content:center; height:220px; }
+                .brand-logo { height:96px; }
+                @media (max-width: 992px) { .brand-logo { height:72px; } }
 
                 /* center and brand the login header for better UX */
                 .login-header h3 { text-align: center; color: #0B78E3; font-weight: 700; margin-bottom: 0.75rem; }
@@ -33,9 +31,8 @@
                     <div class="account-content">
                         <div class="row align-items-center justify-content-center">
                             <div class="col-md-7 col-lg-6 login-left">
-                                <div class="banner-wrap">
-                                    <img src="{% static 'assets/img/login-banner.png' %}" class="img-fluid" alt="">
-                                    <img src="{% static 'assets/img/logo-text.svg' %}" class="banner-text" alt="PBL3">
+                                <div class="brand-wrap">
+                                    <img src="{% static 'assets/img/logo2.svg' %}" class="brand-logo" alt="PBL3">
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-6 login-right">
