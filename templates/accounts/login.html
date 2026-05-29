@@ -66,7 +66,7 @@
                                         {% endfor %}
                                     {% endif %}
                                     <div class="text-right">
-                                        <a class="forgot-link" href="#">Quên mật khẩu?</a>
+                                        <a class="forgot-link" href="{% url 'accounts:password_reset' %}">Quên mật khẩu?</a>
                                     </div>
                                     <button class="btn btn-primary btn-block btn-lg login-btn" type="submit">Đăng nhập</button>
                                     <div class="login-or">

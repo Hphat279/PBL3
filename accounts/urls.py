@@ -29,4 +29,6 @@ urlpatterns = [
         CompleteProfileView.as_view(),
         name="complete-profile",
     ),
+    # Include Django auth password-reset views (login/logout are handled by custom views)
+    path('', include('django.contrib.auth.urls')),
 ]
