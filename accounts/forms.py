@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordResetForm
+from django.utils.translation import gettext_lazy as _
 
 from .models import User
 
@@ -168,4 +170,22 @@ class ProfileCompletionForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         # Allow current user to keep their email; uniqueness will be validated in the view
+        return email
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    """Require that the submitted email exists in the user database and show
+    a friendly validation error if not. Note: this reveals whether an email
+    is registered.
+    """
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email:
+            raise forms.ValidationError(_('Vui lòng nhập địa chỉ email.'), code='required')
+        # check existence
+        from .models import User
+
+        if not User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError(_('Email không đúng với tài khoản của bạn.'), code='invalid')
         return email
