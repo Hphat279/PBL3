@@ -12,6 +12,7 @@ from bookings.models import Prescription
 from patients.forms import ChangePasswordForm
 from .models import Medicine, PrescriptionDispensation, PrescriptionDispensationItem
 from .forms import MedicineForm
+from bookings.models import PrescriptionMedicine
 
 
 class PharmacistDashboardView(PharmacistRequiredMixin, TemplateView):
@@ -143,99 +144,75 @@ class PrescriptionListView(PharmacistRequiredMixin, ListView):
 
 
 class PrescriptionDispenseView(PharmacistRequiredMixin, View):
-    """
-    Xử lý việc phát thuốc cho bệnh nhân dựa trên đơn thuốc của Bác sĩ.
-    - GET: Hiển thị form chi tiết đơn thuốc và danh sách thuốc khả dụng trong kho để lựa chọn.
-    - POST: Tiến hành xử lý trừ kho, lưu thông tin hóa đơn phát thuốc trong một Transaction (giao dịch an toàn).
-    """
     template_name = "pharmacy/dispense_form.html"
 
     def get(self, request, pk):
-        # Lấy đơn thuốc theo khóa chính (id), nếu không tìm thấy trả về lỗi 404
         prescription = get_object_or_404(
-            Prescription.objects.select_related("patient", "patient__profile", "doctor", "doctor__profile"),
+            Prescription.objects.select_related(
+                "patient", "patient__profile", "doctor", "doctor__profile"
+            ).prefetch_related("medicines__medicine"),
             pk=pk
         )
-        # Nếu đơn thuốc đã phát rồi thì không cho phép phát lại, chuyển hướng đến trang chi tiết hóa đơn phát thuốc
         if prescription.status == "dispensed":
             messages.warning(request, "Đơn thuốc này đã được phát.")
             return redirect("pharmacy:dispense-detail", pk=prescription.dispensation.pk)
 
-        # Lấy danh sách thuốc đang hoạt động trong kho và có số lượng tồn > 0
-        medicines = Medicine.objects.filter(is_active=True, quantity__gt=0)
+        rx_meds = prescription.medicines.select_related("medicine").all()
+        total = sum(rm.quantity * rm.medicine.price for rm in rx_meds)
+        stock_ok = all(rm.medicine.quantity >= rm.quantity for rm in rx_meds)
+
         return render(request, self.template_name, {
             "prescription": prescription,
-            "medicines": medicines
+            "rx_medicines": rx_meds,
+            "total": total,
+            "stock_ok": stock_ok,
         })
 
     def post(self, request, pk):
-        prescription = get_object_or_404(Prescription, pk=pk)
+        prescription = get_object_or_404(Prescription.objects.prefetch_related("medicines__medicine"), pk=pk)
         if prescription.status == "dispensed":
             messages.warning(request, "Đơn thuốc này đã được phát.")
             return redirect("pharmacy:dispense-detail", pk=prescription.dispensation.pk)
 
-        # Lấy danh sách mã thuốc (IDs) và số lượng tương ứng được chọn phát từ form gửi lên
-        med_ids = request.POST.getlist("medicine_id[]")
-        quantities = request.POST.getlist("quantity[]")
         notes = request.POST.get("notes", "")
+        rx_meds = prescription.medicines.select_related("medicine").all()
 
-        # Kiểm tra nếu dược sĩ chưa chọn loại thuốc nào
-        if not med_ids or len(med_ids) == 0:
-            messages.error(request, "Vui lòng chọn ít nhất một loại thuốc để phát.")
+        if not rx_meds.exists():
+            messages.error(request, "Đơn thuốc không có thuốc nào để phát.")
             return self.get(request, pk)
 
-        # Thực thi trong một giao dịch cơ sở dữ liệu (Database Transaction)
-        # Nhằm đảm bảo tính toàn vẹn dữ liệu: tất cả thành công hoặc cùng rollback nếu có lỗi xảy ra.
         try:
             with transaction.atomic():
-                # 1. Tạo bản ghi Hóa đơn phát thuốc chính (PrescriptionDispensation)
                 dispensation = PrescriptionDispensation.objects.create(
                     prescription=prescription,
                     pharmacist=request.user,
                     notes=notes
                 )
-
-                # 2. Duyệt qua từng thuốc được chọn phát để kiểm tra tồn kho và trừ số lượng
-                for med_id, qty_str in zip(med_ids, quantities):
-                    if not med_id or not qty_str:
-                        continue
-                    qty = int(qty_str)
-                    if qty <= 0:
-                        raise ValueError("Số lượng phát phải lớn hơn 0.")
-
-                    # Lấy đối tượng thuốc và lock dòng dữ liệu này (select_for_update) để tránh tranh chấp dữ liệu (Race Condition)
-                    medicine = Medicine.objects.select_for_update().get(pk=med_id)
-                    
-                    # Kiểm tra xem trong kho còn đủ thuốc không
-                    if medicine.quantity < qty:
-                        raise ValueError(f"Thuốc '{medicine.name}' không đủ số lượng trong kho (Còn lại: {medicine.quantity} {medicine.unit}).")
-
-                    # Trừ số lượng tồn kho của thuốc
-                    medicine.quantity -= qty
+                for rm in rx_meds:
+                    medicine = Medicine.objects.select_for_update().get(pk=rm.medicine.pk)
+                    if medicine.quantity < rm.quantity:
+                        raise ValueError(
+                            f"Thuốc '{medicine.name}' không đủ số lượng trong kho "
+                            f"(Còn lại: {medicine.quantity} {medicine.unit}, yêu cầu: {rm.quantity})."
+                        )
+                    medicine.quantity -= rm.quantity
                     medicine.save()
-
-                    # 3. Lưu chi tiết dòng thuốc được phát
                     PrescriptionDispensationItem.objects.create(
                         dispensation=dispensation,
                         medicine=medicine,
-                        quantity=qty,
+                        quantity=rm.quantity,
                         price=medicine.price
                     )
-
-                # 4. Cập nhật trạng thái đơn thuốc của bác sĩ thành "đã phát" (dispensed)
                 prescription.status = "dispensed"
                 prescription.save()
-
-                messages.success(request, "Phát thuốc và cập nhật kho thành công.")
+                messages.success(request, "Phát thuốc thành công — hóa đơn đã được tạo.")
                 return redirect("pharmacy:dispense-detail", pk=dispensation.pk)
 
         except ValueError as e:
-            # Bắt các lỗi nghiệp vụ tự định nghĩa (ví dụ: không đủ tồn kho)
             messages.error(request, str(e))
             return self.get(request, pk)
         except Exception as e:
-            # Bắt các lỗi hệ thống không mong muốn
-            messages.error(request, f"Đã xảy ra lỗi hệ thống: {str(e)}")
+            messages.error(request, f"Lỗi hệ thống: {str(e)}")
             return self.get(request, pk)
 
 

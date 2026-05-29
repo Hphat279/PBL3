@@ -28,9 +28,10 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
-from bookings.models import Booking, Prescription, Referral
+from bookings.models import Booking, Prescription, Referral, PrescriptionMedicine
 from core.models import Review, Department
 from core.dept_fields import DEPARTMENT_FIELDS
+from pharmacy.models import Medicine
 from core.decorators import user_is_doctor
 from doctors.forms import DoctorProfileForm, PrescriptionForm
 from doctors.models import Experience
@@ -733,6 +734,7 @@ class PrescriptionCreateView(DoctorRequiredMixin, CreateView):
         context["booking"] = get_object_or_404(
             Booking, id=booking_id, doctor=self.request.user
         )
+        context["medicines"] = Medicine.objects.filter(is_active=True).order_by("name")
         return context
 
     def form_valid(self, form):
@@ -751,14 +753,60 @@ class PrescriptionCreateView(DoctorRequiredMixin, CreateView):
         form.instance.booking = booking
         form.instance.doctor = self.request.user
         form.instance.patient = booking.patient
+
+        selected_meds = self.request.POST.getlist("med_medicine")
+        selected_qty = self.request.POST.getlist("med_quantity")
+        selected_dosage = self.request.POST.getlist("med_dosage")
+        selected_freq = self.request.POST.getlist("med_frequency")
+        selected_dur = self.request.POST.getlist("med_duration")
+        selected_inst = self.request.POST.getlist("med_instructions")
+
+        medication_lines = []
+        prescription = form.save()
+
+        for i in range(len(selected_meds)):
+            med_id = selected_meds[i]
+            if not med_id:
+                continue
+            medicine = Medicine.objects.get(pk=int(med_id))
+            qty = selected_qty[i] if i < len(selected_qty) else "1"
+            dosage = selected_dosage[i] if i < len(selected_dosage) else ""
+            freq = selected_freq[i] if i < len(selected_freq) else ""
+            dur = selected_dur[i] if i < len(selected_dur) else ""
+            inst = selected_inst[i] if i < len(selected_inst) else ""
+
+            PrescriptionMedicine.objects.create(
+                prescription=prescription,
+                medicine=medicine,
+                quantity=int(qty) if qty.isdigit() else 1,
+                dosage=dosage,
+                frequency=freq,
+                duration=dur,
+                instructions=inst,
+            )
+
+            line = f"<strong>{medicine.name}</strong> — {dosage}"
+            if freq:
+                line += f", {freq}"
+            if dur:
+                line += f", {dur}"
+            if inst:
+                line += f"<br><em>{inst}</em>"
+            medication_lines.append(line)
+
+        if medication_lines:
+            auto_medications = "<ul>" + "".join(f"<li>{l}</li>" for l in medication_lines) + "</ul>"
+        else:
+            auto_medications = form.cleaned_data.get("medications", "")
+
+        prescription.medications = auto_medications
+        prescription.save()
+
         messages.success(self.request, "Thêm đơn thuốc thành công")
-        return super().form_valid(form)
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy(
-            "doctors:appointment-detail",
-            kwargs={"pk": self.kwargs["booking_id"]},
-        )
+        return reverse_lazy("doctors:dashboard")
 
 
 class PrescriptionDetailView(DoctorRequiredMixin, DetailView):

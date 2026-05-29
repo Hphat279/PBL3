@@ -80,6 +80,27 @@ class Prescription(models.Model):
         verbose_name_plural = "Đơn thuốc"
 
 
+class PrescriptionMedicine(models.Model):
+    prescription = models.ForeignKey(
+        Prescription, on_delete=models.CASCADE, related_name="medicines"
+    )
+    medicine = models.ForeignKey(
+        "pharmacy.Medicine", on_delete=models.CASCADE
+    )
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Số lượng/ngày")
+    dosage = models.CharField(max_length=100, blank=True, verbose_name="Liều dùng")
+    frequency = models.CharField(max_length=100, blank=True, verbose_name="Tần suất")
+    duration = models.CharField(max_length=100, blank=True, verbose_name="Thời gian dùng")
+    instructions = models.TextField(blank=True, verbose_name="Hướng dẫn")
+
+    class Meta:
+        verbose_name = "Thuốc trong đơn"
+        verbose_name_plural = "Thuốc trong đơn"
+
+    def __str__(self):
+        return f"{self.medicine.name} x{self.quantity}"
+
+
 class Referral(models.Model):
     booking = models.ForeignKey(
         Booking, on_delete=models.CASCADE, related_name="referrals"
