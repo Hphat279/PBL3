@@ -1,6 +1,8 @@
 import debug_toolbar
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from accounts.forms import CustomPasswordResetForm
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -29,6 +31,16 @@ urlpatterns = (
         path("super-admin/", admin.site.urls),
         # Include project-level account routes and django-allauth routes.
         path("accounts/", include("accounts.urls")),
+        # Override the password reset view to use a custom form that shows a
+        # friendly validation message when the email is not found.
+        path(
+            "accounts/password_reset/",
+            auth_views.PasswordResetView.as_view(form_class=CustomPasswordResetForm),
+            name="password_reset",
+        ),
+        # Include Django's auth URL patterns at the project level so their
+        # names are available un-namespaced (password_reset_done, etc.).
+        path("accounts/", include("django.contrib.auth.urls")),
         path("accounts/", include("allauth.urls")),
         path("patients/", include("patients.urls")),
         path("doctors/", include("doctors.urls")),

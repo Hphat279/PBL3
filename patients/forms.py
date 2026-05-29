@@ -11,6 +11,7 @@ class PatientProfileForm(forms.ModelForm):
 
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
     avatar = forms.ImageField(required=False)
     dob = forms.DateField(
         required=False, widget=forms.DateInput(attrs={"type": "date"})
@@ -65,7 +66,7 @@ class PatientProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "avatar"]
+        fields = ["first_name", "last_name", "email", "avatar"]
 
     def clean_phone(self):
         phone = self.cleaned_data.get("phone")
@@ -91,19 +92,19 @@ class PatientProfileForm(forms.ModelForm):
 class ChangePasswordForm(forms.Form):
     old_password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Current Password"}
+            attrs={"class": "form-control", "placeholder": "Mật khẩu hiện tại"}
         )
     )
     new_password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "New Password"}
+            attrs={"class": "form-control", "placeholder": "Mật khẩu mới"}
         )
     )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Confirm New Password",
+                "placeholder": "Xác nhận mật khẩu mới",
             }
         )
     )

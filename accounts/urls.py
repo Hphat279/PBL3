@@ -29,4 +29,6 @@ urlpatterns = [
         CompleteProfileView.as_view(),
         name="complete-profile",
     ),
+    # Note: django.contrib.auth.urls is included at project level to avoid
+    # namespacing issues; password reset view is overridden there.
 ]

@@ -12,6 +12,18 @@
     <div class="content">
         <div class="container-fluid">
 
+            {% block css %}
+            <style>
+                .brand-wrap { display:flex; align-items:center; justify-content:center; height:220px; }
+                .brand-logo { height:96px; }
+                @media (max-width: 992px) { .brand-logo { height:72px; } }
+
+                /* center and brand the login header for better UX */
+                .login-header h3 { text-align: center; color: #0B78E3; font-weight: 700; margin-bottom: 0.75rem; }
+                .login-right .login-header { padding-top: 0.5rem; }
+            </style>
+            {% endblock %}
+
             <div class="row">
                 <div class="col-md-8 offset-md-2">
 
@@ -19,7 +31,9 @@
                     <div class="account-content">
                         <div class="row align-items-center justify-content-center">
                             <div class="col-md-7 col-lg-6 login-left">
-                                <img src="{% static 'assets/img/login-banner.png' %}" class="img-fluid" alt="PBL3 Đăng nhập">
+                                <div class="brand-wrap">
+                                    <img src="{% static 'assets/img/logo2.svg' %}" class="brand-logo" alt="PBL3">
+                                </div>
                             </div>
                             <div class="col-md-12 col-lg-6 login-right">
                                 <div class="login-header">
@@ -66,9 +80,9 @@
                                         {% endfor %}
                                     {% endif %}
                                     <div class="text-right">
-                                        <a class="forgot-link" href="#">Quên mật khẩu?</a>
+                                        <a class="forgot-link" href="{% url 'password_reset' %}">Quên mật khẩu?</a>
                                     </div>
-                                    <button class="btn btn-primary btn-block btn-lg login-btn" type="submit">Đăng nhập</button>
+                                    <button class="btn btn-info btn-lg btn-block login-btn" type="submit">Đăng nhập</button>
                                     <div class="login-or">
                                         <span class="or-line"></span>
                                         <span class="span-or">hoặc</span>
