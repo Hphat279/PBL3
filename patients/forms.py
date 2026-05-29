@@ -92,19 +92,19 @@ class PatientProfileForm(forms.ModelForm):
 class ChangePasswordForm(forms.Form):
     old_password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": """}
+            attrs={"class": "form-control", "placeholder": "Mật khẩu hiện tại"}
         )
     )
     new_password = forms.CharField(
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "New Password"}
+            attrs={"class": "form-control", "placeholder": "Mật khẩu mới"}
         )
     )
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "Confirm New Password",
+                "placeholder": "Xác nhận mật khẩu mới",
             }
         )
     )
