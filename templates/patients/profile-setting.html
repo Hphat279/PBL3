@@ -94,13 +94,6 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Email <span class="text-danger">*</span></label>
-                                                <input type="email" class="form-control" name="email" value="{{ user.email|default:'' }}">
-                                                {% include 'includes/form_error.html' with field=form.email %}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Nhóm máu</label>
                                             <select class="form-control" name="blood_group">
@@ -130,6 +123,13 @@
                                             <label>Số điện thoại</label>
                                             <input type="text" class="form-control" name="phone" value="{{ user.profile.phone|default:'' }}">
                                             {% include 'includes/form_error.html' with field=form.phone %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" name="email" value="{{ user.email|default:'' }}">
+                                            {% include 'includes/form_error.html' with field=form.email %}
                                         </div>
                                     </div>
                                 </div>
