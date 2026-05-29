@@ -1,0 +1,142 @@
+{% extends 'includes/pharmacist-sidebar.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block page_name1 %}Bảng điều khiển{% endblock %}
+{% block page_name2 %}Bảng điều khiển dược sĩ{% endblock %}
+
+{% block title %}Bảng điều khiển dược sĩ{% endblock %}
+
+{% block main %}
+    <!-- Thẻ thống kê -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card dash-card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-3">
+                            <div class="dash-widget dct-border-rht">
+                                <div class="circle-bar circle-bar1">
+                                    <div class="circle-graph1" data-percent="75">
+                                        <img src="{% static 'assets/img/icon-01.png' %}" class="img-fluid" alt="Thuốc trong kho">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Loại thuốc trong kho</h6>
+                                    <h3>{{ total_medicines }}</h3>
+                                    <p class="text-muted"><a href="{% url 'pharmacy:medicine-list' %}">Xem chi tiết kho</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-3">
+                            <div class="dash-widget dct-border-rht">
+                                <div class="circle-bar circle-bar2">
+                                    <div class="circle-graph2" data-percent="65">
+                                        <img src="{% static 'assets/img/icon-02.png' %}" class="img-fluid" alt="Chờ phát">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Đơn thuốc chờ phát</h6>
+                                    <h3 class="text-warning">{{ pending_prescriptions }}</h3>
+                                    <p class="text-muted"><a href="{% url 'pharmacy:prescription-list' %}?status=pending">Xử lý ngay</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-3">
+                            <div class="dash-widget dct-border-rht">
+                                <div class="circle-bar circle-bar3">
+                                    <div class="circle-graph3" data-percent="50">
+                                        <img src="{% static 'assets/img/icon-03.png' %}" class="img-fluid" alt="Đã phát">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Đơn đã phát thuốc</h6>
+                                    <h3 class="text-success">{{ dispensed_prescriptions }}</h3>
+                                    <p class="text-muted"><a href="{% url 'pharmacy:prescription-list' %}?status=dispensed">Xem lịch sử</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-3">
+                            <div class="dash-widget">
+                                <div class="circle-bar circle-bar1">
+                                    <div class="circle-graph1" data-percent="100">
+                                        <img src="{% static 'assets/img/icon-01.png' %}" class="img-fluid" alt="Phát hôm nay">
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6>Đơn đã phát hôm nay</h6>
+                                    <h3>{{ total_dispensed_today }}</h3>
+                                    <p class="text-muted">Hoàn thành hôm nay</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Thẻ thống kê -->
+
+    <!-- Đơn thuốc chờ phát mới nhất -->
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="mb-4">Đơn thuốc chờ phát mới nhất</h4>
+            <div class="card card-table mb-0">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bệnh nhân</th>
+                                    <th>Ngày kê đơn</th>
+                                    <th>Bác sĩ kê</th>
+                                    <th>Chẩn đoán</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prescription in recent_prescriptions %}
+                                    <tr>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a href="#" class="avatar avatar-sm mr-2">
+                                                    <img class="avatar-img rounded-circle" src="{{ prescription.patient.profile.image }}" alt="Ảnh bệnh nhân">
+                                                </a>
+                                                <a href="#">{{ prescription.patient.get_full_name }}</a>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            {{ prescription.created_at|date_vn }}
+                                            <span class="d-block text-info">{{ prescription.created_at|time:"h:i A" }}</span>
+                                        </td>
+                                        <td>
+                                            Bác sĩ {{ prescription.doctor.get_full_name }}
+                                        </td>
+                                        <td>
+                                            {{ prescription.diagnosis|truncatechars:50 }}
+                                        </td>
+                                        <td>
+                                            <div class="table-action">
+                                                <a href="{% url 'pharmacy:prescription-dispense' prescription.pk %}" class="btn btn-sm bg-success-light">
+                                                    <i class="fas fa-prescription-bottle-alt"></i> Xem & Phát thuốc
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">Tuyệt vời! Không còn đơn thuốc nào chờ phát.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Đơn thuốc chờ phát mới nhất -->
+{% endblock %}

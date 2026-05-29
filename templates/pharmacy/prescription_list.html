@@ -1,0 +1,154 @@
+{% extends 'includes/pharmacist-sidebar.html' %}
+{% load currency_filters %}
+
+{% block page_name1 %}Đơn thuốc{% endblock %}
+{% block page_name2 %}Đơn thuốc từ bác sĩ{% endblock %}
+
+{% block title %}Đơn thuốc{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Tabs Trạng thái -->
+            <div class="appointment-tab mb-4">
+                <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded">
+                    <li class="nav-item">
+                        <a class="nav-link {% if current_status == 'pending' %}active{% endif %}" href="{% url 'pharmacy:prescription-list' %}?status=pending{% if search_query %}&q={{ search_query }}{% endif %}">
+                            <i class="fas fa-clock"></i> Chờ phát thuốc
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if current_status == 'dispensed' %}active{% endif %}" href="{% url 'pharmacy:prescription-list' %}?status=dispensed{% if search_query %}&q={{ search_query }}{% endif %}">
+                            <i class="fas fa-check-circle"></i> Đã phát thuốc
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /Tabs Trạng thái -->
+
+            <!-- Bộ lọc và Tìm kiếm -->
+            <div class="card">
+                <div class="card-body">
+                    <form method="get" action="{% url 'pharmacy:prescription-list' %}">
+                        <input type="hidden" name="status" value="{{ current_status }}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Tìm theo tên bệnh nhân hoặc bác sĩ kê..." name="q" value="{{ search_query }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-search"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /Bộ lọc và Tìm kiếm -->
+
+            <!-- Danh sách đơn thuốc -->
+            <div class="card card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bệnh nhân</th>
+                                    <th>Ngày kê đơn</th>
+                                    <th>Bác sĩ kê</th>
+                                    <th>Chẩn đoán</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-right">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prescription in prescriptions %}
+                                    <tr>
+                                        <td>
+                                            <h2 class="table-avatar">
+                                                <a href="#" class="avatar avatar-sm mr-2">
+                                                    <img class="avatar-img rounded-circle" src="{{ prescription.patient.profile.image }}" alt="Ảnh bệnh nhân">
+                                                </a>
+                                                <a href="#">{{ prescription.patient.get_full_name }}</a>
+                                            </h2>
+                                        </td>
+                                        <td>
+                                            {{ prescription.created_at|date_vn }}
+                                            <span class="d-block text-info">{{ prescription.created_at|time:"h:i A" }}</span>
+                                        </td>
+                                        <td>
+                                            Bác sĩ {{ prescription.doctor.get_full_name }}
+                                            <span class="d-block text-muted small">{{ prescription.doctor.profile.specialization }}</span>
+                                        </td>
+                                        <td>
+                                            {{ prescription.diagnosis|truncatechars:60 }}
+                                        </td>
+                                        <td>
+                                            {% if prescription.status == 'pending' %}
+                                                <span class="badge badge-pill bg-warning-light">Chờ phát thuốc</span>
+                                            {% else %}
+                                                <span class="badge badge-pill bg-success-light">Đã phát thuốc</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="table-action">
+                                                {% if prescription.status == 'pending' %}
+                                                    <a href="{% url 'pharmacy:prescription-dispense' prescription.pk %}" class="btn btn-sm bg-success-light">
+                                                        <i class="fas fa-prescription-bottle-alt"></i> Xem & Phát thuốc
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'pharmacy:dispense-detail' prescription.dispensation.pk %}" class="btn btn-sm bg-info-light">
+                                                        <i class="fas fa-eye"></i> Xem biên lai
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Không có đơn thuốc nào ở trạng thái này.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /Danh sách đơn thuốc -->
+
+            <!-- Phân trang -->
+            {% if is_paginated %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?status={{ current_status }}&page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo; Trở lại</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item"><a class="page-link" href="?status={{ current_status }}&page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}">{{ num }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?status={{ current_status }}&page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" aria-label="Next">
+                                            <span aria-hidden="true">Tiếp &raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            {% endif %}
+            <!-- /Phân trang -->
+        </div>
+    </div>
+{% endblock %}

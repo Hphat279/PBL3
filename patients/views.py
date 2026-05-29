@@ -99,7 +99,14 @@ class AppointmentDetailView(DetailView):
     def get_queryset(self):
         return Booking.objects.select_related(
             "doctor", "doctor__profile", "patient", "patient__profile"
-        ).filter(patient=self.request.user)
+        ).prefetch_related("referrals__department").filter(patient=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["referrals"] = self.object.referrals.select_related(
+            "department"
+        ).order_by("created_at")
+        return context
 
 
 class AppointmentCancelView(View):

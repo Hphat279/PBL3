@@ -1,0 +1,67 @@
+{% extends 'dept/base.html' %}
+{% load static %}
+
+{% block title %}Hàng đợi chuyên khoa{% endblock %}
+
+{% block main %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="card-title">Hàng đợi — {{ user.profile.department.name }}</h4>
+        <span class="badge badge-pill bg-primary-light">{{ referrals.count }} chỉ định</span>
+    </div>
+    <div class="card-body">
+        {% if referrals %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Bệnh nhân</th>
+                        <th>Bác sĩ chỉ định</th>
+                        <th>Lý do</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ref in referrals %}
+                    <tr>
+                        <td>
+                            <strong>{{ ref.booking.patient.get_full_name }}</strong>
+                            {% if ref.booking.patient.profile.blood_group %}
+                                <br><small class="text-muted">Nhóm máu: {{ ref.booking.patient.profile.blood_group }}</small>
+                            {% endif %}
+                        </td>
+                        <td>Bác sĩ {{ ref.general_doctor.get_full_name }}</td>
+                        <td><small>{{ ref.reason|truncatechars:60 }}</small></td>
+                        <td>
+                            {% if ref.status == 'pending' %}
+                                <span class="badge badge-pill bg-warning-light">Chờ tiếp nhận</span>
+                            {% elif ref.status == 'in_progress' %}
+                                <span class="badge badge-pill bg-info-light">Đang khám</span>
+                            {% elif ref.status == 'completed' %}
+                                <span class="badge badge-pill bg-success-light">Đã hoàn thành</span>
+                            {% endif %}
+                        </td>
+                        <td><small>{{ ref.created_at|date:"d/m/Y H:i" }}</small></td>
+                        <td>
+                            <a href="{% url 'doctors:dept-referral' ref.id %}" class="btn btn-sm btn-primary">
+                                {% if ref.status == 'pending' %}Tiếp nhận{% elif ref.status == 'in_progress' %}Tiếp tục{% else %}Xem{% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+        {% include 'includes/pagination.html' %}
+        {% endif %}
+
+        {% else %}
+        <p class="text-muted text-center py-4">Không có chỉ định nào đang chờ.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

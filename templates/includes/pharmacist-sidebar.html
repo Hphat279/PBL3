@@ -3,18 +3,12 @@
 {% load static %}
 
 {% block scripts %}
-
-    <!-- JS vòng tiến trình -->
-    <script src="{% static 'assets/js/circle-progress.min.js' %}"></script>
-
     <!-- JS thanh bên cố định -->
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
     <script src="{% static 'assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
-
 {% endblock %}
 
 {% block content %}
-
     <!-- Thanh điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
@@ -36,29 +30,21 @@
     <!-- Nội dung trang -->
     <div class="content">
         <div class="container-fluid">
-
             <div class="row">
                 <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-
                     <!-- Sidebar hồ sơ -->
                     <div class="profile-sidebar">
                         <div class="widget-profile pro-widget-content">
                             <div class="profile-info-widget">
                                 <a href="#" class="booking-doc-img">
-                                    <img src="{{ user.profile.image }}" alt="Ảnh người dùng">
+                                    <img src="{{ user.profile.image }}" alt="Ảnh dược sĩ">
                                 </a>
                                 <div class="profile-det-info">
-                                    <h3>Bác sĩ {{ user.get_full_name }}</h3>
-
+                                    <h3>Dược sĩ {{ user.get_full_name }}</h3>
                                     <div class="patient-details">
-                                        {% if user.profile.specialization %}
-                                            <h5 class="mb-0">{{ user.profile.specialization }}</h5>
-                                        {% endif %}
-                                        {% if user.profile.city and user.profile.country %}
-                                            <h5 class="mt-2">
-                                                <i class="fas fa-map-marker-alt"></i> 
-                                                {{ user.profile.city }}, {{ user.profile.country }}
-                                            </h5>
+                                        <h5 class="mb-0"><i class="fas fa-prescription-bottle-alt"></i> Phụ trách Kho & Phát thuốc</h5>
+                                        {% if user.profile.phone %}
+                                            <h5 class="mt-2"><i class="fas fa-phone"></i> {{ user.profile.phone }}</h5>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -68,37 +54,25 @@
                             <nav class="dashboard-menu">
                                 <ul>
                                     <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-                                        <a href="{% url 'doctors:dashboard' %}">
+                                        <a href="{% url 'pharmacy:dashboard' %}">
                                             <i class="fas fa-columns"></i>
                                             <span>Bảng điều khiển</span>
                                         </a>
                                     </li>
-                                    <li class="{% if request.resolver_match.url_name == 'appointments' %}active{% endif %}">
-                                        <a href="{% url 'doctors:appointments' %}">
-                                            <i class="fas fa-calendar-check"></i>
-                                            <span>Cuộc hẹn</span>
+                                    <li class="{% if request.resolver_match.url_name == 'medicine-list' or request.resolver_match.url_name == 'medicine-create' or request.resolver_match.url_name == 'medicine-update' %}active{% endif %}">
+                                        <a href="{% url 'pharmacy:medicine-list' %}">
+                                            <i class="fas fa-layer-group"></i>
+                                            <span>Quản lý kho thuốc</span>
                                         </a>
                                     </li>
-                                    <li class="{% if request.resolver_match.url_name == 'my-patients' %}active{% endif %}">
-                                        <a href="{% url 'doctors:my-patients' %}">
-                                            <i class="fas fa-user-injured"></i>
-                                            <span>Bệnh nhân của tôi</span>
-                                        </a>
-                                    </li>
-                                    <li class="{% if request.resolver_match.url_name == 'schedule-timings' %}active{% endif %}">
-                                        <a href="{% url 'doctors:schedule-timings' %}">
-                                            <i class="fas fa-hourglass-start"></i>
-                                            <span>Cài đặt lịch</span>
-                                        </a>
-                                    </li>
-                                    <li class="{% if request.resolver_match.url_name == 'profile-settings' %}active{% endif %}">
-                                        <a href="{% url 'doctors:profile-settings' %}">
-                                            <i class="fas fa-user-cog"></i>
-                                            <span>Cài đặt hồ sơ</span>
+                                    <li class="{% if request.resolver_match.url_name == 'prescription-list' or request.resolver_match.url_name == 'prescription-dispense' %}active{% endif %}">
+                                        <a href="{% url 'pharmacy:prescription-list' %}">
+                                            <i class="fas fa-file-prescription"></i>
+                                            <span>Đơn thuốc từ bác sĩ</span>
                                         </a>
                                     </li>
                                     <li class="{% if request.resolver_match.url_name == 'change-password' %}active{% endif %}">
-                                        <a href="{% url 'doctors:change-password' %}">
+                                        <a href="{% url 'pharmacy:change-password' %}">
                                             <i class="fas fa-lock"></i>
                                             <span>Đổi mật khẩu</span>
                                         </a>
@@ -111,23 +85,16 @@
                                     </li>
                                 </ul>
                             </nav>
-                            </nav>
                         </div>
                     </div>
                     <!-- /Sidebar hồ sơ -->
-
                 </div>
 
                 <div class="col-md-7 col-lg-8 col-xl-9">
-
                     {% block main %}{% endblock %}
-
                 </div>
             </div>
-
         </div>
-
     </div>
     <!-- /Nội dung trang -->
-
 {% endblock %}
