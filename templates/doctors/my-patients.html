@@ -32,34 +32,32 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="#">{{ patient.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>
-                                    {% if patient.profile.dob %}
-                                        {{ patient.profile.dob|timesince|split:" "|first }} tuổi
+                                    {% if patient.profile.age %}
+                                        {{ patient.profile.age }} tuổi
                                     {% else %}
-                                        N/A
+                                        Chưa xác định
                                     {% endif %}
                                 </td>
-                                <td>{{ patient.profile.gender|title|default:"N/A" }}</td>
-                                <td>{{ patient.profile.blood_group|default:"N/A" }}</td>
-                                <td>{{ patient.profile.phone|default:"N/A" }}</td>
+                                <td>{{ patient.profile.get_gender_display|default:"Chưa xác định" }}</td>
+                                <td>{{ patient.profile.blood_group|default:"Chưa xác định" }}</td>
+                                <td>{{ patient.profile.phone|default:"Chưa xác định" }}</td>
                                 <td>
-                                    {% with last_visit=patient.patient_appointments.filter.first %}
-                                        {% if last_visit %}
-                                            {{ last_visit.appointment_date }}
-                                        {% else %}
-                                            N/A
-                                        {% endif %}
-                                    {% endwith %}
+                                    {% if patient.last_visit %}
+                                        {{ patient.last_visit.appointment_date }}
+                                    {% else %}
+                                        Chưa xác định
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% with stats=patient_stats|get_item:patient.id %}
-                                        <span class="d-block">Total: {{ stats.total_appointments }}</span>
-                                        <small class="text-muted">Completed: {{ stats.completed_appointments }}</small>
+                                        <span class="d-block">Tổng: {{ stats.total_appointments }}</span>
+                                        <small class="text-muted">Hoàn thành: {{ stats.completed_appointments }}</small>
                                     {% endwith %}
                                 </td>
                                 <td>
@@ -67,7 +65,7 @@
                                         <a href="#" class="btn btn-sm bg-info-light mr-1" data-toggle="modal" data-target="#patient_details_{{ patient.id }}">
                                             <i class="far fa-eye"></i> Xem
                                         </a>
-                                        <a href="{% url 'doctors:appointment-history' patient.id %}" class="btn btn-sm bg-primary-light">
+                                        <a href="{% url 'doctors:patient-history' patient.id %}" class="btn btn-sm bg-primary-light">
                                             <i class="fas fa-history"></i> Lịch sử
                                         </a>
                                     </div>
@@ -92,31 +90,31 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="patient-info">
-                                                {% if patient.profile.medical_conditions %}
                                                 <div class="info-block">
                                                     <h5><i class="fas fa-notes-medical"></i> Bệnh lý</h5>
-                                                    <p>{{ patient.profile.medical_conditions }}</p>
+                                                    <p>{{ patient.profile.medical_conditions|default:"Chưa có dữ liệu" }}</p>
                                                 </div>
-                                                {% endif %}
                                                 
-                                                {% if patient.profile.allergies %}
                                                 <div class="info-block">
                                                     <h5><i class="fas fa-allergies"></i> Dị ứng</h5>
-                                                    <p>{{ patient.profile.allergies }}</p>
+                                                    <p>{{ patient.profile.allergies|default:"Chưa có dữ liệu" }}</p>
                                                 </div>
-                                                {% endif %}
                                                 
                                                 <div class="info-block">
                                                     <h5><i class="fas fa-map-marker-alt"></i> Địa chỉ</h5>
                                                     <p>
-                                                        {{ patient.profile.address|default:"" }}<br>
-                                                        {% if patient.profile.city or patient.profile.state %}
-                                                            {{ patient.profile.city }}{% if patient.profile.city and patient.profile.state %}, {% endif %}{{ patient.profile.state }}<br>
+                                                        {% if patient.profile.address or patient.profile.city or patient.profile.state or patient.profile.postal_code or patient.profile.country %}
+                                                            {{ patient.profile.address|default:"" }}<br>
+                                                            {% if patient.profile.city or patient.profile.state %}
+                                                                {{ patient.profile.city }}{% if patient.profile.city and patient.profile.state %}, {% endif %}{{ patient.profile.state }}<br>
+                                                            {% endif %}
+                                                            {% if patient.profile.postal_code %}
+                                                                {{ patient.profile.postal_code }}<br>
+                                                            {% endif %}
+                                                            {{ patient.profile.country|default:"" }}
+                                                        {% else %}
+                                                            Chưa có địa chỉ
                                                         {% endif %}
-                                                        {% if patient.profile.postal_code %}
-                                                            {{ patient.profile.postal_code }}<br>
-                                                        {% endif %}
-                                                        {{ patient.profile.country|default:"" }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -167,5 +165,20 @@
         margin-right: 0;
     }
 </style>
+{% endblock %}
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Move modal elements to document.body to avoid being clipped by overflow containers
+    document.querySelectorAll('.modal').forEach(function(modal) {
+        if (!document.body.contains(modal)) return;
+        try {
+            document.body.appendChild(modal);
+        } catch (e) {
+            // ignore
+        }
+    });
+});
+</script>
 {% endblock %}
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 
 {% block title %}
     Đăng nhập
@@ -7,18 +8,18 @@
 
 {% block content %}
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container-fluid">
 
             <div class="row">
                 <div class="col-md-8 offset-md-2">
 
-                    <!-- Login Tab Content -->
+                    <!-- Nội dung tab Đăng nhập -->
                     <div class="account-content">
                         <div class="row align-items-center justify-content-center">
                             <div class="col-md-7 col-lg-6 login-left">
-                                <img src="{% static 'assets/img/login-banner.png' %}" class="img-fluid" alt="PBL3 Login">
+                                <img src="{% static 'assets/img/login-banner.png' %}" class="img-fluid" alt="PBL3 Đăng nhập">
                             </div>
                             <div class="col-md-12 col-lg-6 login-right">
                                 <div class="login-header">
@@ -73,19 +74,35 @@
                                         <span class="span-or">hoặc</span>
                                     </div>
                                     <div class="row form-row social-login">
-                                        <div class="col-6">
-                                            <a href="#" class="btn btn-facebook btn-block"><i class="fab fa-facebook-f mr-1"></i> Đăng nhập bằng Facebook</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <a href="#" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng nhập bằng Google</a>
-                                        </div>
+                                        {% if google_enabled %}
+                                            <div class="col-12">
+                                                <a id="google-login-btn" href="{% provider_login_url "google" %}" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng nhập bằng Google</a>
+                                            </div>
+                                            <script>
+                                                // Ensure immediate GET navigation to provider URL to open account picker
+                                                (function(){
+                                                    var btn = document.getElementById('google-login-btn');
+                                                    if(!btn) return;
+                                                    btn.addEventListener('click', function(e){
+                                                        // allow normal navigation (GET) but ensure no other handlers interfere
+                                                        // some browsers or extensions may intercept; force navigation
+                                                        e.preventDefault();
+                                                        window.location.href = btn.href;
+                                                    });
+                                                })();
+                                            </script>
+                                        {% else %}
+                                            <div class="col-12">
+                                                <a href="{% url 'accounts:google-start' %}" class="btn btn-google btn-block"><i class="fab fa-google mr-1"></i> Đăng nhập bằng tài khoản Google</a>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     <div class="text-center dont-have">Bạn chưa có tài khoản? <a href="{% url 'accounts:patient-register' %}">Đăng ký</a></div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <!-- /Login Tab Content -->
+                    <!-- /Nội dung tab Đăng nhập -->
 
                 </div>
             </div>
@@ -93,6 +110,6 @@
         </div>
 
     </div>
-    <!-- /Page Content -->
+    <!-- /Nội dung trang -->
 
 {% endblock %}

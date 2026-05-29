@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -28,7 +28,9 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 
-from bookings.models import Booking, Prescription
+from bookings.models import Booking, Prescription, Referral
+from core.models import Review, Department
+from core.dept_fields import DEPARTMENT_FIELDS
 from core.decorators import user_is_doctor
 from doctors.forms import DoctorProfileForm, PrescriptionForm
 from doctors.models import Experience
@@ -39,7 +41,7 @@ from doctors.serializers import (
     RegistrationNumberSerializer,
     SpecializationSerializer,
 )
-from mixins.custom_mixins import DoctorRequiredMixin
+from mixins.custom_mixins import DoctorRequiredMixin, DepartmentDoctorRequiredMixin
 from patients.forms import ChangePasswordForm
 from utils.htmx import render_toast_message_for_api
 from accounts.models import User
@@ -93,6 +95,20 @@ class DoctorDashboardView(DoctorRequiredMixin, TemplateView):
             Booking.objects.select_related("patient", "patient__profile")
             .filter(doctor=self.request.user, appointment_date=today)
             .order_by("appointment_time")
+        )
+
+        # Recent reviews for this doctor
+        context["recent_reviews"] = (
+            Review.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")[:10]
+        )
+
+        # Recent prescriptions for display on dashboard
+        context["recent_prescriptions"] = (
+            Prescription.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")[:5]
         )
 
         return context
@@ -430,7 +446,8 @@ class DoctorsListView(ListView):
             elif sort_by == "rating":
                 queryset = queryset.order_by("-rating")
             elif sort_by == "experience":
-                queryset = queryset.order_by("-profile__experience")
+                # Order by number of experience entries (doctors with more experience entries first)
+                queryset = queryset.annotate(exp_count=Count("experiences")).order_by("-exp_count")
         else:
             queryset = queryset.order_by("-pk")
 
@@ -489,7 +506,6 @@ class AppointmentDetailView(DoctorRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         patient = self.object.patient
 
-        # Get patient's appointment history with this doctor
         context["patient_history"] = (
             Booking.objects.select_related("doctor", "doctor__profile")
             .filter(
@@ -500,10 +516,39 @@ class AppointmentDetailView(DoctorRequiredMixin, DetailView):
             .order_by("-appointment_date", "-appointment_time")
         )
 
-        # Get total visits count
         context["total_visits"] = Booking.objects.filter(
             doctor=self.request.user, patient=patient, status="completed"
         ).count()
+
+        context["departments"] = Department.objects.filter(is_active=True)
+
+        context["referrals"] = self.object.referrals.select_related(
+            "department"
+        ).order_by("created_at")
+
+        # Build labeled results for each referral
+        for ref in context["referrals"]:
+            if ref.result_data:
+                fields = DEPARTMENT_FIELDS.get(ref.department.name, [])
+                label_map = {f["key"]: f"{f['label']}{' (' + f['unit'] + ')' if f.get('unit') else ''}" for f in fields}
+                ref.labeled_results = [
+                    {"label": label_map.get(k, k), "value": v}
+                    for k, v in ref.result_data.items()
+                ]
+
+        referred_ids = list(context["referrals"].values_list("department_id", flat=True))
+        if referred_ids:
+            context["available_departments"] = context["departments"].exclude(
+                id__in=referred_ids
+            )
+        else:
+            context["available_departments"] = context["departments"]
+
+        referral_statuses = [r.status for r in context["referrals"]]
+        context["all_referrals_completed"] = (
+            len(referral_statuses) > 0
+            and all(s == "completed" for s in referral_statuses)
+        )
 
         return context
 
@@ -514,20 +559,47 @@ class AppointmentActionView(DoctorRequiredMixin, View):
             Booking,
             pk=pk,
             doctor=request.user,
-            status__in=["pending", "confirmed"],
         )
 
         if action == "accept":
+            if appointment.status != "pending":
+                messages.warning(request, "Cuộc hẹn này không ở trạng thái chờ.")
+                return redirect("doctors:appointment-detail", pk=pk)
             appointment.status = "confirmed"
             messages.success(request, "Xác nhận cuộc hẹn thành công")
         elif action == "cancel":
+            if appointment.status not in ["pending", "confirmed"]:
+                messages.warning(request, "Không thể hủy cuộc hẹn ở trạng thái này.")
+                return redirect("doctors:appointment-detail", pk=pk)
             appointment.status = "cancelled"
             messages.success(request, "Đã huỷ cuộc hẹn thành công")
         elif action == "completed":
+            if appointment.status == "completed":
+                messages.warning(request, "Cuộc hẹn này đã được hoàn thành.")
+                return redirect("doctors:appointment-detail", pk=pk)
+            if appointment.status != "confirmed":
+                messages.warning(request, "Chỉ có thể hoàn thành cuộc hẹn đã xác nhận.")
+                return redirect("doctors:appointment-detail", pk=pk)
+            pending_refs = appointment.referrals.exclude(status="completed").exists()
+            if pending_refs:
+                messages.error(
+                    request,
+                    "Không thể hoàn thành cuộc hẹn khi vẫn còn chỉ định chuyên khoa chưa có kết quả."
+                )
+                return redirect("doctors:appointment-detail", pk=pk)
             appointment.status = "completed"
             messages.success(request, "Đã đánh dấu cuộc hẹn là hoàn thành")
 
         appointment.save()
+        # After accepting, redirect to the appointment detail so the doctor can view details
+        if action == "accept":
+            return redirect("doctors:appointment-detail", pk=appointment.pk)
+
+        # After marking completed, redirect to the prescription creation page for this booking
+        if action == "completed":
+            return redirect("doctors:prescription-create", booking_id=appointment.pk)
+
+        # Default redirect to dashboard for other actions
         return redirect("doctors:dashboard")
 
 
@@ -559,6 +631,27 @@ class MyPatientsView(DoctorRequiredMixin, ListView):
                 ),
             )
             patient_stats[patient.id] = stats
+            # Compute age from DOB for display (integer years)
+            if getattr(patient, 'profile', None) and patient.profile.dob:
+                today = date.today()
+                patient.profile.age = (
+                    today.year
+                    - patient.profile.dob.year
+                    - (
+                        (today.month, today.day)
+                        < (patient.profile.dob.month, patient.profile.dob.day)
+                    )
+                )
+            else:
+                if getattr(patient, 'profile', None):
+                    patient.profile.age = None
+            # Attach last visit (most recent appointment) to patient for template
+            last_visit = (
+                Booking.objects.filter(doctor=self.request.user, patient=patient)
+                .order_by("-appointment_date", "-appointment_time")
+                .first()
+            )
+            patient.last_visit = last_visit
         context["patient_stats"] = patient_stats
         return context
 
@@ -585,6 +678,20 @@ class AppointmentHistoryView(DoctorRequiredMixin, ListView):
             role="patient",
         )
         return context
+
+
+class ReviewListView(DoctorRequiredMixin, ListView):
+    model = Review
+    template_name = "doctors/reviews.html"
+    context_object_name = "reviews"
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            Review.objects.select_related("patient", "patient__profile")
+            .filter(doctor=self.request.user)
+            .order_by("-created_at")
+        )
 
 
 class DoctorChangePasswordView(DoctorRequiredMixin, View):
@@ -670,3 +777,118 @@ class PrescriptionDetailView(DoctorRequiredMixin, DetailView):
             "patient__profile",
             "booking",
         )
+
+
+class DepartmentQueueView(DepartmentDoctorRequiredMixin, ListView):
+    model = Referral
+    template_name = "dept/queue.html"
+    context_object_name = "referrals"
+    paginate_by = 20
+
+    def get_queryset(self):
+        dept = self.request.user.profile.department
+        return (
+            Referral.objects.select_related(
+                "booking",
+                "booking__patient",
+                "booking__patient__profile",
+                "general_doctor",
+                "department",
+            )
+            .filter(department=dept)
+            .order_by("-created_at")
+        )
+
+
+class ReferralResultView(DepartmentDoctorRequiredMixin, View):
+    template_name = "dept/referral_result.html"
+
+    def get_context(self, referral):
+        dept_name = referral.department.name
+        return {
+            "referral": referral,
+            "dept_fields": DEPARTMENT_FIELDS.get(dept_name, []),
+            "dept_name": dept_name,
+        }
+
+    def get(self, request, referral_id):
+        dept = request.user.profile.department
+        referral = get_object_or_404(
+            Referral.objects.select_related(
+                "booking",
+                "booking__patient",
+                "booking__patient__profile",
+                "booking__doctor",
+                "general_doctor",
+                "department",
+            ),
+            id=referral_id,
+            department=dept,
+        )
+        return render(request, self.template_name, self.get_context(referral))
+
+    def post(self, request, referral_id):
+        dept = request.user.profile.department
+        referral = get_object_or_404(
+            Referral, id=referral_id, department=dept
+        )
+        action = request.POST.get("action")
+
+        if action == "start":
+            referral.status = "in_progress"
+            referral.save()
+            messages.success(request, "Đã nhận bệnh nhân — đang khám.")
+
+        elif action == "complete":
+            fields = DEPARTMENT_FIELDS.get(referral.department.name, [])
+            result_data = {}
+            result_lines = []
+            for f in fields:
+                val = request.POST.get(f["key"], "").strip()
+                if val:
+                    result_data[f["key"]] = val
+                    label = f"{f['label']}: {val}"
+                    if f.get("unit"):
+                        label += f" {f['unit']}"
+                    result_lines.append(label)
+
+            if not result_data:
+                messages.error(request, "Vui lòng nhập ít nhất một chỉ số.")
+                return redirect("doctors:dept-referral", referral_id=referral.id)
+
+            referral.result_data = result_data
+            referral.result = "\n".join(result_lines)
+            referral.status = "completed"
+            referral.save()
+            messages.success(request, "Đã hoàn thành và gửi kết quả.")
+
+        else:
+            messages.error(request, "Hành động không hợp lệ.")
+
+        return redirect("doctors:dept-dashboard")
+
+
+class ReferralCreateView(DoctorRequiredMixin, View):
+    def post(self, request, appointment_id):
+        booking = get_object_or_404(
+            Booking, id=appointment_id, doctor=request.user
+        )
+        department_ids = request.POST.getlist("departments")
+        reasons = request.POST.getlist("reasons")
+
+        created = 0
+        for i, dept_id in enumerate(department_ids):
+            if not dept_id:
+                continue
+            reason = reasons[i].strip() if i < len(reasons) else ""
+            Referral.objects.create(
+                booking=booking,
+                department_id=dept_id,
+                general_doctor=request.user,
+                reason=reason,
+            )
+            created += 1
+
+        if created:
+            messages.success(request, f"Đã tạo {created} chỉ định chuyên khoa.")
+        return redirect("doctors:appointment-detail", pk=appointment_id)

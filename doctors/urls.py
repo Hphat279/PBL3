@@ -18,18 +18,23 @@ from .views import (
     DoctorChangePasswordView,
     PrescriptionCreateView,
     PrescriptionDetailView,
+    ReviewListView,
+    DepartmentQueueView,
+    ReferralResultView,
+    ReferralCreateView,
 )
 
 app_name = "doctors"
 
 urlpatterns = [
-    path("", DoctorsListView.as_view(), name="list"),
+    path("list/", DoctorsListView.as_view(), name="list"),
+    path("", DoctorsListView.as_view(), name="list-alt"),
     path("dashboard/", DoctorDashboardView.as_view(), name="dashboard"),
     path("schedule-timings/", schedule_timings, name="schedule-timings"),
     path(
         "profile-settings/",
         DoctorProfileUpdateView.as_view(),
-        name="profile-setting",
+        name="profile-settings",
     ),
     path(
         "<str:username>/profile/",
@@ -67,15 +72,21 @@ urlpatterns = [
         name="appointment-detail",
     ),
     path(
+        "appointments/<int:appointment_id>/refer/",
+        ReferralCreateView.as_view(),
+        name="referral-create",
+    ),
+    path(
         "appointments/<int:pk>/<str:action>/",
         AppointmentActionView.as_view(),
         name="appointment-action",
     ),
     path("my-patients/", MyPatientsView.as_view(), name="my-patients"),
+    path("reviews/", ReviewListView.as_view(), name="reviews"),
     path(
         "my-patients/<int:patient_id>/history/",
         AppointmentHistoryView.as_view(),
-        name="appointment-history",
+        name="patient-history",
     ),
     path(
         "change-password/",
@@ -85,11 +96,21 @@ urlpatterns = [
     path(
         "appointment/<int:booking_id>/prescription/add/",
         PrescriptionCreateView.as_view(),
-        name="add-prescription",
+        name="prescription-create",
     ),
     path(
         "prescription/<int:pk>/",
         PrescriptionDetailView.as_view(),
         name="prescription-detail",
+    ),
+    path(
+        "dept/dashboard/",
+        DepartmentQueueView.as_view(),
+        name="dept-dashboard",
+    ),
+    path(
+        "dept/referral/<int:referral_id>/",
+        ReferralResultView.as_view(),
+        name="dept-referral",
     ),
 ]

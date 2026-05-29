@@ -14,7 +14,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="invoice-logo">
-                                    <img src="{% static 'assets/img/logo2.svg' %}" alt="logo">
+                                    <img src="{% static 'assets/img/logo2.svg' %}" alt="Logo PBL3">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     
-                    <!-- Invoice Item -->
+                    <!-- Mục hóa đơn -->
                     <div class="invoice-item">
                         <div class="row">
                             <div class="col-md-6">
@@ -58,9 +58,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /Invoice Item -->
+                    <!-- /Mục hóa đơn -->
                     
-                    <!-- Invoice Item -->
+                    <!-- Mục hóa đơn -->
                     <div class="invoice-item invoice-table-wrap">
                         <div class="row">
                             <div class="col-md-12">
@@ -77,7 +77,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>Phí khám</td>
-                                                <td class="text-center">{{ booking.appointment_date }}</td>
+                                                <td class="text-center">{{ booking.appointment_date|date_vn }}</td>
                                                 <td class="text-center">{{ booking.appointment_time|time:"h:i A" }}</td>
                                                 <td class="text-right">{{ booking.doctor.profile.price_per_consultation|vnd }}</td>
                                             </tr>
@@ -91,7 +91,7 @@
                                         <tbody>
                                             <tr>
                                                 <th>Tổng tiền:</th>
-                                                <td><span>₫{{ total }}</span></td>
+                                                <td>{{ total|vnd }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -99,9 +99,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /Invoice Item -->
+                    <!-- /Mục hóa đơn -->
                     
-                    <!-- Invoice Information -->
+                    <!-- Thông tin hóa đơn -->
                     <div class="other-info">
                         <h4>Thông tin đặt lịch</h4>
                                 <p class="text-muted mb-0">
@@ -114,12 +114,12 @@
                                 {% elif booking.status == 'confirmed' %}Đã xác nhận
                                 {% elif booking.status == 'completed' %}Hoàn thành
                                 {% elif booking.status == 'cancelled' %}Đã hủy
-                                {% else %}{{ booking.status|title }}
+                                {% else %}{{ booking.status|status_label }}
                                 {% endif %}
                             </span>
                         </p>
                     </div>
-                    <!-- /Invoice Information -->
+                    <!-- /Thông tin hóa đơn -->
                     
                 </div>
             </div>

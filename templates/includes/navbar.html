@@ -1,6 +1,6 @@
 {% load static %}
 
-<!-- Header -->
+<!-- Đầu trang -->
 <header class="header">
     <nav class="navbar navbar-expand-lg header-nav">
         <div class="navbar-header">
@@ -12,13 +12,13 @@
                 </span>
             </a>
                 <a href="{% url 'core:home' %}" class="navbar-brand logo">
-                <img src="{% static 'assets/img/logo2.svg' %}" class="img-fluid" alt="Logo">
+                <img src="{% static 'assets/img/logo2.svg' %}" class="img-fluid" alt="Logo PBL3">
             </a>
         </div>
         <div class="main-menu-wrapper">
             <div class="menu-header">
                 <a href="{% url 'core:home' %}" class="menu-logo">
-                    <img src="{% static 'assets/img/logo2.svg' %}" class="img-fluid" alt="Logo">
+                    <img src="{% static 'assets/img/logo2.svg' %}" class="img-fluid" alt="Logo PBL3">
                 </a>
                 <a id="menu_close" class="menu-close" href="javascript:void(0);">
                     <i class="fas fa-times"></i>
@@ -48,6 +48,16 @@
                             <li><a href="#">Đổi mật khẩu</a></li>
                         </ul>
                     </li>
+                {% elif user.role == 'pharmacist' %}
+                    <li class="has-submenu {% if '/pharmacy/' in request.path %} active {% endif %}">
+                        <a href="#">Dược sĩ <i class="fas fa-chevron-down"></i></a>
+                        <ul class="submenu">
+                            <li><a href="{% url 'pharmacy:dashboard' %}">Bảng điều khiển</a></li>
+                            <li><a href="{% url 'pharmacy:medicine-list' %}">Quản lý kho</a></li>
+                            <li><a href="{% url 'pharmacy:prescription-list' %}">Đơn thuốc bác sĩ</a></li>
+                            <li><a href="{% url 'pharmacy:change-password' %}">Đổi mật khẩu</a></li>
+                        </ul>
+                    </li>
                 {% endif %}
             </ul>
         </div>
@@ -63,10 +73,10 @@
             </li>
             {% if not user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link header-login" href="{% url 'accounts:login' %}">Đăng nhập / Đăng ký </a>
+                    <a class="nav-link header-login" href="{% url 'accounts:login' %}">Đăng nhập / Đăng ký</a>
                 </li>
             {% else %}
-                <!-- User Menu -->
+                <!-- Menu người dùng -->
                 <li class="nav-item dropdown has-arrow logged-item">
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                         <span class="user-img">
@@ -76,12 +86,14 @@
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="user-header">
                             <div class="avatar avatar-sm">
-                                <img src="{{ user.profile.image }}" alt="User Image" class="avatar-img rounded-circle">
+                                <img src="{{ user.profile.image }}" alt="Ảnh người dùng" class="avatar-img rounded-circle">
                             </div>
                             <div class="user-text">
                                 <h6>{{ user.username }}</h6>
                                 {% if user.role == "patient" %}
                                     <p class="text-muted mb-0">Bệnh nhân</p>
+                                {% elif user.role == "pharmacist" %}
+                                    <p class="text-muted mb-0">Dược sĩ</p>
                                 {% else %}
                                     <p class="text-muted mb-0">Bác sĩ</p>
                                 {% endif %}
@@ -92,13 +104,15 @@
                             <a class="dropdown-item" href="{% url 'patients:profile-setting' %}">Cài đặt hồ sơ</a>
                         {% elif user.role == "doctor" %}
                             <a class="dropdown-item" href="{% url 'doctors:dashboard' %}">Bảng điều khiển</a>
+                        {% elif user.role == "pharmacist" %}
+                            <a class="dropdown-item" href="{% url 'pharmacy:dashboard' %}">Bảng điều khiển</a>
                         {% endif %}
                         <a class="dropdown-item" href="{% url 'accounts:logout' %}">Đăng xuất</a>
                     </div>
                 </li>
-                <!-- /User Menu -->
+                <!-- /Menu người dùng -->
             {% endif %}
         </ul>
     </nav>
 </header>
-<!-- /Header -->
+<!-- /Đầu trang -->

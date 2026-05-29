@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Add Prescription
+Thêm đơn thuốc
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@ Add Prescription
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Add Prescription</h4>
+                        <h4 class="card-title">Thêm đơn thuốc</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -21,27 +21,27 @@ Add Prescription
                                     {% csrf_token %}
                                     
                                     <div class="form-group">
-                                        <label>Symptoms</label>
+                                        <label>Triệu chứng</label>
                                         {{ form.symptoms }}
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label>Diagnosis</label>
+                                        <label>Chẩn đoán</label>
                                         {{ form.diagnosis }}
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label>Medication & Instructions</label>
+                                        <label>Thuốc & Hướng dẫn</label>
                                         {{ form.medications }}
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label>Additional Notes</label>
+                                        <label>Ghi chú thêm</label>
                                         {{ form.notes }}
                                     </div>
                                     
                                     <div class="submit-section">
-                                        <button type="submit" class="btn btn-primary submit-btn">Save Prescription</button>
+                                        <button type="submit" class="btn btn-primary submit-btn">Lưu đơn thuốc</button>
                                     </div>
                                 </form>
                             </div>

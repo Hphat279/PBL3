@@ -1,9 +1,10 @@
 {% extends "dashboard/base.html" %}
+{% load currency_filters %}
 
 {% block title %}Lịch khám{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
@@ -14,7 +15,7 @@
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -38,7 +39,7 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.doctor.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="{% url 'doctors:doctor-profile' appointment.doctor.username %}">Bác sĩ {{ appointment.doctor.get_full_name }}</a>
                                     </h2>
@@ -47,13 +48,13 @@
                                 <td>
                                     <h2 class="table-avatar">
                                         <a href="#" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="User Image">
+                                            <img class="avatar-img rounded-circle" src="{{ appointment.patient.profile.image }}" alt="Ảnh người dùng">
                                         </a>
                                         <a href="#">{{ appointment.patient.get_full_name }}</a>
                                     </h2>
                                 </td>
                                 <td>
-                                    {{ appointment.appointment_date|date:"d M Y" }}
+                                    {{ appointment.appointment_date|date_vn }}
                                     <span class="text-primary d-block">{{ appointment.appointment_time|time:"h:i A" }}</span>
                                 </td>
                                 <td>
@@ -62,7 +63,7 @@
                                         {% if appointment.status == 'pending' %}bg-warning-light{% endif %}
                                         {% if appointment.status == 'cancelled' %}bg-danger-light{% endif %}
                                         {% if appointment.status == 'completed' %}bg-info-light{% endif %}">
-                                        {{ appointment.status|title }}
+                                        {{ appointment.status|status_label }}
                                     </span>
                                 </td>
                                 <td class="text-right">{{ appointment.doctor.profile.price_per_consultation|vnd }}</td>
@@ -95,7 +96,7 @@
                 <div class="row mt-4">
                     <div class="col-sm-12 col-md-5">
                         <div class="dataTables_info">
-                            Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ paginator.count }} entries
+                            Hiển thị {{ page_obj.start_index }} đến {{ page_obj.end_index }} trên tổng {{ paginator.count }} mục
                         </div>
                     </div>
                     <div class="col-sm-12 col-md-7">
@@ -103,10 +104,10 @@
                             <ul class="pagination">
                                 {% if page_obj.has_previous %}
                                     <li class="page-item">
-                                        <a class="page-link" href="?page=1">&laquo; First</a>
+                                        <a class="page-link" href="?page=1">&laquo; Đầu</a>
                                     </li>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Trước</a>
                                     </li>
                                 {% endif %}
 
@@ -124,10 +125,10 @@
 
                                 {% if page_obj.has_next %}
                                     <li class="page-item">
-                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Tiếp</a>
                                     </li>
                                     <li class="page-item">
-                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Cuối &raquo;</a>
                                     </li>
                                 {% endif %}
                             </ul>

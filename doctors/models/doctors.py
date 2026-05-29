@@ -12,8 +12,8 @@ class Education(models.Model):
     year_of_completion = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        verbose_name = "Education"
-        verbose_name_plural = "Doctor Educations"
+        verbose_name = "Bằng cấp"
+        verbose_name_plural = "Bằng cấp"
 
     def __str__(self) -> str:
         return (
@@ -32,8 +32,8 @@ class Experience(models.Model):
     designation = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
-        verbose_name = "Work & Experience"
-        verbose_name_plural = "Works & Experiences"
+        verbose_name = "Kinh nghiệm"
+        verbose_name_plural = "Kinh nghiệm"
 
     def __str__(self) -> str:
         return f"{self.user.get_full_name()} -> {self.institution}"
@@ -55,9 +55,15 @@ class Review(models.Model):
     class Meta:
         unique_together = ["doctor", "patient"]
         ordering = ["-created_at"]
+        verbose_name = "Đánh giá bác sĩ"
+        verbose_name_plural = "Đánh giá bác sĩ"
 
 
 class Specialty(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     doctors = models.ManyToManyField(User, related_name="specialties")
+    
+    class Meta:
+        verbose_name = "Chuyên khoa"
+        verbose_name_plural = "Chuyên khoa"

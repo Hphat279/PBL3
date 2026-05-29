@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hoàn thành hồ sơ{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'assets/css/complete_profile.css' %}">
+<!-- Select2 for searchable selects -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>.select2-container--default .select2-selection--single { height:44px; }</style>
+{% endblock %}
+
+{% block content %}
+<div class="content py-4 complete-profile-page">
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10 mx-auto">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h4 class="card-title mb-3">Hoàn thành hồ sơ bệnh nhân</h4>
+            <p class="text-muted">Vui lòng điền đầy đủ thông tin để bác sĩ có thể liên hệ và cập nhật hồ sơ y tế.</p>
+            <form method="post">
+              {% csrf_token %}
+              <div class="section-card section-personal">
+                <div class="section-header">
+                  <h6>Thông tin cơ bản</h6>
+                </div>
+                <div class="section-body">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Email</label>
+                      <input type="email" name="email" class="form-control" value="{{ form.initial.email|default:'' }}" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Số điện thoại</label>
+                      <input type="text" name="phone" class="form-control" value="{{ form.initial.phone|default:'' }}" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Tên</label>
+                      <input type="text" name="first_name" class="form-control" value="{{ form.initial.first_name|default:'' }}" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label">Họ</label>
+                      <input type="text" name="last_name" class="form-control" value="{{ form.initial.last_name|default:'' }}" required />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card section-medical">
+                <div class="section-header">
+                  <h6>Thông tin y tế</h6>
+                </div>
+                <div class="section-body">
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Ngày sinh</label>
+                      <input type="date" name="dob" class="form-control" value="{{ form.initial.dob|default:'' }}" />
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Giới tính</label>
+                      <select name="gender" class="form-control">
+                        <option value="">Chọn</option>
+                        <option value="male" {% if form.initial.gender == 'male' %}selected{% endif %}>Nam</option>
+                        <option value="female" {% if form.initial.gender == 'female' %}selected{% endif %}>Nữ</option>
+                        <option value="other" {% if form.initial.gender == 'other' %}selected{% endif %}>Khác</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label">Nhóm máu</label>
+                      <select name="blood_group" class="form-control">
+                        <option value="">Chọn</option>
+                        <option value="A+" {% if form.initial.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                        <option value="A-" {% if form.initial.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                        <option value="B+" {% if form.initial.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                        <option value="B-" {% if form.initial.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                        <option value="O+" {% if form.initial.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                        <option value="O-" {% if form.initial.blood_group == 'O-' %}selected{% endif %}>O-</option>
+                        <option value="AB+" {% if form.initial.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                        <option value="AB-" {% if form.initial.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                      </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                      <label class="form-label">Dị ứng</label>
+                      <textarea name="allergies" class="form-control" rows="2">{{ form.initial.allergies|default:'' }}</textarea>
+                    </div>
+                    <div class="col-12 mb-3">
+                      <label class="form-label">Tiền sử bệnh</label>
+                      <textarea name="medical_conditions" class="form-control" rows="2">{{ form.initial.medical_conditions|default:'' }}</textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card section-address">
+                <div class="section-header">
+                  <h6>Địa chỉ liên hệ</h6>
+                </div>
+                <div class="section-body">
+                  <div class="row">
+                    <div class="col-md-12 mb-3">
+                      <label class="form-label">Địa chỉ</label>
+                      <input type="text" name="address" class="form-control" value="{{ form.initial.address|default:'' }}" />
+                    </div>
+                    <div class="form-row-inline d-flex align-items-start w-100">
+                      <div class="col-md-4 mb-3">
+                        <label class="form-label">Quốc gia</label>
+                        <select id="country-select" name="country" class="form-control">
+                          <option value="">Chọn quốc gia</option>
+                          <option value="Vietnam" {% if form.initial.country == 'Vietnam' %}selected{% endif %}>Việt Nam</option>
+                          <option value="Other" {% if form.initial.country and form.initial.country != 'Vietnam' %}selected{% endif %}>Khác</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label class="form-label">Thành phố / Tỉnh</label>
+                        <select id="city-select" name="city" class="form-control">
+                          <option value="">Chọn thành phố</option>
+                        </select>
+                        <input type="text" id="city-input" name="city" class="form-control d-none mt-2" placeholder="Nhập thành phố" value="{{ form.initial.city|default:'' }}" />
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label class="form-label">Quận / Huyện</label>
+                        <select id="district-select" name="state" class="form-control">
+                          <option value="">Chọn quận/huyện</option>
+                        </select>
+                        <input type="text" id="district-input" name="state" class="form-control d-none mt-2" placeholder="Nhập quận/huyện" value="{{ form.initial.state|default:'' }}" />
+                      </div>
+                    </div>
+              </div>
+
+              <div class="text-right mt-3">
+                <button type="submit" class="btn btn-primary">Hoàn thành hồ sơ</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script>
+    // Load regions from static JSON and populate selects
+    async function loadRegions() {
+      try {
+        const res = await fetch('/static/data/vietnam_regions.json');
+        window.vnRegions = await res.json();
+      } catch (e) {
+        window.vnRegions = { "Vietnam": {} };
+      }
+    }
+
+    function populateCities(country) {
+      const citySelect = document.getElementById('city-select');
+      const cityInput = document.getElementById('city-input');
+      citySelect.innerHTML = '<option value="">Chọn thành phố</option>';
+      document.getElementById('district-select').innerHTML = '<option value="">Chọn quận/huyện</option>';
+      if (country === 'Vietnam') {
+        const cities = Object.keys(window.vnRegions['Vietnam'] || {});
+        citySelect.classList.remove('d-none'); cityInput.classList.add('d-none');
+        cities.forEach(city => {
+          const opt = document.createElement('option'); opt.value = city; opt.text = city;
+          if ("{{ form.initial.city }}" === city) opt.selected = true;
+          citySelect.appendChild(opt);
+        });
+      } else {
+        citySelect.classList.add('d-none'); cityInput.classList.remove('d-none');
+      }
+    }
+
+    function populateDistricts(country, city) {
+      const districtSelect = document.getElementById('district-select');
+      const districtInput = document.getElementById('district-input');
+      districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+      if (country === 'Vietnam' && (window.vnRegions['Vietnam'] || {})[city]) {
+        const list = (window.vnRegions['Vietnam'] || {})[city] || [];
+        districtSelect.classList.remove('d-none'); districtInput.classList.add('d-none');
+        list.forEach(d => {
+          const opt = document.createElement('option'); opt.value = d; opt.text = d;
+          if ("{{ form.initial.state }}" === d) opt.selected = true;
+          districtSelect.appendChild(opt);
+        });
+      } else {
+        districtSelect.classList.add('d-none'); districtInput.classList.remove('d-none');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function(){
+      await loadRegions();
+      const countrySelect = document.getElementById('country-select');
+      const citySelect = document.getElementById('city-select');
+      const districtSelect = document.getElementById('district-select');
+
+      const initialCountry = "{{ form.initial.country }}" || '';
+      if (initialCountry === 'Vietnam') {
+        populateCities('Vietnam');
+        const initialCity = "{{ form.initial.city }}" || '';
+        if (initialCity) populateDistricts('Vietnam', initialCity);
+      } else if (initialCountry) {
+        document.getElementById('city-select').classList.add('d-none');
+        document.getElementById('city-input').classList.remove('d-none');
+        document.getElementById('district-select').classList.add('d-none');
+        document.getElementById('district-input').classList.remove('d-none');
+      }
+
+      countrySelect.addEventListener('change', function(){
+        populateCities(this.value);
+      });
+
+      citySelect.addEventListener('change', function(){
+        populateDistricts(countrySelect.value, this.value);
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    // initialize Select2 on selects to make them searchable
+    document.addEventListener('DOMContentLoaded', function(){
+      function initSelect2Later(){
+        if (window.jQuery && window.jQuery().select2) {
+          $('#country-select').select2({ width: '100%', minimumResultsForSearch: Infinity });
+          $('#city-select').select2({ width: '100%', placeholder: 'Chọn thành phố' });
+          $('#district-select').select2({ width: '100%', placeholder: 'Chọn quận/huyện' });
+          $('select[name=blood_group]').select2({ width: '100%', minimumResultsForSearch: Infinity });
+        } else {
+          setTimeout(initSelect2Later, 200);
+        }
+      }
+      initSelect2Later();
+    });
+  </script>
+{% endblock %}

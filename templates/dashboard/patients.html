@@ -1,9 +1,10 @@
 {% extends "dashboard/base.html" %}
+{% load currency_filters %}
 
 {% block title %}Bệnh nhân{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
+<!-- Tiêu đề trang -->
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
@@ -14,7 +15,7 @@
         </div>
     </div>
 </div>
-<!-- /Page Header -->
+<!-- /Tiêu đề trang -->
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -35,7 +36,7 @@
                         </thead>
                         <tbody>
                             {% for patient in patients %}
-                                <!-- Add Patient Details Modal -->
+                                <!-- Modal chi tiết bệnh nhân -->
                                 <div class="modal fade" id="patient_details_{{ patient.id }}" tabindex="-1" role="dialog">
                                     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                         <div class="modal-content">
@@ -48,15 +49,15 @@
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                        <img src="{{ patient.profile.image }}" alt="Patient Image" class="img-fluid rounded">
+                                                        <img src="{{ patient.profile.image }}" alt="Ảnh bệnh nhân" class="img-fluid rounded">
                                                     </div>
                                                     <div class="col-md-8">
                                                         <h4>{{ patient.get_full_name }}</h4>
                                                         <p><strong>Email:</strong> {{ patient.email }}</p>
-                                                        <p><strong>Phone:</strong> {{ patient.profile.phone|default:"Not provided" }}</p>
-                                                        <p><strong>Gender:</strong> {{ patient.profile.gender|title|default:"Not specified" }}</p>
-                                                        <p><strong>Blood Group:</strong> {{ patient.profile.blood_group|default:"Not specified" }}</p>
-                                                        <p><strong>Age:</strong> {{ patient.profile.age|default:"Not specified" }} tuổi</p>
+                                                        <p><strong>SĐT:</strong> {{ patient.profile.phone|default:"Chưa xác định" }}</p>
+                                                        <p><strong>Giới tính:</strong> {{ patient.profile.get_gender_display|default:"Chưa xác định" }}</p>
+                                                        <p><strong>Nhóm máu:</strong> {{ patient.profile.blood_group|default:"Chưa xác định" }}</p>
+                                                        <p><strong>Tuổi:</strong> {% if patient.profile.age %}{{ patient.profile.age }} tuổi{% else %}Chưa xác định{% endif %}</p>
                                                     </div>
                                                 </div>
                                                 
@@ -67,10 +68,10 @@
                                                         <h5>Thông tin y tế</h5>
                                                         {% if patient.profile.medical_conditions or patient.profile.allergies %}
                                                             {% if patient.profile.medical_conditions %}
-                                                                <p><strong>Medical Conditions:</strong><br>{{ patient.profile.medical_conditions }}</p>
+                                                                <p><strong>Bệnh lý:</strong><br>{{ patient.profile.medical_conditions }}</p>
                                                             {% endif %}
                                                             {% if patient.profile.allergies %}
-                                                                <p><strong>Allergies:</strong><br>{{ patient.profile.allergies }}</p>
+                                                                <p><strong>Dị ứng:</strong><br>{{ patient.profile.allergies }}</p>
                                                             {% endif %}
                                                         {% else %}
                                                             <p class="text-muted">Chưa có thông tin y tế</p>
@@ -80,8 +81,8 @@
                                                         <h5>Thống kê cuộc hẹn</h5>
                                                         <p><strong>Tổng số lượt khám:</strong> {{ patient.total_appointments }}</p>
                                                         <p><strong>Lượt khám hoàn thành:</strong> {{ patient.completed_appointments }}</p>
-                                                        <p><strong>Tổng đã thanh toán:</strong> ₫{{ patient.total_paid }}</p>
-                                                        <p><strong>Lần khám cuối:</strong> {{ patient.last_visit|date:"d M Y"|default:"Chưa có" }}</p>
+                                                        <p><strong>Tổng đã thanh toán:</strong> {{ patient.total_paid|vnd }}</p>
+                                                        <p><strong>Lần khám cuối:</strong> {{ patient.last_visit|date_vn|default:"Chưa có" }}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,16 +94,16 @@
                                     <td>
                                         <h2 class="table-avatar">
                                             <a href="#" class="avatar avatar-sm mr-2">
-                                                <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="User Image">
+                                                <img class="avatar-img rounded-circle" src="{{ patient.profile.image }}" alt="Ảnh người dùng">
                                             </a>
                                             <a href="#">{{ patient.get_full_name }}</a>
                                         </h2>
                                     </td>
-                                    <td>{{ patient.profile.age|default:"N/A" }}</td>
-                                    <td>{{ patient.profile.address|default:"N/A" }}</td>
-                                    <td>{{ patient.profile.phone|default:"N/A" }}</td>
-                                    <td>{{ patient.last_visit|date:"d M Y"|default:"Chưa có" }}</td>
-                                    <td class="text-right">₫{{ patient.total_paid|default:"0" }}</td>
+                                    <td>{% if patient.profile.age %}{{ patient.profile.age }}{% else %}Chưa xác định{% endif %}</td>
+                                    <td>{{ patient.profile.address|default:"Chưa xác định" }}</td>
+                                    <td>{{ patient.profile.phone|default:"Chưa xác định" }}</td>
+                                    <td>{{ patient.last_visit|date_vn|default:"Chưa có" }}</td>
+                                    <td class="text-right">{{ patient.total_paid|vnd }}</td>
                                     <td>
                                         <div class="actions">
                                             <button type="button" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#patient_details_{{ patient.id }}">

@@ -25,3 +25,43 @@ def vnd(value):
 
     s = f"{val:,}".replace(',', '.')
     return f"₫{s}"
+
+
+@register.filter
+def status_label(value):
+    """Translate internal status codes to Vietnamese labels."""
+    if not value:
+        return ""
+    mapping = {
+        'pending': 'Đang chờ',
+        'confirmed': 'Đã xác nhận',
+        'completed': 'Hoàn thành',
+        'cancelled': 'Đã hủy',
+        'no_show': 'Vắng mặt',
+    }
+    return mapping.get(value, str(value).title())
+
+
+@register.filter
+def date_vn(value):
+    """Format a date/datetime to a Vietnamese-friendly string: '27 Tháng 9, 2003'."""
+    if not value:
+        return ""
+    try:
+        # value may be date or datetime
+        day = value.day
+        month = value.month
+        year = value.year
+        return f"{day} Tháng {month}, {year}"
+    except Exception:
+        return value
+
+
+@register.filter
+def multiply(value, arg):
+    """Multiply two values together."""
+    try:
+        return Decimal(str(value)) * Decimal(str(arg))
+    except Exception:
+        return 0
+

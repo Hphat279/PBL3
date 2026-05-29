@@ -30,38 +30,68 @@ class TimeRange(models.Model):
 
     class Meta:
         unique_together = ("start", "end")
+        verbose_name = "Khoảng thời gian"
+        verbose_name_plural = "Khoảng thời gian"
 
 
 class Saturday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Bảy"
+        verbose_name_plural = "Thứ Bảy"
 
 
 class Sunday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Chủ Nhật"
+        verbose_name_plural = "Chủ Nhật"
 
 
 class Monday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Hai"
+        verbose_name_plural = "Thứ Hai"
 
 
 class Tuesday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Ba"
+        verbose_name_plural = "Thứ Ba"
 
 
 class Wednesday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Tư"
+        verbose_name_plural = "Thứ Tư"
 
 
 class Thursday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Năm"
+        verbose_name_plural = "Thứ Năm"
 
 
 class Friday(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     time_range = models.ManyToManyField(TimeRange)
+    
+    class Meta:
+        verbose_name = "Thứ Sáu"
+        verbose_name_plural = "Thứ Sáu"

@@ -10,7 +10,7 @@
 
 {% block content %}
 
-    <!-- Breadcrumb -->
+    <!-- Thanh điều hướng -->
     <div class="breadcrumb-bar">
         <div class="container-fluid">
             <div class="row align-items-center">
@@ -26,12 +26,12 @@
             </div>
         </div>
     </div>
-    <!-- /Breadcrumb -->
+    <!-- /Thanh điều hướng -->
 
-    <!-- Page Content -->
+    <!-- Nội dung trang -->
     <div class="content">
         <div class="container">
-            <!-- Doctor Widget -->
+            <!-- Khung bác sĩ -->
             <div class="card">
                 <div class="card-body">
                     <div class="doctor-widget">
@@ -52,8 +52,14 @@
                                     <i class="fas fa-star {% if doctor.rating >= 2 %}filled{% endif %}"></i>
                                     <i class="fas fa-star {% if doctor.rating >= 3 %}filled{% endif %}"></i>
                                     <i class="fas fa-star {% if doctor.rating >= 4 %}filled{% endif %}"></i>
-                                    <i class="fas fa-star {% if doctor.rating >= 5 %}filled{% endif %}"></i>
-                                    <span class="d-inline-block average-rating">({{ doctor.reviews_count|default:0 }})</span>
+                                    {% if doctor.rating >= 5 %}
+                                        <i class="fas fa-star filled"></i>
+                                    {% elif doctor.has_half_star %}
+                                        <i class="fas fa-star-half-alt filled"></i>
+                                    {% else %}
+                                        <i class="fas fa-star"></i>
+                                    {% endif %}
+                                    <span class="d-inline-block average-rating">({{ doctor.reviews_received.count }})</span>
                                 </div>
                             </div>
                         </div>
@@ -78,18 +84,20 @@
                                 </ul>
                             </div>
                             <div class="clinic-booking">
-                                <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                {% if user.is_authenticated and user.role == 'patient' %}
+                                    <a class="apt-btn" href="{% url 'bookings:doctor-booking-view' doctor.username %}">Đặt lịch khám</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- /Doctor Widget -->
+            <!-- /Khung bác sĩ -->
 
-            <!-- Doctor Details Tab -->
+            <!-- Tab thông tin bác sĩ -->
             <div class="card">
                 <div class="card-body pt-0">
-                    <!-- Tab Menu -->
+                    <!-- Menu tab -->
                     <nav class="user-tabs mb-4">
                         <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
                             <li class="nav-item">
@@ -103,24 +111,24 @@
                             </li>
                         </ul>
                     </nav>
-                    <!-- /Tab Menu -->
+                    <!-- /Menu tab -->
 
-                    <!-- Tab Content -->
+                    <!-- Nội dung tab -->
                     <div class="tab-content pt-0">
-                        <!-- Overview Content -->
+                        <!-- Nội dung tổng quan -->
                         <div role="tabpanel" id="doc_overview" class="tab-pane fade show active">
                             <div class="row">
                                 <div class="col-md-12 col-lg-9">
-                                    <!-- About Details -->
+                                    <!-- Thông tin giới thiệu -->
                                     {% if doctor.profile.about %}
                                     <div class="widget about-widget">
                                         <h4 class="widget-title">Về tôi</h4>
                                         <p>{{ doctor.profile.about }}</p>
                                     </div>
                                     {% endif %}
-                                    <!-- /About Details -->
+                                    <!-- /Thông tin giới thiệu -->
 
-                                    <!-- Education Details -->
+                                    <!-- Thông tin học vấn -->
                                     <div class="widget education-widget">
                                         <h4 class="widget-title">Học vấn</h4>
                                         <div class="experience-box">
@@ -144,9 +152,9 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <!-- /Education Details -->
+                                    <!-- /Thông tin học vấn -->
 
-                                    <!-- Experience Details -->
+                                    <!-- Thông tin kinh nghiệm -->
                                     <div class="widget experience-widget">
                                         <h4 class="widget-title">Công việc & Kinh nghiệm</h4>
                                         <div class="experience-box">
@@ -170,29 +178,29 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <!-- /Experience Details -->
+                                    <!-- /Thông tin kinh nghiệm -->
 
                                     {% if doctor.profile.specialization %}
-                                        <!-- Specializations List -->
+                                        <!-- Danh sách chuyên khoa -->
                                         <div class="service-list">
                                             <h4>Chuyên môn</h4>
                                             <ul class="clearfix">
                                                 <li>{{ doctor.profile.specialization }}</li>
                                             </ul>
                                         </div>
-                                        <!-- /Specializations List -->
+                                        <!-- /Danh sách chuyên khoa -->
                                     {% endif %}
 
                                 </div>
                             </div>
                         </div>
-                        <!-- /Overview Content -->
+                        <!-- /Nội dung tổng quan -->
 
-                        <!-- Business Hours Content -->
+                        <!-- Nội dung giờ làm việc -->
                         <div role="tabpanel" id="doc_business_hours" class="tab-pane fade">
                             <div class="row">
                                 <div class="col-md-6 offset-md-3">
-                                    <!-- Business Hours Widget -->
+                                    <!-- Widget giờ làm việc -->
                                     <div class="widget business-widget">
                                         <div class="widget-content">
                                             <div class="listing-hours">
@@ -215,17 +223,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- /Business Hours Widget -->
+                                    <!-- /Widget giờ làm việc -->
                                 </div>
                             </div>
                         </div>
-                        <!-- /Business Hours Content -->
+                        <!-- /Nội dung giờ làm việc -->
 
-                        <!-- Reviews Content -->
+                        <!-- Nội dung đánh giá -->
                         <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
                             <div class="row">
                                 <div class="col-md-12 col-lg-12">
-                                    <!-- Reviews Widget -->
+                                    <!-- Widget đánh giá -->
                                     <div class="widget reviews-widget">
                                         <h4 class="widget-title">Đánh giá</h4>
                                         <div class="widget-content">
@@ -234,11 +242,15 @@
                                                     <h4 class="card-title d-flex justify-content-between">
                                                         <span>Đánh giá</span>
                                                         <span class="average-rating">
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 1 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 2 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 3 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 4 %}text-yellow{% endif %}"></i>
-                                                            <i class="fas fa-star {% if doctor.average_rating >= 5 %}text-yellow{% endif %}"></i>
+                                                            {% for i in "12345"|make_list %}
+                                                                {% if forloop.counter <= doctor.full_stars %}
+                                                                    <i class="fas fa-star text-yellow"></i>
+                                                                {% elif doctor.has_half_star and forloop.counter == doctor.full_stars|add:"1" %}
+                                                                    <i class="fas fa-star-half-alt text-yellow"></i>
+                                                                {% else %}
+                                                                    <i class="fas fa-star"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
                                                             <span>({{ doctor.reviews_received.count }} đánh giá)</span>
                                                         </span>
                                                     </h4>
@@ -249,7 +261,7 @@
                                                                 <div class="review-header d-flex justify-content-between">
                                                                     <div class="reviewer-info">
                                                                         <div class="reviewer-img">
-                                                                            <img src="{{ review.patient.profile.image }}" class="avatar-sm rounded-circle" alt="Patient">
+                                                                            <img src="{{ review.patient.profile.image }}" class="avatar-sm rounded-circle" alt="Ảnh bệnh nhân">
                                                                         </div>
                                                                         <h5>{{ review.patient.get_full_name }}</h5>
                                                                         <small class="review-date">{{ review.created_at|date }}</small>
@@ -270,17 +282,17 @@
                                             </div> 
                                         </div>
                                     </div>
-                                    <!-- /Reviews Widget -->
+                                    <!-- /Widget đánh giá -->
                                 </div>
                             </div>
                         </div>
-                        <!-- /Reviews Content -->
+                        <!-- /Nội dung đánh giá -->
 
                     </div>
-                    <!-- /Tab Content -->
+                    <!-- /Nội dung tab -->
                 </div>
             </div>
-            <!-- /Doctor Details Tab -->
+            <!-- /Tab thông tin bác sĩ -->
         </div>
     </div>
     <!-- /Page Content -->

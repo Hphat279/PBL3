@@ -19,18 +19,21 @@ from accounts.views.admin_views import (
     RevenueReportView,
 )
 
-admin.site.site_header = "PBL3 Admin"
-admin.site.site_title = "PBL3 Admin Portal"
-admin.site.index_title = "Welcome to PBL3 Admin Portal"
+admin.site.site_header = "PBL3 Quản trị"
+admin.site.site_title = "Cổng quản trị PBL3"
+admin.site.index_title = "Chào mừng đến Cổng quản trị PBL3"
 
 
 urlpatterns = (
     [
         path("super-admin/", admin.site.urls),
+        # Include project-level account routes and django-allauth routes.
         path("accounts/", include("accounts.urls")),
+        path("accounts/", include("allauth.urls")),
         path("patients/", include("patients.urls")),
         path("doctors/", include("doctors.urls")),
         path("bookings/", include("bookings.urls")),
+        path("pharmacy/", include("pharmacy.urls")),
         path("", include("core.urls")),
         path("__debug__/", include(debug_toolbar.urls)),
         path("ckeditor/", include("ckeditor_uploader.urls")),

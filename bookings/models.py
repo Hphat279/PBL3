@@ -35,6 +35,8 @@ class Booking(models.Model):
         ordering = ["-appointment_date", "-appointment_time"]
         # Ensure no double bookings for same doctor at same time
         unique_together = ["doctor", "appointment_date", "appointment_time"]
+        verbose_name = "Lịch khám"
+        verbose_name_plural = "Lịch khám"
 
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.get_full_name()} on {self.appointment_date} at {self.appointment_time}"
@@ -58,6 +60,14 @@ class Prescription(models.Model):
     diagnosis = models.TextField()
     medications = RichTextField()
     notes = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Chờ phát thuốc"),
+            ("dispensed", "Đã phát thuốc"),
+        ],
+        default="pending",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -66,3 +76,41 @@ class Prescription(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+        verbose_name = "Đơn thuốc"
+        verbose_name_plural = "Đơn thuốc"
+
+
+class Referral(models.Model):
+    booking = models.ForeignKey(
+        Booking, on_delete=models.CASCADE, related_name="referrals"
+    )
+    department = models.ForeignKey(
+        "core.Department", on_delete=models.CASCADE, related_name="referrals"
+    )
+    general_doctor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="referrals_given",
+    )
+    reason = models.TextField(blank=True)
+    result = models.TextField(blank=True)
+    result_data = models.JSONField(blank=True, default=dict)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Chờ"),
+            ("in_progress", "Đang khám"),
+            ("completed", "Hoàn thành"),
+        ],
+        default="pending",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Chỉ định chuyên khoa"
+        verbose_name_plural = "Chỉ định chuyên khoa"
+
+    def __str__(self):
+        return f"{self.department.name} — {self.booking.patient}"

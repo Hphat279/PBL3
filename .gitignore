@@ -2,3 +2,13 @@ venv/
 __pycache__/
 *.pyc
 db.sqlite3
+
+# Ignore virtual environment
+venv/
+
+# Ignore compiled python files
+*.pyc
+__pycache__/
+
+# Ignore custom core and accounts explanation file
+core_and_accounts_explanation.md

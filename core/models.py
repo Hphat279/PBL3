@@ -11,8 +11,8 @@ class Speciality(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = "Speciality"
-        verbose_name_plural = "Specialities"
+        verbose_name = "Chuyên khoa"
+        verbose_name_plural = "Chuyên khoa"
         ordering = ["name"]
 
     def __str__(self):
@@ -65,6 +65,8 @@ class Review(models.Model):
     class Meta:
         ordering = ["-created_at"]
         unique_together = ["patient", "booking"]
+        verbose_name = "Đánh giá"
+        verbose_name_plural = "Đánh giá"
 
     def __str__(self):
         return f"Review by {self.patient} for Dr. {self.doctor}"
@@ -72,3 +74,17 @@ class Review(models.Model):
     @property
     def rating_percent(self):
         return (self.rating / 5) * 100
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Khoa"
+        verbose_name_plural = "Khoa"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name

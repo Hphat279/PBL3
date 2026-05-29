@@ -8,24 +8,24 @@
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-		<title>{% block title %}PBL3{% endblock %} - Dashboard</title>
+		<title>{% block title %}PBL3{% endblock %} - Bảng điều khiển</title>
 		
-		<!-- Favicon -->
+        <!-- Biểu tượng trang (favicon) -->
         <link rel="shortcut icon" type="image/x-icon" href="{% static 'dashboard/assets/img/favicon.png' %}">
 		
-		<!-- Bootstrap CSS -->
+		<!-- CSS Bootstrap -->
         <link rel="stylesheet" href="{% static 'dashboard/assets/css/bootstrap.min.css' %}">
 		
-		<!-- Fontawesome CSS -->
+		<!-- CSS Fontawesome -->
         <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
     	<link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
 		
-		<!-- Feathericon CSS -->
+		<!-- CSS Feathericon -->
         <link rel="stylesheet" href="{% static 'dashboard/assets/css/feathericon.min.css' %}">
 		
 		<link rel="stylesheet" href="{% static 'dashboard/assets/plugins/morris/morris.css' %}">
 		
-		<!-- Main CSS -->
+		<!-- CSS chính -->
         <link rel="stylesheet" href="{% static 'dashboard/assets/css/style.css' %}">
 
 		<style>
@@ -38,14 +38,14 @@
     </head>
     <body>
 	
-		<!-- Main Wrapper -->
+			<!-- Vùng chính -->
         <div class="main-wrapper">
             
 			{% include "dashboard/includes/header.html" %}
             
 			{% include "dashboard/includes/sidebar.html" %}
 			
-			<!-- Page Wrapper -->
+			<!-- Vùng trang -->
             <div class="page-wrapper">
 			
                 <div class="content container-fluid">
@@ -54,15 +54,15 @@
 					
 				</div>			
 			</div>
-			<!-- /Page Wrapper -->
+			<!-- /Vùng trang -->
 		
         </div>
-		<!-- /Main Wrapper -->
+		<!-- /Vùng chính -->
 		
 		<!-- jQuery -->
         <script src="{% static 'dashboard/assets/js/jquery-3.2.1.min.js' %}"></script>
 		
-		<!-- Bootstrap Core JS -->
+		<!-- JS Bootstrap core -->
         <script src="{% static 'dashboard/assets/js/popper.min.js' %}"></script>
         <script src="{% static 'dashboard/assets/js/bootstrap.min.js' %}"></script>
 		
@@ -73,7 +73,7 @@
 		<script src="{% static 'dashboard/assets/plugins/morris/morris.min.js' %}"></script>  
 		<script src="{% static 'dashboard/assets/js/chart.morris.js' %}"></script>
 		
-		<!-- Custom JS -->
+		<!-- JS tuỳ chỉnh -->
 		<script  src="{% static 'dashboard/assets/js/script.js' %}"></script>
 		
     </body>

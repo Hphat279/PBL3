@@ -1,0 +1,169 @@
+{% extends 'dept/base.html' %}
+{% load static %}
+
+{% block title %}Kết quả khám — {{ referral.department.name }}{% endblock %}
+
+{% block main %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Thông tin bệnh nhân</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h5><i class="fas fa-user"></i> Họ tên</h5>
+                            <p>{{ referral.booking.patient.get_full_name }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h5><i class="fas fa-venus-mars"></i> Giới tính</h5>
+                            <p>{{ referral.booking.patient.profile.get_gender_display|default:"Chưa xác định" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h5><i class="fas fa-tint"></i> Nhóm máu</h5>
+                            <p>{{ referral.booking.patient.profile.blood_group|default:"Chưa xác định" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-block">
+                            <h5><i class="fas fa-user-md"></i> Bác sĩ chỉ định</h5>
+                            <p>Bác sĩ {{ referral.general_doctor.get_full_name }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if referral.booking.patient.profile.allergies %}
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <div class="info-block">
+                            <h5><i class="fas fa-allergies"></i> Dị ứng</h5>
+                            <p>{{ referral.booking.patient.profile.allergies }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if referral.status == 'in_progress' and dept_fields %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h4 class="card-title">Kết quả khám — {{ dept_name }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="complete">
+                    <div class="row">
+                        {% for field in dept_fields %}
+                        <div class="{% if field.type == 'textarea' %}col-12{% else %}col-md-6{% endif %}">
+                            <div class="form-group">
+                                <label>
+                                    {{ field.label }}
+                                    {% if field.unit %}<small class="text-muted">({{ field.unit }})</small>{% endif %}
+                                </label>
+                                {% if field.type == 'number' %}
+                                <div class="input-group">
+                                    <input type="number" step="0.01" name="{{ field.key }}" class="form-control" placeholder="{{ field.placeholder }}">
+                                    {% if field.unit %}
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">{{ field.unit }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% elif field.type == 'select' %}
+                                <select name="{{ field.key }}" class="form-control">
+                                    {% for opt in field.options %}
+                                    <option value="{{ opt }}">{{ opt }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% elif field.type == 'textarea' %}
+                                <textarea name="{{ field.key }}" class="form-control" rows="3" placeholder="{{ field.placeholder }}"></textarea>
+                                {% else %}
+                                <input type="text" name="{{ field.key }}" class="form-control" placeholder="{{ field.placeholder }}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg mt-3">
+                        <i class="fas fa-paper-plane"></i> Gửi kết quả
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Chỉ định — {{ referral.department.name }}</h4>
+            </div>
+            <div class="card-body">
+                {% if referral.reason %}
+                <div class="info-block">
+                    <h5><i class="fas fa-sticky-note"></i> Lý do</h5>
+                    <p>{{ referral.reason }}</p>
+                </div>
+                {% endif %}
+                <div class="info-block">
+                    <h5><i class="fas fa-info-circle"></i> Trạng thái</h5>
+                    {% if referral.status == 'pending' %}
+                        <span class="badge badge-pill bg-warning-light">Chờ tiếp nhận</span>
+                    {% elif referral.status == 'in_progress' %}
+                        <span class="badge badge-pill bg-info-light">Đang khám</span>
+                    {% elif referral.status == 'completed' %}
+                        <span class="badge badge-pill bg-success-light">Đã hoàn thành</span>
+                    {% endif %}
+                </div>
+                <div class="info-block">
+                    <h5><i class="far fa-clock"></i> Ngày tạo</h5>
+                    <p>{{ referral.created_at|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if referral.status == 'pending' %}
+        <div class="card mt-3">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="start">
+                    <p class="text-muted mb-0">Bắt đầu tiếp nhận bệnh nhân để tiến hành khám.</p>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block mt-3">
+                        <i class="fas fa-play"></i> Bắt đầu khám
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if referral.status == 'completed' %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <h4 class="card-title">Kết quả đã lưu</h4>
+            </div>
+            <div class="card-body">
+                {% if referral.result %}
+                <div class="p-3" style="white-space: pre-wrap; background: #f8fafc; border-radius: 8px; font-size: 14px;">
+                    {{ referral.result }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'doctors:dept-dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại hàng đợi
+    </a>
+</div>
+{% endblock %}
