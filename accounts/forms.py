@@ -179,6 +179,13 @@ class CustomPasswordResetForm(PasswordResetForm):
     is registered.
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ensure the email input uses our form-control styling
+        if 'email' in self.fields:
+            self.fields['email'].widget.attrs.update({'class': 'form-control reset-input'})
+
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email:
