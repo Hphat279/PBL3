@@ -12,6 +12,8 @@ class DoctorProfileForm(forms.ModelForm):
 
 
 class PrescriptionForm(forms.ModelForm):
+    medications = forms.CharField(widget=CKEditorWidget(config_name="default"), required=False)
+
     class Meta:
         model = Prescription
         fields = ["symptoms", "diagnosis", "medications", "notes"]
@@ -22,7 +24,6 @@ class PrescriptionForm(forms.ModelForm):
             "diagnosis": forms.Textarea(
                 attrs={"rows": 3, "class": "form-control"}
             ),
-            "medications": CKEditorWidget(config_name="default"),
             "notes": forms.Textarea(
                 attrs={"rows": 3, "class": "form-control"}
             ),
