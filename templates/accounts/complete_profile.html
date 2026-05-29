@@ -157,14 +157,20 @@
       document.getElementById('district-select').innerHTML = '<option value="">Chọn quận/huyện</option>';
       if (country === 'Vietnam') {
         const cities = Object.keys(window.vnRegions['Vietnam'] || {});
-        citySelect.classList.remove('d-none'); cityInput.classList.add('d-none');
+        citySelect.classList.remove('d-none');
+        citySelect.disabled = false;
+        cityInput.classList.add('d-none');
+        cityInput.disabled = true;
         cities.forEach(city => {
           const opt = document.createElement('option'); opt.value = city; opt.text = city;
           if ("{{ form.initial.city }}" === city) opt.selected = true;
           citySelect.appendChild(opt);
         });
       } else {
-        citySelect.classList.add('d-none'); cityInput.classList.remove('d-none');
+        citySelect.classList.add('d-none');
+        citySelect.disabled = true;
+        cityInput.classList.remove('d-none');
+        cityInput.disabled = false;
       }
     }
 
@@ -174,14 +180,20 @@
       districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
       if (country === 'Vietnam' && (window.vnRegions['Vietnam'] || {})[city]) {
         const list = (window.vnRegions['Vietnam'] || {})[city] || [];
-        districtSelect.classList.remove('d-none'); districtInput.classList.add('d-none');
+        districtSelect.classList.remove('d-none');
+        districtSelect.disabled = false;
+        districtInput.classList.add('d-none');
+        districtInput.disabled = true;
         list.forEach(d => {
           const opt = document.createElement('option'); opt.value = d; opt.text = d;
           if ("{{ form.initial.state }}" === d) opt.selected = true;
           districtSelect.appendChild(opt);
         });
       } else {
-        districtSelect.classList.add('d-none'); districtInput.classList.remove('d-none');
+        districtSelect.classList.add('d-none');
+        districtSelect.disabled = true;
+        districtInput.classList.remove('d-none');
+        districtInput.disabled = false;
       }
     }
 
@@ -197,10 +209,14 @@
         const initialCity = "{{ form.initial.city }}" || '';
         if (initialCity) populateDistricts('Vietnam', initialCity);
       } else if (initialCountry) {
-        document.getElementById('city-select').classList.add('d-none');
-        document.getElementById('city-input').classList.remove('d-none');
-        document.getElementById('district-select').classList.add('d-none');
-        document.getElementById('district-input').classList.remove('d-none');
+        const cs = document.getElementById('city-select');
+        const ci = document.getElementById('city-input');
+        const ds = document.getElementById('district-select');
+        const di = document.getElementById('district-input');
+        cs.classList.add('d-none'); cs.disabled = true;
+        ci.classList.remove('d-none'); ci.disabled = false;
+        ds.classList.add('d-none'); ds.disabled = true;
+        di.classList.remove('d-none'); di.disabled = false;
       }
 
       countrySelect.addEventListener('change', function(){

@@ -174,23 +174,16 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Thành phố</label>
+                                            <label>Thành phố / Tỉnh</label>
                                             <input type="text" class="form-control" name="city" value="{{ user.profile.city|default:'' }}">
                                             {% include 'includes/form_error.html' with field=form.city %}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Tỉnh/Thành</label>
+                                            <label>Quận / Huyện</label>
                                             <input type="text" class="form-control" name="state" value="{{ user.profile.state|default:'' }}">
                                             {% include 'includes/form_error.html' with field=form.state %}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Mã bưu chính</label>
-                                            <input type="text" class="form-control" name="postal_code" value="{{ user.profile.postal_code|default:'' }}">
-                                            {% include 'includes/form_error.html' with field=form.postal_code %}
                                         </div>
                                     </div>
                                     <div class="col-md-6">

@@ -37,6 +37,20 @@ class ProfileCompletionMiddleware:
         if not user or not user.is_authenticated:
             return None
 
+        # Only enforce profile completion for patient users.
+        # Skip for staff/admin and doctors.
+        try:
+            if user.is_staff or user.is_superuser:
+                return None
+        except Exception:
+            pass
+        try:
+            # If a role attribute exists and equals 'doctor', skip enforcement
+            if getattr(user, 'role', None) == 'doctor':
+                return None
+        except Exception:
+            pass
+
         path = request.path
         # Allow exempt prefixes
         for p in self.EXEMPT_PATH_PREFIXES:
