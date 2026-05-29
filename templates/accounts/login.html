@@ -14,10 +14,15 @@
 
             {% block css %}
             <style>
-                .banner-wrap { position: relative; display: inline-block; }
+                .banner-wrap { position: relative; display: inline-block; vertical-align: middle; }
                 .banner-wrap .img-fluid { display: block; }
-                .banner-text { position: absolute; left: 120px; top: 50%; transform: translateY(-50%); height: 36px; }
+                /* smaller text, closer to the cross */
+                .banner-text { position: absolute; left: 95px; top: 50%; transform: translateY(-50%); height: 28px; }
                 @media (max-width: 992px) { .banner-text { display: none; } }
+
+                /* center and brand the login header for better UX */
+                .login-header h3 { text-align: center; color: #0B78E3; font-weight: 700; margin-bottom: 0.75rem; }
+                .login-right .login-header { padding-top: 0.5rem; }
             </style>
             {% endblock %}
 
