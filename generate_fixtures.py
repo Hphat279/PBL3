@@ -134,6 +134,7 @@ def generate_fixtures():
         doctor_username = f"doctor{i}"
         doctor = {
             "model": "accounts.user",
+            "pk": user_id,
             "fields": {
                 "password": "pbkdf2_sha256$260000$HQyGxzxfOxv6nLKI8zF$w9Nmz1Rxm1fPY1HzJ2MU7MgKBfTJ1RfF3q9M1wJvXvQ=",  # "password123"
                 "username": doctor_username,
